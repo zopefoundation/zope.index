@@ -11,9 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Text index wrapper.
-
-This exists to implement IInjection and IQuerying.
+"""Text index.
 
 $Id$
 """

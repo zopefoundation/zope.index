@@ -82,25 +82,6 @@ class IIndexSearch(Interface):
 
         """
 
-class IQuerying(Interface):
-    """An index that can be queried by some text and returns a result set."""
-
-    def query(querytext, start=0, count=None):
-        """Execute a query.
-
-        querytext: unicode, the query expression
-        start: the first result to return (0-based)
-        count: the maximum number of results to return (default: all)
-        return: ([(docid, rank), ...], total)
-
-        The return value is a tuple:
-            matches: list of (int, float) tuples, docid and rank
-            total: int, the total number of matches
-
-        The matches list represents the requested batch.  The ranks
-        are floats between 0 and 1 (inclusive).
-        """
-
 class IStatistics(Interface):
     """An index that provides statistical information about itself."""
 
@@ -109,60 +90,6 @@ class IStatistics(Interface):
 
     def wordCount():
         """Return the number of words currently indexed."""
-
-
-class IKeywordQuerying(Interface):
-    """Query over a set of keywords, seperated by white space."""
-
-    def search(query, operator='and'):
-        """Execute a search given by 'query' as a list/tuple of
-           (unicode) strings against the index. 'operator' can be either
-           'and' or 'or' to search for all keywords or any keyword. 
-
-           Return an IISet of docids
-        """
-
-class ITopicQuerying(Interface):
-    """Query over topics, seperated by white space."""
-
-    def search(query, operator='and'):
-        """Execute a search given by 'query' as a list/tuple of filter ids.
-          'operator' can be 'and' or 'or' to search for matches in all
-           or any filter.
-
-           Return an IISet of docids
-        """
-
-class ISimpleQuery(Interface):
-    """A simple query interface."""
-
-    def query(term, start=0, count=None):
-        """Search for the given term, return a sequence of docids"""
-
-
-class ITopicFilteredSet(Interface):
-    """Interface for filtered sets used by topic indexes."""
-    
-    def clear():
-        """Remove all entries from the index."""
-
-    def index_doc(docid, context):
-        """Add an object's info to the index."""
-
-    def unindex_doc(docid):
-        """Remove an object with id 'docid' from the index."""
-
-    def getId():
-        """Return the id of the filter itself."""
-
-    def setExpression(expr):
-        """Set the filter expression, e.g. 'context.meta_type=='...'"""
-        
-    def getExpression():
-        """Return the filter expression."""
-
-    def getIds():
-        """Return an IISet of docids."""
 
 
 class INBest(Interface):
