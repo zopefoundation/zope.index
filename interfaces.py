@@ -70,10 +70,10 @@ class IIndexSearch(Interface):
 
         A result is returned that is:
 
-        - An IIBTree or an IIBucket mapping document ids to integer
+        - An IFBTree or an IFBucket mapping document ids to floating-point
           scores for document ids of documents that match the query,
 
-        - An IISet or IITreeSet containing document ids of documents
+        - An IFSet or IFTreeSet containing document ids of documents
           that match the query, or
 
         - None, indicating that the index could not use the query and

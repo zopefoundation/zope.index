@@ -19,7 +19,7 @@ import persistent
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
-from BTrees.IIBTree import IITreeSet, IISet, multiunion
+from BTrees.IFBTree import IFTreeSet, IFSet, multiunion
 from BTrees.Length import Length
 
 import zope.interface
@@ -63,7 +63,7 @@ class FieldIndex(persistent.Persistent):
         # Insert into forward index.
         set = self._fwd_index.get(value)
         if set is None:
-            set = IITreeSet()
+            set = IFTreeSet()
             self._fwd_index[value] = set
         set.insert(docid)
 

@@ -24,26 +24,26 @@ Fied indexes are searched with apply.  The argument is a tuple
 with a minimum and maximum value:
 
     >>> index.apply((30, 70))
-    IISet([3, 4, 5, 7, 8])
+    IFSet([3, 4, 5, 7, 8])
 
 Open-ended ranges can be provided by provinding None as an end point:
 
     >>> index.apply((30, None))
-    IISet([2, 3, 4, 5, 6, 7, 8])
+    IFSet([2, 3, 4, 5, 6, 7, 8])
 
     >>> index.apply((None, 70))
-    IISet([0, 1, 3, 4, 5, 7, 8, 9])
+    IFSet([0, 1, 3, 4, 5, 7, 8, 9])
 
     >>> index.apply((None, None))
-    IISet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    IFSet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 To do an exact value search, supply equal minimum and maximum values:
 
     >>> index.apply((30, 30))
-    IISet([4, 7])
+    IFSet([4, 7])
 
     >>> index.apply((70, 70))
-    IISet([])
+    IFSet([])
 
 Field indexes support basic statistics:
 
@@ -55,13 +55,13 @@ Field indexes support basic statistics:
 Documents can be reindexed:
 
     >>> index.apply((15, 15))
-    IISet([9])
+    IFSet([9])
     >>> index.index_doc(9, 14)
 
     >>> index.apply((15, 15))
-    IISet([])
+    IFSet([])
     >>> index.apply((14, 14))
-    IISet([9])
+    IFSet([9])
     
 Documents can be unindexed:
 
@@ -77,7 +77,7 @@ Documents can be unindexed:
     7
 
     >>> index.apply((30, 70))
-    IISet([3, 4, 5])
+    IFSet([3, 4, 5])
 
 Unindexing a document id that isn't present is ignored:
 
@@ -97,4 +97,4 @@ We can also clear the index entirely:
     0
 
     >>> index.apply((30, 70))
-    IISet([])
+    IFSet([])
