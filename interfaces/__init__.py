@@ -13,9 +13,8 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.6 2003/10/31 19:07:15 garrett Exp $
+$Id: __init__.py,v 1.7 2004/02/20 20:44:23 srichter Exp $
 """
-
 from zope.interface import Interface
 
 
@@ -42,6 +41,7 @@ class IInjection(Interface):
         """
 
 class IQuerying(Interface):
+    """An index that can be queried by some text and returns a result set."""
 
     def query(querytext, start=0, count=None):
         """Execute a query.
@@ -60,6 +60,7 @@ class IQuerying(Interface):
         """
 
 class IStatistics(Interface):
+    """An index that provides statistical information about itself."""
 
     def documentCount():
         """Return the number of documents currently indexed."""
@@ -69,6 +70,7 @@ class IStatistics(Interface):
 
 
 class IExtendedQuerying(Interface):
+    """An index that supports advanced search setups."""
 
     def search(term):
         """Execute a search on a single term given as a string.
@@ -107,9 +109,10 @@ class IExtendedQuerying(Interface):
         """
 
 class IRangeQuerying(Interface):
+    """Query over a range of objects."""
 
     def rangesearch(minval, maxval):
-        """ Execute a range search.
+        """Execute a range search.
 
            Return an IISet of docids for all docs where
 
@@ -122,6 +125,7 @@ class IRangeQuerying(Interface):
         """             
 
 class IKeywordQuerying(Interface):
+    """Query over a set of keywords, seperated by white space."""
 
     def search(query, operator='and'):
         """Execute a search given by 'query' as a list/tuple of
@@ -132,6 +136,7 @@ class IKeywordQuerying(Interface):
         """
 
 class ITopicQuerying(Interface):
+    """Query over topics, seperated by white space."""
 
     def search(query, operator='and'):
         """Execute a search given by 'query' as a list/tuple of filter ids.
@@ -142,33 +147,32 @@ class ITopicQuerying(Interface):
         """
 
 class ISimpleQuery(Interface):
-    "a simple query interface"
+    "S simple query interface."
 
     def query(term, start=0, count=None):
         "search for the given term, return a sequence of hubids"
 
 
 class ITopicFilteredSet(Interface):
-    """ interface for filtered sets used by topic indexes """
+    """Interface for filtered sets used by topic indexes."""
     
     def clear():
-        """clearn the index"""
+        """Remove all entries from the index."""
 
     def index_doc(docid, context):
-        """index an object"""
+        """Add an object's info to the index."""
 
     def unindex_doc(docid):
-        """unindex the object with id 'docid'"""
+        """Remove an object with id 'docid' from the index."""
 
     def getId():
-        """return own filter id"""
+        """Return the id of the filter itself."""
 
     def setExpression(expr):
-        """set the filter expression, e.g.
-           'context.meta_type=='...'
-        """
+        """Set the filter expression, e.g. 'context.meta_type=='...'"""
+        
     def getExpression():
-        """return the filter expression"""
+        """Return the filter expression."""
 
     def getIds():
-        """return an IISet of docids"""
+        """Return an IISet of docids."""
