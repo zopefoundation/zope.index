@@ -1,2 +1,1 @@
-#
-# This file is necessary to make this directory a package.
+from zope.index.text.textindexwrapper import TextIndexWrapper as TextIndex
