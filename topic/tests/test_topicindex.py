@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Topic Index tests
 
+$Id$
+"""
 from unittest import TestCase, TestSuite, main, makeSuite 
 
 from zope.index.topic.index import TopicIndex
@@ -19,7 +22,7 @@ from zope.index.topic.filter import PythonFilteredSet
 from zope.interface.verify import verifyClass
 from zope.interface.interface import implementedBy
 
-class O:
+class O(object):
     """ a dummy class """
 
     def __init__(self, meta_type):
@@ -29,9 +32,12 @@ class TopicIndexTest(TestCase):
 
     def setUp(self):
         self.index = TopicIndex()
-        self.index.addFilter(PythonFilteredSet('doc1', "context.meta_type == 'doc1'"))
-        self.index.addFilter(PythonFilteredSet('doc2', "context.meta_type == 'doc2'"))
-        self.index.addFilter(PythonFilteredSet('doc3', "context.meta_type == 'doc3'"))
+        self.index.addFilter(PythonFilteredSet('doc1',
+                                               "context.meta_type == 'doc1'"))
+        self.index.addFilter(PythonFilteredSet('doc2',
+                                               "context.meta_type == 'doc2'"))
+        self.index.addFilter(PythonFilteredSet('doc3',
+                                               "context.meta_type == 'doc3'"))
 
         self.index.index_doc(0 , O('doc0'))
         self.index.index_doc(1 , O('doc1'))

@@ -11,7 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-
 """Query Parser.
 
 This particular parser recognizes the following syntax:
@@ -53,6 +52,8 @@ Summarizing the default operator rules:
 - a leading hyphen implies NOT, e.g. ``foo -bar''
 - these can be combined, e.g. ``foo -"foo bar"'' or ``foo -foo-bar''
 - * and ? are used for globbing (i.e. prefix search), e.g. ``foo*''
+
+$Id$
 """
 
 import re
@@ -94,7 +95,7 @@ _tokenizer_regex = re.compile(r"""
     )
 """, re.VERBOSE)
 
-class QueryParser:
+class QueryParser(object):
 
     implements(IQueryParser)
 

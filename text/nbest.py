@@ -23,7 +23,7 @@ from bisect import bisect_left as bisect
 from zope.index.interfaces.nbest import INBest
 from zope.interface import implements
 
-class NBest:
+class NBest(object):
     implements(INBest)
 
     def __init__(self, N):

@@ -32,7 +32,7 @@ from zope.index.text.lexicon import Lexicon, StopWordRemover
 
 def make_zc_index():
     # there's an elaborate dance necessary to construct an index
-    class Struct:
+    class Struct(object):
         pass
     extra = Struct()
     extra.doc_attr = "read"
@@ -46,7 +46,7 @@ def make_zc_index():
 # Splitter(string, stop_words, encoding,
 #          singlechar, indexnumbers, casefolding)
 
-class MySplitter:
+class MySplitter(object):
     def __init__(self):
         self._v_splitter = HTMLWordSplitter()
     def __call__(self, text, stopdict, *args, **kwargs):

@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""HTML Splitter
 
+$Id$
+"""
 import re
 
 from zope.interface import implements
@@ -20,7 +23,7 @@ from zope.index.interfaces.splitter import ISplitter
 from zope.index.text.pipelinefactory import element_factory
 
 
-class HTMLWordSplitter:
+class HTMLWordSplitter(object):
 
     implements(ISplitter)
 

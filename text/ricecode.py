@@ -11,7 +11,6 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-
 """Rice coding (a variation of Golomb coding)
 
 Based on a Java implementation by Glen McCluskey described in a Usenix
@@ -33,11 +32,13 @@ Compute the length of the unary part, q, where
    Emit q 1 bits followed by a 0 bit.
 
 Emit the lower m bits of x-1, treating x-1 as a binary value.
+
+$Id$
 """
 
 import array
 
-class BitArray:
+class BitArray(object):
 
     def __init__(self, buf=None):
         self.bytes = array.array('B')
@@ -81,7 +82,7 @@ class BitArray:
         self.nbits = nbits
         self.bitsleft = bitsleft
 
-class RiceCode:
+class RiceCode(object):
     def __init__(self, m):
         """Constructor a RiceCode for m-bit values."""
         if not (0 <= m <= 16):

@@ -1,5 +1,4 @@
-#! /usr/bin/env python2.2
-
+#! /usr/bin/env python2.3
 ##############################################################################
 #
 # Copyright (c) 2003 Zope Corporation and Contributors.
@@ -41,8 +40,9 @@ Indexing options:
 Querying options:
   -m N -- show at most N matching lines from the message (default 3)
   -n N -- show the N best matching messages (default 3)
-"""
 
+$Id$
+"""
 import os
 import re
 import sys
@@ -146,7 +146,7 @@ def main():
     if pack:
         ix.pack()
 
-class Indexer:
+class Indexer(object):
 
     filestorage = database = connection = root = None
 

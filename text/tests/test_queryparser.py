@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Query Parser
 
+$Id$
+"""
 from unittest import TestCase, TestSuite, main, makeSuite
 
 from zope.interface.verify import verifyClass
@@ -280,7 +283,7 @@ class StopWordTestQueryParser(TestQueryParserBase):
         self.failure('stop AND NOT foo')
 
 
-class FakeStopWordRemover:
+class FakeStopWordRemover(object):
 
     def process(self, list):
         return [word for word in list if word != "stop"]

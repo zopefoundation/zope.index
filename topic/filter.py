@@ -11,14 +11,15 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Filters for TopicIndexes
 
-"""Filters for TopicIndexes"""
-
+$Id$
+"""
 from BTrees.IIBTree import IISet
 from zope.index.interfaces import ITopicFilteredSet
 from zope.interface import implements
 
-class FilteredSetBase:
+class FilteredSetBase(object):
     """ Base class for all filtered sets.
     
         A filtered set is a collection of documents represented

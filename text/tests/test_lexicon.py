@@ -11,14 +11,17 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Lexicon tests
 
+$Id$
+"""
 import sys
 from unittest import TestCase, main, makeSuite
 
 from zope.index.text.lexicon import Lexicon
 from zope.index.text.lexicon import Splitter, CaseNormalizer
 
-class StupidPipelineElement:
+class StupidPipelineElement(object):
     def __init__(self, fromword, toword):
         self.__fromword = fromword
         self.__toword = toword
@@ -32,7 +35,7 @@ class StupidPipelineElement:
                 res.append(term)
         return res
 
-class WackyReversePipelineElement:
+class WackyReversePipelineElement(object):
     def __init__(self, revword):
         self.__revword = revword
 
@@ -47,7 +50,7 @@ class WackyReversePipelineElement:
                 res.append(term)
         return res
 
-class StopWordPipelineElement:
+class StopWordPipelineElement(object):
     def __init__(self, stopdict={}):
         self.__stopdict = stopdict
 

@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Query Engine tests
 
+$Id$
+"""
 import unittest
 
 from BTrees.IIBTree import IIBucket
@@ -20,7 +23,7 @@ from zope.index.text.queryparser import QueryParser
 from zope.index.text.parsetree import QueryError
 from zope.index.text.lexicon import Lexicon, Splitter
 
-class FauxIndex:
+class FauxIndex(object):
 
     def search(self, term):
         b = IIBucket()

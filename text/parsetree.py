@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Generic parser support: exception and parse tree nodes.
 
-"""Generic parser support: exception and parse tree nodes."""
-
+$Id$
+"""
 from BTrees.IIBTree import difference
 
 from zope.index.interfaces.queryparsetree import IQueryParseTree
@@ -27,7 +28,7 @@ class QueryError(Exception):
 class ParseError(Exception):
     pass
 
-class ParseTreeNode:
+class ParseTreeNode(object):
 
     implements(IQueryParseTree)
 

@@ -155,7 +155,7 @@ def _text2list(text):
 
 # Sample pipeline elements
 
-class Splitter:
+class Splitter(object):
 
     rx = re.compile(r"(?u)\w+")
     rxGlob = re.compile(r"(?u)\w+[\w*?]*") # See globToWordIds() above
@@ -176,7 +176,7 @@ element_factory.registerFactory('Word Splitter',
                                  'Whitespace splitter',
                                  Splitter)
 
-class CaseNormalizer:
+class CaseNormalizer(object):
 
     def process(self, lst):
         return [w.lower() for w in lst]
@@ -189,7 +189,7 @@ element_factory.registerFactory('Stop Words',
                                 ' Don\'t remove stop words',
                                 None)
 
-class StopWordRemover:
+class StopWordRemover(object):
 
     dict = get_stopdict().copy()
 
