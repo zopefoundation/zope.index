@@ -17,7 +17,7 @@
 from persistence import Persistent
 
 from zodb.btrees.IOBTree import IOBTree
-from zodb.btrees.OOBTree import OOBTree, OOSet, difference, intersection
+from zodb.btrees.OOBTree import OOBTree, OOSet, difference 
 from zodb.btrees.IIBTree import IISet, union, intersection
 from zodb.btrees.Length import Length
 
