@@ -11,10 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Abstract base class for full text index with relevance ranking.
 
-"""Abstract base class for full text index with relevance ranking."""
-
-
+$Id$
+"""
 import math
 
 from persistent import Persistent
