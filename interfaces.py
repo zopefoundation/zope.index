@@ -111,45 +111,6 @@ class IStatistics(Interface):
         """Return the number of words currently indexed."""
 
 
-class IExtendedQuerying(Interface):
-    """An index that supports advanced search setups."""
-
-    def search(term):
-        """Execute a search on a single term given as a string.
-
-        Return an IIBTree mapping docid to score, or None if all docs
-        match due to the lexicon returning no wids for the term (e.g.,
-        if the term is entirely composed of stopwords).
-        """
-
-    def search_phrase(phrase):
-        """Execute a search on a phrase given as a string.
-
-        Return an IIBtree mapping docid to score.
-        """
-
-    def search_glob(pattern):
-        """Execute a pattern search.
-
-        The pattern represents a set of words by using * and ?.  For
-        example, "foo*" represents the set of all words in the lexicon
-        starting with "foo".
-
-        Return an IIBTree mapping docid to score.
-        """
-
-    def query_weight(terms):
-        """Return the weight for a set of query terms.
-
-        'terms' is a sequence of all terms included in the query,
-        although not terms with a not.  If a term appears more than
-        once in a query, it should appear more than once in terms.
-
-        Nothing is defined about what "weight" means, beyond that the
-        result is an upper bound on document scores returned for the
-        query.
-        """
-
 class IKeywordQuerying(Interface):
     """Query over a set of keywords, seperated by white space."""
 
