@@ -15,13 +15,18 @@
 """Filters for TopicIndexes"""
 
 from zodb.btrees.IIBTree import IISet
-from zope.index.interfaces import ITopicFilter
+from zope.index.interfaces import ITopicFilteredSet
 from zope.interface import implements
 
-class FilterBase:
-    """ base class for all filters """
+class FilteredSetBase:
+    """ Base class for all filtered sets.
+    
+        A filtered set is a collection of documents represented
+        by their document ids that match a common criteria given
+        by a condition.
+    """
 
-    implements(ITopicFilter)
+    implements(ITopicFilteredSet)
 
     def __init__(self, id, expr):
         self.id   = id
@@ -56,8 +61,8 @@ class FilterBase:
     __str__ = __repr__
 
 
-class PythonFilter(FilterBase):
-    """ a topic filter to check a context against a Python expression """
+class PythonFilteredSet(FilteredSetBase):
+    """ a topic filtered set to check a context against a Python expression """
 
     def index_doc(self, docid, context):
 

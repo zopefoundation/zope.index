@@ -12,7 +12,7 @@
 #
 ##############################################################################
 
-"""Field index"""
+"""Topic index"""
 
 from persistence import Persistent
 
@@ -22,19 +22,17 @@ from zodb.btrees.IIBTree import IISet, union, intersection
 from types import ListType, TupleType, StringTypes
 from zope.interface import implements
 
-from zope.index.interfaces import IInjection
-
+from zope.index.interfaces import IInjection, ITopicQuerying
 
 class TopicIndex(Persistent):
 
-    implements(IInjection)
+    implements(IInjection, ITopicQuerying)
 
     def __init__(self):
         self.clear()
 
     def clear(self):
-        """Initialize forward and reverse mappings."""
-        # The forward index maps indexed values to a sequence of docids
+        # mapping filter id -> filter
         self._filters = OOBTree()
 
     def addFilter(self, f ):

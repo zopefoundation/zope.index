@@ -16,12 +16,9 @@ from unittest import TestCase, TestSuite, main, makeSuite
 
 from zodb.btrees.IIBTree import IISet
 from zope.index.topic.index import TopicIndex
-from zope.index.topic.filter import PythonFilter
+from zope.index.topic.filter import PythonFilteredSet
 from zope.interface.verify import verifyClass
 from zope.interface.interface import implementedBy
-
-
-from zope.index.interfaces import ITopicFilter, IInjection
 
 class O:
     """ a dummy class """
@@ -33,9 +30,9 @@ class TopicIndexTest(TestCase):
 
     def setUp(self):
         self.index = TopicIndex()
-        self.index.addFilter(PythonFilter('doc1', "context.meta_type == 'doc1'"))
-        self.index.addFilter(PythonFilter('doc2', "context.meta_type == 'doc2'"))
-        self.index.addFilter(PythonFilter('doc3', "context.meta_type == 'doc3'"))
+        self.index.addFilter(PythonFilteredSet('doc1', "context.meta_type == 'doc1'"))
+        self.index.addFilter(PythonFilteredSet('doc2', "context.meta_type == 'doc2'"))
+        self.index.addFilter(PythonFilteredSet('doc3', "context.meta_type == 'doc3'"))
 
         self.index.index_doc(0 , O('doc0'))
         self.index.index_doc(1 , O('doc1'))
@@ -57,21 +54,30 @@ class TopicIndexTest(TestCase):
         return self._search(query, expected, 'and')
 
     def testInterfaces(self):
-
-        for iface in implementedBy(PythonFilter):
-            verifyClass(iface, PythonFilter)
+        for iface in implementedBy(PythonFilteredSet):
+            verifyClass(iface, PythonFilteredSet)
 
         for iface in implementedBy(TopicIndex):
             verifyClass(iface, TopicIndex)
 
-    def testOr(self):
+    def test_unindex(self):
+        self.index.unindex_doc(-99)         # should not raise 
+        self.index.unindex_doc(3)  
+        self.index.unindex_doc(4)  
+        self.index.unindex_doc(5)  
+        self._search_or('doc1',  [1,2])
+        self._search_or('doc2',  [])
+        self._search_or('doc3',  [6])
+        self._search_or('doc4',  [])
+
+    def test_or(self):
         self._search_or('doc1',  [1,2])
         self._search_or(['doc1'],[1,2])
         self._search_or('doc2',  [3,4]),
         self._search_or(['doc2'],[3,4])
         self._search_or(['doc1','doc2'], [1,2,3,4])
 
-    def testAnd(self):
+    def test_and(self):
         self._search_and('doc1',   [1,2])
         self._search_and(['doc1'], [1,2])
         self._search_and('doc2',   [3,4])

@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.4 2003/07/16 16:56:34 andreasjung Exp $
+$Id: __init__.py,v 1.5 2003/07/17 18:38:32 andreasjung Exp $
 """
 
 from zope.interface import Interface
@@ -131,6 +131,16 @@ class IKeywordQuerying(Interface):
            Return an IISet of docids
         """
 
+class ITopicQuerying(Interface):
+
+    def search(query, operator='and'):
+        """Execute a search given by 'query' as a list/tuple of filter ids.
+          'operator' can be 'and' or 'or' to search for matches in all
+           or any filter.
+
+           Return an IISet of docids
+        """
+
 class ISimpleQuery(Interface):
     "a simple query interface"
 
@@ -138,8 +148,8 @@ class ISimpleQuery(Interface):
         "search for the given term, return a sequence of hubids"
 
 
-class ITopicFilter(Interface):
-    """ interface for filters used by topic indexes """
+class ITopicFilteredSet(Interface):
+    """ interface for filtered sets used by topic indexes """
     
     def clear():
         """clearn the index"""
