@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.2 2003/07/14 08:31:30 anthony Exp $
+$Id: __init__.py,v 1.3 2003/07/15 16:07:40 andreasjung Exp $
 """
 
 from zope.interface import Interface
@@ -116,10 +116,20 @@ class IRangeQuerying(Interface):
            minval <= value <= maxval   if minval<=maxval and 
                                        both minval and maxval are not None
 
-           value <= maxval             if minval is not None 
+           Value <= maxval             if minval is not None 
 
            value >= minval             if maxval is not None
         """             
+
+class IKeywordQuerying(Interface):
+
+    def search(query, operator='and'):
+        """Execute a search given by 'query' as a list/tuple of
+           (unicode) strings against the index. 'operator' can be either
+           'and' or 'or' to search for all keywords or any keyword. 
+
+           Return an IISet of docids
+        """
 
 class ISimpleQuery(Interface):
     "a simple query interface"
