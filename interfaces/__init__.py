@@ -21,11 +21,11 @@ from zope.interface import Interface
 class IInjection(Interface):
     """Interface for injecting documents into an index."""
 
-    def index_doc(docid, texts):
+    def index_doc(docid, doc):
         """Add a document to the index.
 
         docid: int, identifying the document
-        texts: list of unicode, the text to be indexed in a list
+        doc: the document to be indexed
         return: None
 
         This can also be used to reindex documents.
@@ -37,7 +37,12 @@ class IInjection(Interface):
         docid: int, identifying the document
         return: None
 
-        If docid does not exist, KeyError is raised.
+        This call is a no-op if the docid isn't in the index, however,
+        after this call, the index should have no references to the docid.
+        """
+
+    def clear():
+        """Unindex all documents indexed by the index
         """
 
 class IQuerying(Interface):
@@ -147,10 +152,10 @@ class ITopicQuerying(Interface):
         """
 
 class ISimpleQuery(Interface):
-    "A simple query interface."
+    """A simple query interface."""
 
     def query(term, start=0, count=None):
-        "search for the given term, return a sequence of hubids"
+        """Search for the given term, return a sequence of docids"""
 
 
 class ITopicFilteredSet(Interface):
