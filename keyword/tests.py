@@ -11,10 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Keyword Index
 
-$Id$
-"""
 from unittest import TestCase, TestSuite, main, makeSuite
 
 from BTrees.IIBTree import IISet
