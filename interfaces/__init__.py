@@ -21,11 +21,13 @@ from zope.interface import Interface
 class IInjection(Interface):
     """Interface for injecting documents into an index."""
 
-    def index_doc(docid, doc):
+    def index_doc(docid, value):
         """Add a document to the index.
 
         docid: int, identifying the document
-        doc: the document to be indexed
+
+        value: the value to be indexed
+
         return: None
 
         This can also be used to reindex documents.
@@ -35,6 +37,7 @@ class IInjection(Interface):
         """Remove a document from the index.
 
         docid: int, identifying the document
+
         return: None
 
         This call is a no-op if the docid isn't in the index, however,
@@ -43,6 +46,40 @@ class IInjection(Interface):
 
     def clear():
         """Unindex all documents indexed by the index
+        """
+
+class IIndexSearch(Interface):
+
+    def apply_index(query):
+        """Apply an index to the given query
+
+        The type if the query is index specific.
+
+        TODO
+            This is somewhat problemetic. It means that application
+            code that calls apply_index has to be aware of the
+            expected query type. This isn't too much of a problem now,
+            as we have no more general query language nor do we have
+            any sort of automatic query-form generation.
+
+            It would be nice to have a system later for having
+            query-form generation or, perhaps, sme sort of query
+            language. At that point, we'll need some sort of way to
+            determine query types, presumably through introspection of
+            the index objects.
+
+        A result is returned that is:
+
+        - An IIBTree or an IIBucket mapping document ids to integer
+          scores for document ids of documents that match the query,
+
+        - An IISet or IITreeSet containing document ids of documents
+          that match the query, or
+
+        - None, indicating that the index could not use the query and
+          that the result should have no impact on determining a final
+          result.
+
         """
 
 class IQuerying(Interface):
@@ -112,22 +149,6 @@ class IExtendedQuerying(Interface):
         result is an upper bound on document scores returned for the
         query.
         """
-
-class IRangeQuerying(Interface):
-    """Query over a range of objects."""
-
-    def rangesearch(minval, maxval):
-        """Execute a range search.
-
-           Return an IISet of docids for all docs where
-
-           minval <= value <= maxval   if minval<=maxval and 
-                                       both minval and maxval are not None
-
-           Value <= maxval             if minval is not None 
-
-           value >= minval             if maxval is not None
-        """             
 
 class IKeywordQuerying(Interface):
     """Query over a set of keywords, seperated by white space."""

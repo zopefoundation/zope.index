@@ -8,17 +8,18 @@
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE
+# FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Splitter interface
+"""Test field index
 
 $Id$
 """
-from zope.interface import Interface
 
-class ISplitter(Interface):
-    """A splitter."""
+def test_suite():
+    from zope.testing.doctest import DocFileSuite
+    return DocFileSuite('README.txt')
 
-    def process(text):
-        """Run the splitter over the input text, returning a list of terms."""
+if __name__=='__main__':
+    import unittest
+    unittest.main(defaultTest='test_suite')
