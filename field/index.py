@@ -14,7 +14,7 @@
 
 """Field index"""
 
-from persistence import Persistent
+from persistent import Persistent
 
 from zodb.btrees.IOBTree import IOBTree
 from zodb.btrees.OOBTree import OOBTree

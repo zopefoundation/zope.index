@@ -14,7 +14,7 @@
 
 """Topic index"""
 
-from persistence import Persistent
+from persistent import Persistent
 
 from zodb.btrees.OOBTree import OOBTree
 from zodb.btrees.IIBTree import IISet, union, intersection

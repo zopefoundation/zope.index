@@ -19,7 +19,7 @@ from zope.interface import implements
 from zodb.btrees.IOBTree import IOBTree
 from zodb.btrees.OIBTree import OIBTree
 
-from persistence import Persistent
+from persistent import Persistent
 
 from zope.index.interfaces.lexicon import ILexicon
 from zope.index.text.stopdict import get_stopdict

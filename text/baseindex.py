@@ -17,7 +17,7 @@
 
 import math
 
-from persistence import Persistent
+from persistent import Persistent
 from zope.interface import implements
 
 from zodb.btrees.IOBTree import IOBTree

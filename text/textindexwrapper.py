@@ -15,10 +15,10 @@
 
 This exists to implement IInjection and IQuerying.
 
-$Id: textindexwrapper.py,v 1.2 2003/07/14 08:31:34 anthony Exp $
+$Id: textindexwrapper.py,v 1.3 2004/02/20 16:57:36 fdrake Exp $
 """
 
-from persistence import Persistent
+from persistent import Persistent
 from zope.interface import implements
 
 from zope.index.text.okapiindex import OkapiIndex
