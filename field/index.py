@@ -19,6 +19,7 @@ from persistence import Persistent
 from zodb.btrees.IOBTree import IOBTree
 from zodb.btrees.OOBTree import OOBTree
 from zodb.btrees.IIBTree import IITreeSet, IISet, union
+from zodb.btrees.Length import Length
 
 from types import ListType, TupleType
 from zope.interface import implements
@@ -40,10 +41,11 @@ class FieldIndex(Persistent):
         self._fwd_index = OOBTree()
         # The reverse index maps a docid to its index value
         self._rev_index = IOBTree()
+        self._num_docs = Length(0)
 
     def documentCount(self):
         """See interface IStatistics"""
-        return len(self._rev_index)
+        return self._num_docs()
 
     def wordCount(self):
         """See interface IStatistics"""
@@ -74,6 +76,7 @@ class FieldIndex(Persistent):
                 del self._fwd_index[value]
         except KeyError:
             pass
+        self._num_docs.change(-1)
 
     def search(self, values):
 	"See interface ISimpleQuerying"
@@ -111,6 +114,7 @@ class FieldIndex(Persistent):
         if not self._fwd_index.has_key(value):
             self._fwd_index[value] = IITreeSet()
         self._fwd_index[value].insert(docid)
+        self._num_docs.change(1)
 
     def _insert_reverse(self, docid, value):
         """Insert into reverse index."""
