@@ -19,7 +19,6 @@ $Id$
 from persistent import Persistent
 from zope.interface import implements
 
-from zope.index.text.baseindex import SCALE_FACTOR
 from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.lexicon import Lexicon
 from zope.index.text.lexicon import Splitter, CaseNormalizer, StopWordRemover
@@ -67,18 +66,14 @@ class TextIndex(Persistent):
             qw = self.index.query_weight(tree.terms())
             
             # Hack to avoid ZeroDivisionError
-            if qw < SCALE_FACTOR:
-                qw = SCALE_FACTOR
+            if qw == 0:
+                qw = 1.0
 
-            # TODO we should seriously consider using float
-            # scores. Since we are using ints. we'll scale this
-            # result to get integers other than zero.  We'll use
-            # 100 so we can pretend this is a percent. ;)
-            qw *= .01
+            qw *= 1.0
 
             for docid, score in results.iteritems():
                 try:
-                    results[docid] = int(score/qw)
+                    results[docid] = score/qw
                 except TypeError:
                     # We overflowed the score, perhaps wildly unlikely.
                     # Who knows.

@@ -142,7 +142,7 @@ class IQueryParseTree(Interface):
 
         The index argument must implement the IIndex interface.
 
-        Return an IIBucket or IIBTree mapping document ids to scores
+        Return an IFBucket or IFBTree mapping document ids to scores
         (higher scores mean better results).
 
         May raise ParseTree.QueryError.
@@ -174,7 +174,7 @@ class IExtendedQuerying(Interface):
     def search(term):
         """Execute a search on a single term given as a string.
 
-        Return an IIBTree mapping docid to score, or None if all docs
+        Return an IFBTree mapping docid to score, or None if all docs
         match due to the lexicon returning no wids for the term (e.g.,
         if the term is entirely composed of stopwords).
         """
@@ -182,7 +182,7 @@ class IExtendedQuerying(Interface):
     def search_phrase(phrase):
         """Execute a search on a phrase given as a string.
 
-        Return an IIBtree mapping docid to score.
+        Return an IFBtree mapping docid to score.
         """
 
     def search_glob(pattern):
@@ -192,7 +192,7 @@ class IExtendedQuerying(Interface):
         example, "foo*" represents the set of all words in the lexicon
         starting with "foo".
 
-        Return an IIBTree mapping docid to score.
+        Return an IFBTree mapping docid to score.
         """
 
     def query_weight(terms):

@@ -15,17 +15,17 @@
 
 $Id$
 """
-from BTrees.IIBTree import IIBucket, weightedIntersection, weightedUnion
+from BTrees.IFBTree import IFBucket, weightedIntersection, weightedUnion
 
 from zope.index.nbest import NBest
 
 def mass_weightedIntersection(L):
-    "A list of (mapping, weight) pairs -> their weightedIntersection IIBucket."
+    "A list of (mapping, weight) pairs -> their weightedIntersection IFBucket."
     L = [(x, wx) for (x, wx) in L if x is not None]
     if len(L) < 2:
         return _trivial(L)
     # Intersect with smallest first.  We expect the input maps to be
-    # IIBuckets, so it doesn't hurt to get their lengths repeatedly
+    # IFBuckets, so it doesn't hurt to get their lengths repeatedly
     # (len(Bucket) is fast; len(BTree) is slow).
     L.sort(lambda x, y: cmp(len(x[0]), len(y[0])))
     (x, wx), (y, wy) = L[:2]
@@ -35,7 +35,7 @@ def mass_weightedIntersection(L):
     return result
 
 def mass_weightedUnion(L):
-    "A list of (mapping, weight) pairs -> their weightedUnion IIBucket."
+    "A list of (mapping, weight) pairs -> their weightedUnion IFBucket."
     if len(L) < 2:
         return _trivial(L)
     # Balance unions as closely as possible, smallest to largest.
@@ -56,8 +56,8 @@ def _trivial(L):
     # pair, we may still need to multiply the mapping by its weight.
     assert len(L) <= 1
     if len(L) == 0:
-        return IIBucket()
+        return IFBucket()
     [(result, weight)] = L
     if weight != 1:
-        dummy, result = weightedUnion(IIBucket(), result, 0, weight)
+        dummy, result = weightedUnion(IFBucket(), result, 0, weight)
     return result

@@ -22,7 +22,7 @@ We index text using the `index_doc` method:
     ... =======================
     ... 
     ... I give my pledge, as an American, to save, and faithfully
-    ... to defent from waste, the natural resources of my Country; 
+    ... to defend from waste, the natural resources of my Country; 
     ... it's soils, minerals, forests, waters and wildlife.
     ... """)
     >>> index.index_doc(4, u"Fran\xe7ois") 
@@ -67,39 +67,39 @@ We index text using the `index_doc` method:
 Then we can search using the apply method, which takes a search
 string:
 
-    >>> index.apply(u'brown fox')
-    BTrees._IIBTree.IIBucket([(1, 61), (2, 67)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown fox').items()]
+    [(1, '0.6153'), (2, '0.6734')]
 
-    >>> index.apply(u'quick fox')
-    BTrees._IIBTree.IIBucket([(1, 61)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'quick fox').items()]
+    [(1, '0.6153')]
 
-    >>> index.apply(u'brown python')
-    BTrees._IIBTree.IIBucket([])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown python').items()]
+    []
 
-    >>> index.apply(u'dalmatian')
-    BTrees._IIBTree.IIBucket([])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'dalmatian').items()]
+    []
 
-    >>> index.apply(u'brown or python')
-    BTrees._IIBTree.IIBucket([(1, 26), (2, 25), (8, 9)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown or python').items()]
+    [(1, '0.2602'), (2, '0.2529'), (8, '0.0934')]
 
-    >>> index.apply(u'butts')
-    BTrees._IIBTree.IIBucket([(7, 69)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'butts').items()]
+    [(7, '0.6948')]
 
 The outputs are mappings from document ids to integer scored. Items
 with higher scores are more relevent.
 
 We can use unicode characters in search strings:
 
-    >>> index.apply(u"Fran\xe7ois")
-    BTrees._IIBTree.IIBucket([(4, 74)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u"Fran\xe7ois").items()]
+    [(4, '0.7427')]
 
-    >>> index.apply(word)
-    BTrees._IIBTree.IIBucket([(5, 71)])
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(word).items()]
+    [(5, '0.7179')]
 
 We can use globbing in search strings:
 
-    >>> index.apply('fo*')
-    BTrees._IIBTree.IIBucket([(1, 217), (2, 265), (3, 204)])
+    >>> [(k, "%.3f" % v) for (k, v) in index.apply('fo*').items()]
+    [(1, '2.179'), (2, '2.651'), (3, '2.041')]
 
 Text indexes support basic statistics:
 
