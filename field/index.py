@@ -23,8 +23,8 @@ from zodb.btrees.IIBTree import IITreeSet, IISet, union
 from types import ListType, TupleType
 from zope.interface import implements
 
-from zope.index.interfaces.index import IInjection, ISimpleQuery
-from zope.index.interfaces.index import IStatistics, IRangeQuerying
+from zope.index.interfaces import IInjection, ISimpleQuery
+from zope.index.interfaces import IStatistics, IRangeQuerying
 
 
 class FieldIndex(Persistent):

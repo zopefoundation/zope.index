@@ -15,7 +15,7 @@
 
 This exists to implement IInjection and IQuerying.
 
-$Id: textindexwrapper.py,v 1.1 2003/07/14 03:53:41 anthony Exp $
+$Id: textindexwrapper.py,v 1.2 2003/07/14 08:31:34 anthony Exp $
 """
 
 from persistence import Persistent
@@ -27,7 +27,7 @@ from zope.index.text.lexicon import Splitter, CaseNormalizer, StopWordRemover
 from zope.index.text.queryparser import QueryParser
 from zope.index.text.nbest import NBest
 
-from zope.index.interfaces.index import \
+from zope.index.interfaces import \
      IInjection, IQuerying, IStatistics
 
 class TextIndexWrapper(Persistent):
