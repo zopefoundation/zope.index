@@ -61,7 +61,7 @@ sys.path.insert(0, zopecode)
 
 from ZODB.DB import DB
 from ZODB.Storage.FileStorage import FileStorage
-from transaction import get_transaction
+import transaction
 from BTrees.IOBTree import IOBTree
 from BTrees.OIBTree import OIBTree
 from BTrees.IIBTree import IIBTree
@@ -566,7 +566,7 @@ class Indexer(object):
     def commit(self):
         if self.trans_count > 0:
             print "committing..."
-            get_transaction().commit()
+            transaction.commit()
             self.trans_count = 0
             self.pack_count += 1
             if self.pack_count >= self.pack_limit > 0:
