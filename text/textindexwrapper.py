@@ -53,6 +53,9 @@ class TextIndexWrapper(Persistent):
     def unindex_doc(self, docid):
         self.index.unindex_doc(docid)
 
+    def clear(self):
+        self.index.clear()
+
     # Methods implementing IQuerying
 
     def query(self, querytext, start=0, count=None):

@@ -31,6 +31,11 @@ class TextIndexWrapperTest(unittest.TestCase):
         w.index_doc(1001, [doc])
         self.wrapper = w
 
+    def test_clear(self):
+        self.wrapper.clear()
+        self.assertEqual(self.wrapper.documentCount(), 0)
+        self.assertEqual(self.wrapper.wordCount(), 0)
+
     def testCounts(self):
         w = self.wrapper
         self.assertEqual(self.wrapper.documentCount(), 2)
