@@ -16,7 +16,7 @@
 $Id$
 """
 from BTrees.IIBTree import IISet
-from zope.index.interfaces import ITopicFilteredSet
+from zope.index.topic.interfaces import ITopicFilteredSet
 from zope.interface import implements
 
 class FilteredSetBase(object):

@@ -43,7 +43,7 @@ def path2url(p):
     return "http://www.python.org" + p[i:]
 
 from Products.PluginIndexes.TextIndex.TextIndex import And, Or
-from zope.index.text.nbest import NBest
+from zope.index.nbest import NBest
 
 def main(rt):
     index = rt["index"]

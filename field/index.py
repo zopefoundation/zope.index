@@ -15,23 +15,24 @@
 
 $Id$
 """
-from persistent import Persistent
+import persistent
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
-from BTrees.IIBTree import IITreeSet, IISet, union
+from BTrees.IFBTree import IFTreeSet, IFSet, multiunion
 from BTrees.Length import Length
 
-from types import ListType, TupleType
-from zope.interface import implements
+import zope.interface
 
-from zope.index.interfaces import IInjection, ISimpleQuery
-from zope.index.interfaces import IStatistics, IRangeQuerying
+from zope.index import interfaces
 
+class FieldIndex(persistent.Persistent):
 
-class FieldIndex(Persistent):
-
-    implements(IRangeQuerying, IInjection, ISimpleQuery, IStatistics)
+    zope.interface.implements(
+        interfaces.IInjection,
+        interfaces.IStatistics,
+        interfaces.IIndexSearch,
+        )
 
     def __init__(self):
         self.clear()
@@ -52,71 +53,47 @@ class FieldIndex(Persistent):
         """See interface IStatistics"""
         return len(self._fwd_index)
 
-    def has_doc(self, docid):
-        return bool(self._rev_index.has_key(docid))
-
     def index_doc(self, docid, value):
         """See interface IInjection"""
-        if self.has_doc(docid):       # unindex doc if present
+        rev_index = self._rev_index
+        if docid in rev_index:
+            # unindex doc if present
             self.unindex_doc(docid)
-        self._insert_forward(docid, value)
-        self._insert_reverse(docid, value)
+
+        # Insert into forward index.
+        set = self._fwd_index.get(value)
+        if set is None:
+            set = IFTreeSet()
+            self._fwd_index[value] = set
+        set.insert(docid)
+
+        # increment doc count
+        self._num_docs.change(1)
+
+        # Insert into reverse index.
+        rev_index[docid] = value
 
     def unindex_doc(self, docid):
         """See interface IInjection"""
-        try:      # ignore non-existing docids, don't raise
-            value = self._rev_index[docid]
-        except KeyError:
-            return
+        rev_index = self._rev_index
+        value = rev_index.get(docid)
+        if value is None:
+            return # not in index
 
-        del self._rev_index[docid]
+        del rev_index[docid]
 
         try:
-            self._fwd_index[value].remove(docid)
-            if len(self._fwd_index[value]) == 0:
-                del self._fwd_index[value]
+            set = self._fwd_index[value]
+            set.remove(docid)
         except KeyError:
+            # This is fishy, but we don't want to raise an error.
+            # We should probably log something.
             pass
+
+        if not set:
+            del self._fwd_index[value]
+
         self._num_docs.change(-1)
 
-    def search(self, values):
-        "See interface ISimpleQuerying"
-        # values can either be a single value or a sequence of
-        # values to be searched.
-        if isinstance(values, (ListType, TupleType)):
-            result = IISet()
-            for value in values:
-                try:
-                    r = IISet(self._fwd_index[value])
-                except KeyError:
-                    continue
-                # the results of all subsearches are combined using OR
-                result = union(result, r)
-        else:
-            try:
-                result = IISet(self._fwd_index[values])
-            except KeyError:
-                result = IISet()
-
-        return result
-
-    def query(self, querytext, start=0, count=None):
-        """See interface IQuerying"""
-        res = self.search(querytext)
-        if start or count:
-            res = res[start:start+count]
-        return res
-
-    def rangesearch(self, minvalue, maxvalue):
-        return IISet(self._fwd_index.keys(minvalue, maxvalue))
-
-    def _insert_forward(self, docid, value):
-        """Insert into forward index."""
-        if not self._fwd_index.has_key(value):
-            self._fwd_index[value] = IITreeSet()
-        self._fwd_index[value].insert(docid)
-        self._num_docs.change(1)
-
-    def _insert_reverse(self, docid, value):
-        """Insert into reverse index."""
-        self._rev_index[docid] = value
+    def apply(self, query):
+        return multiunion(self._fwd_index.values(*query))        

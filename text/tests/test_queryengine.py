@@ -17,7 +17,7 @@ $Id$
 """
 import unittest
 
-from BTrees.IIBTree import IIBucket
+from BTrees.IFBTree import IFBucket
 
 from zope.index.text.queryparser import QueryParser
 from zope.index.text.parsetree import QueryError
@@ -26,7 +26,7 @@ from zope.index.text.lexicon import Lexicon, Splitter
 class FauxIndex(object):
 
     def search(self, term):
-        b = IIBucket()
+        b = IFBucket()
         if term == "foo":
             b[1] = b[3] = 1
         elif term == "bar":

@@ -1,1 +1,1 @@
-from zope.index.text.textindexwrapper import TextIndexWrapper as TextIndex
+from zope.index.text.textindex import TextIndex

@@ -22,7 +22,7 @@ $Id$
 
 from bisect import bisect_left as bisect
 
-from zope.index.interfaces.nbest import INBest
+from zope.index.interfaces import INBest
 from zope.interface import implements
 
 class NBest(object):

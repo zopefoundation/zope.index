@@ -21,35 +21,21 @@ from persistent import Persistent
 from zope.interface import implements
 
 from BTrees.IOBTree import IOBTree
-from BTrees.IIBTree import IIBTree, IITreeSet
-from BTrees.IIBTree import intersection, difference
+from BTrees.IFBTree import IFBTree, IFTreeSet
+from BTrees.IFBTree import intersection, difference
 from BTrees import Length
 
-from zope.index.interfaces import IInjection, IStatistics, IExtendedQuerying
+from zope.index.interfaces import IInjection, IStatistics
+
+from zope.index.text.interfaces import IExtendedQuerying
 from zope.index.text import widcode
 from zope.index.text.setops import mass_weightedIntersection, \
                                   mass_weightedUnion
 
 
-# Instead of storing floats, we generally store scaled ints.  Binary pickles
-# can store those more efficiently.  The default SCALE_FACTOR of 1024
-# is large enough to get about 3 decimal digits of fractional info, and
-# small enough so that scaled values should almost always fit in a signed
-# 16-bit int (we're generally storing logs, so a few bits before the radix
-# point goes a long way; on the flip side, for reasonably small numbers x
-# most of the info in log(x) is in the fractional bits, so we do want to
-# save a lot of those).
-SCALE_FACTOR = 1024.0
-
-def scaled_int(f, scale=SCALE_FACTOR):
-    # We expect only positive inputs, so "add a half and chop" is the
-    # same as round().  Surprising, calling round() is significantly more
-    # expensive.
-    return int(f * scale + 0.5)
-
 def unique(L):
     """Return a list of the unique elements in L."""
-    return IITreeSet(L).keys()
+    return IFTreeSet(L).keys()
 
 class BaseIndex(Persistent):
     implements(IInjection, IStatistics, IExtendedQuerying)
@@ -76,7 +62,7 @@ class BaseIndex(Persistent):
         # Different indexers have different notions of doc weight, but we
         # expect each indexer to use ._docweight to map docids to its
         # notion of what a doc weight is.
-        self._docweight = IIBTree()
+        self._docweight = IFBTree()
 
         # docid -> WidCode'd list of wids
         # Used for un-indexing, and for phrase search.
@@ -125,8 +111,8 @@ class BaseIndex(Persistent):
         new_wids = self._lexicon.sourceToWordIds(text)
         new_wid2w, new_docw = self._get_frequencies(new_wids)
 
-        old_widset = IITreeSet(old_wid2w.keys())
-        new_widset = IITreeSet(new_wid2w.keys())
+        old_widset = IFTreeSet(old_wid2w.keys())
+        new_widset = IFTreeSet(new_wid2w.keys())
 
         in_both_widset = intersection(old_widset, new_widset)
         only_old_widset = difference(old_widset, in_both_widset)
@@ -192,13 +178,13 @@ class BaseIndex(Persistent):
         cleaned_wids = self._remove_oov_wids(wids)
         if len(wids) != len(cleaned_wids):
             # At least one wid was OOV:  can't possibly find it.
-            return IIBTree()
+            return IFBTree()
         scores = self._search_wids(wids)
         hits = mass_weightedIntersection(scores)
         if not hits:
             return hits
         code = widcode.encode(wids)
-        result = IIBTree()
+        result = IFBTree()
         for docid, weight in hits.items():
             docwords = self._docwords[docid]
             if docwords.find(code) >= 0:
@@ -209,8 +195,8 @@ class BaseIndex(Persistent):
         return filter(self._wordinfo.has_key, wids)
 
     # Subclass must override.
-    # The workhorse.  Return a list of (IIBucket, weight) pairs, one pair
-    # for each wid t in wids.  The IIBucket, times the weight, maps D to
+    # The workhorse.  Return a list of (IFBucket, weight) pairs, one pair
+    # for each wid t in wids.  The IFBucket, times the weight, maps D to
     # TF(D,t) * IDF(t) for every docid D containing t.  wids must not
     # contain any OOV words.
     def _search_wids(self, wids):
@@ -231,24 +217,24 @@ class BaseIndex(Persistent):
 
     def _add_wordinfo(self, wid, f, docid):
         # Store a wordinfo in a dict as long as there are less than
-        # DICT_CUTOFF docids in the dict.  Otherwise use an IIBTree.
+        # DICT_CUTOFF docids in the dict.  Otherwise use an IFBTree.
 
         # The pickle of a dict is smaller than the pickle of an
-        # IIBTree, substantially so for small mappings.  Thus, we use
+        # IFBTree, substantially so for small mappings.  Thus, we use
         # a dictionary until the mapping reaches DICT_CUTOFF elements.
 
         # The cutoff is chosen based on the implementation
         # characteristics of Python dictionaries.  The dict hashtable
         # always has 2**N slots and is resized whenever it is 2/3s
         # full.  A pickled dict with 10 elts is half the size of an
-        # IIBTree with 10 elts, and 10 happens to be 2/3s of 2**4.  So
+        # IFBTree with 10 elts, and 10 happens to be 2/3s of 2**4.  So
         # choose 10 as the cutoff for now.
 
-        # The IIBTree has a smaller in-memory representation than a
+        # The IFBTree has a smaller in-memory representation than a
         # dictionary, so pickle size isn't the only consideration when
         # choosing the threshold.  The pickle of a 500-elt dict is 92%
-        # of the size of the same IIBTree, but the dict uses more
-        # space when it is live in memory.  An IIBTree stores two C
+        # of the size of the same IFBTree, but the dict uses more
+        # space when it is live in memory.  An IFBTree stores two C
         # arrays of ints, one for the keys and one for the values.  It
         # holds up to 120 key-value pairs in a single bucket.
         doc2score = self._wordinfo.get(wid)
@@ -257,13 +243,13 @@ class BaseIndex(Persistent):
             self.wordCount.change(1)
         else:
             # _add_wordinfo() is called for each update.  If the map
-            # size exceeds the DICT_CUTOFF, convert to an IIBTree.
+            # size exceeds the DICT_CUTOFF, convert to an IFBTree.
             # Obscure:  First check the type.  If it's not a dict, it
             # can't need conversion, and then we can avoid an expensive
-            # len(IIBTree).
+            # len(IFBTree).
             if (isinstance(doc2score, type({})) and
                 len(doc2score) == self.DICT_CUTOFF):
-                doc2score = IIBTree(doc2score)
+                doc2score = IFBTree(doc2score)
         doc2score[docid] = f
         self._wordinfo[wid] = doc2score # not redundant:  Persistency!
 
@@ -286,7 +272,7 @@ class BaseIndex(Persistent):
                 new_word_count += 1
             elif (isinstance(doc2score, dicttype) and
                   len(doc2score) == self.DICT_CUTOFF):
-                doc2score = IIBTree(doc2score)
+                doc2score = IFBTree(doc2score)
             doc2score[docid] = weight
             self._wordinfo[wid] = doc2score # not redundant:  Persistency!
         self.wordCount.change(new_word_count)

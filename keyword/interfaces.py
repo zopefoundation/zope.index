@@ -8,25 +8,22 @@
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
 # WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE
+# FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""Pipeline Element Interface
+"""Keyword-index search interface
 
 $Id$
 """
 from zope.interface import Interface
 
-class IPipelineElement(Interface):
+class IKeywordQuerying(Interface):
+    """Query over a set of keywords, seperated by white space."""
 
-    def process(source):
-        """Provide a text processing step.
+    def search(query, operator='and'):
+        """Execute a search given by 'query' as a list/tuple of
+           (unicode) strings against the index. 'operator' can be either
+           'and' or 'or' to search for all keywords or any keyword. 
 
-        Process a source sequence of words into a result sequence.
-        """
-
-    def processGlob(source):
-        """Process, passing through globbing metacharaters.
-
-        This is an optional method; if it is not used, process() is used.
+           Return an IISet of docids
         """

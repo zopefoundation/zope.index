@@ -16,7 +16,8 @@ from unittest import TestCase, TestSuite, main, makeSuite
 
 from BTrees.IIBTree import IISet
 from zope.index.keyword.index import KeywordIndex
-from zope.index.interfaces import IInjection, IStatistics, IKeywordQuerying
+from zope.index.interfaces import IInjection, IStatistics
+from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface.verify import verifyClass
 
 class KeywordIndexTest(TestCase):

@@ -23,7 +23,8 @@ from BTrees.IIBTree import IISet, union, intersection
 from BTrees.Length import Length
 
 from types import ListType, TupleType, StringTypes
-from zope.index.interfaces import IInjection, IKeywordQuerying, IStatistics
+from zope.index.interfaces import IInjection, IStatistics
+from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface import implements
 
 class KeywordIndex(Persistent):

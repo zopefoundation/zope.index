@@ -23,7 +23,8 @@ from BTrees.IIBTree import IISet, union, intersection
 from types import ListType, TupleType, StringTypes
 from zope.interface import implements
 
-from zope.index.interfaces import IInjection, ITopicQuerying
+from zope.index.interfaces import IInjection
+from zope.index.topic.interfaces import ITopicQuerying
 
 class TopicIndex(Persistent):
 

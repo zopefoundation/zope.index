@@ -24,10 +24,9 @@ from BTrees.OIBTree import OIBTree
 
 from persistent import Persistent
 
-from zope.index.interfaces.lexicon import ILexicon
+from zope.index.text.interfaces import ILexicon
 from zope.index.text.stopdict import get_stopdict
 from zope.index.text.parsetree import QueryError
-from zope.index.text.pipelinefactory import element_factory
 
 
 class Lexicon(Persistent):
@@ -175,22 +174,10 @@ class Splitter(object):
             result += self.rxGlob.findall(s)
         return result
 
-element_factory.registerFactory('Word Splitter',
-                                 'Whitespace splitter',
-                                 Splitter)
-
 class CaseNormalizer(object):
 
     def process(self, lst):
         return [w.lower() for w in lst]
-
-element_factory.registerFactory('Case Normalizer',
-                                'Case Normalizer',
-                                CaseNormalizer)
-
-element_factory.registerFactory('Stop Words',
-                                ' Don\'t remove stop words',
-                                None)
 
 class StopWordRemover(object):
 
@@ -206,16 +193,8 @@ class StopWordRemover(object):
         def process(self, lst):
             return self._process(self.dict, lst)
 
-element_factory.registerFactory('Stop Words',
-                                'Remove listed stop words only',
-                                StopWordRemover)
-
 class StopWordAndSingleCharRemover(StopWordRemover):
 
     dict = get_stopdict().copy()
     for c in range(255):
         dict[chr(c)] = None
-
-element_factory.registerFactory('Stop Words',
-                                'Remove listed and single char words',
-                                StopWordAndSingleCharRemover)

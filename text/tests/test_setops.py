@@ -17,7 +17,7 @@ $Id$
 """
 from unittest import TestCase, main, makeSuite
 
-from BTrees.IIBTree import IIBTree, IIBucket
+from BTrees.IFBTree import IFBTree, IFBucket
 
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
@@ -29,8 +29,8 @@ class TestSetOps(TestCase):
         self.assertEqual(len(mass_weightedUnion([])), 0)
 
     def testIdentity(self):
-        t = IIBTree([(1, 2)])
-        b = IIBucket([(1, 2)])
+        t = IFBTree([(1, 2)])
+        b = IFBucket([(1, 2)])
         for x in t, b:
             for func in mass_weightedUnion, mass_weightedIntersection:
                 result = func([(x, 1)])
@@ -38,9 +38,9 @@ class TestSetOps(TestCase):
                 self.assertEqual(list(result.items()), list(x.items()))
 
     def testScalarMultiply(self):
-        t = IIBTree([(1, 2), (2, 3), (3, 4)])
+        t = IFBTree([(1, 2), (2, 3), (3, 4)])
         allkeys = [1, 2, 3]
-        b = IIBucket(t)
+        b = IFBucket(t)
         for x in t, b:
             self.assertEqual(list(x.keys()), allkeys)
             for func in mass_weightedUnion, mass_weightedIntersection:
@@ -51,11 +51,11 @@ class TestSetOps(TestCase):
                         self.assertEqual(x[key] * factor, result[key])
 
     def testPairs(self):
-        t1 = IIBTree([(1, 10), (3, 30), (7, 70)])
-        t2 = IIBTree([(3, 30), (5, 50), (7, 7), (9, 90)])
+        t1 = IFBTree([(1, 10), (3, 30), (7, 70)])
+        t2 = IFBTree([(3, 30), (5, 50), (7, 7), (9, 90)])
         allkeys = [1, 3, 5, 7, 9]
-        b1 = IIBucket(t1)
-        b2 = IIBucket(t2)
+        b1 = IFBucket(t1)
+        b2 = IFBucket(t2)
         for x in t1, t2, b1, b2:
             for key in x.keys():
                 self.assertEqual(key in allkeys, 1)
@@ -87,12 +87,12 @@ class TestSetOps(TestCase):
 
     def testMany(self):
         import random
-        N = 15  # number of IIBTrees to feed in
+        N = 15  # number of IFBTrees to feed in
         L = []
         commonkey = N * 1000
         allkeys = {commonkey: 1}
         for i in range(N):
-            t = IIBTree()
+            t = IFBTree()
             t[commonkey] = i
             for j in range(N-i):
                 key = i + j

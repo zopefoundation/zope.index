@@ -17,11 +17,10 @@ $Id$
 """
 import math
 
-from BTrees.IIBTree import IIBucket
+from BTrees.IFBTree import IFBucket
 from zope.interface import implements
 
 from zope.index.text.baseindex import BaseIndex, inverse_doc_frequency
-from zope.index.text.baseindex import scaled_int, SCALE_FACTOR
 
 class CosineIndex(BaseIndex):
 
@@ -76,8 +75,8 @@ class CosineIndex(BaseIndex):
             idf = inverse_doc_frequency(len(d2w), N)  # an unscaled float
             #print "idf = %.3f" % idf
             if isinstance(d2w, DictType):
-                d2w = IIBucket(d2w)
-            L.append((d2w, scaled_int(idf)))
+                d2w = IFBucket(d2w)
+            L.append((d2w, idf))
         return L
 
     def query_weight(self, terms):
@@ -89,7 +88,7 @@ class CosineIndex(BaseIndex):
         for wid in self._remove_oov_wids(wids):
             wt = inverse_doc_frequency(len(self._wordinfo[wid]), N)
             sum += wt ** 2.0
-        return scaled_int(math.sqrt(sum))
+        return math.sqrt(sum)
 
     def _get_frequencies(self, wids):
         d = {}
@@ -105,16 +104,16 @@ class CosineIndex(BaseIndex):
         #print "W = %.3f" % W
         for wid, weight in d.items():
             #print i, ":", "%.3f" % weight,
-            d[wid] = scaled_int(weight / W)
+            d[wid] = weight / W
             #print "->", d[wid]
-        return d, scaled_int(W)
+        return d, W
 
     # The rest are helper methods to support unit tests
 
     def _get_wdt(self, d, t):
         wid, = self._lexicon.termToWordIds(t)
         map = self._wordinfo[wid]
-        return map.get(d, 0) * self._docweight[d] / SCALE_FACTOR
+        return map.get(d, 0) * self._docweight[d]
 
     def _get_Wd(self, d):
         return self._docweight[d]
@@ -126,7 +125,7 @@ class CosineIndex(BaseIndex):
     def _get_wt(self, t):
         wid, = self._lexicon.termToWordIds(t)
         map = self._wordinfo[wid]
-        return scaled_int(math.log(1 + len(self._docweight) / float(len(map))))
+        return math.log(1 + len(self._docweight) / float(len(map)))
 
 def doc_term_weight(count):
     """Return the doc-term weight for a term that appears count times."""

@@ -17,7 +17,7 @@ $Id$
 """
 from unittest import TestCase, main, makeSuite
 
-from zope.index.text.nbest import NBest
+from zope.index.nbest import NBest
 
 class NBestTest(TestCase):
 

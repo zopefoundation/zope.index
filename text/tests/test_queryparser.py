@@ -19,8 +19,8 @@ from unittest import TestCase, TestSuite, main, makeSuite
 
 from zope.interface.verify import verifyClass
 
-from zope.index.interfaces.queryparser import IQueryParser
-from zope.index.interfaces.queryparsetree import IQueryParseTree
+from zope.index.text.interfaces import IQueryParser
+from zope.index.text.interfaces import IQueryParseTree
 
 from zope.index.text.queryparser import QueryParser
 from zope.index.text.parsetree import ParseError, ParseTreeNode
