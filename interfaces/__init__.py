@@ -40,6 +40,10 @@ class IInjection(Interface):
         If docid does not exist, KeyError is raised.
         """
 
+    def clear():
+        """Unindex all documents indexed by the index
+        """
+
 class IQuerying(Interface):
     """An index that can be queried by some text and returns a result set."""
 
