@@ -19,6 +19,7 @@ from persistence import Persistent
 from zodb.btrees.IOBTree import IOBTree
 from zodb.btrees.OOBTree import OOBTree, OOSet
 from zodb.btrees.IIBTree import IISet, union, intersection
+from zodb.btrees.Length import Length
 
 from types import ListType, TupleType, StringTypes
 from zope.index.interfaces import IInjection, IKeywordQuerying, IStatistics
@@ -42,10 +43,11 @@ class KeywordIndex(Persistent):
         # keywords since it would allow use to use integers instead of
         # strings
         self._rev_index = IOBTree()
+        self._num_docs = Length(0)
 
     def documentCount(self):
         """Return the number of documents in the index."""
-        return len(self._rev_index)
+        return self._num_docs()
 
     def wordCount(self):
         """Return the number of indexed words"""
@@ -55,7 +57,8 @@ class KeywordIndex(Persistent):
         return bool(self._rev_index.has_key(docid))
 
     def index_doc(self, docid, seq):
-
+        
+        if not seq: return
         seq = [w.lower() for w in seq]
             
         if self.has_doc(docid):       # unindex doc if present
@@ -66,7 +69,9 @@ class KeywordIndex(Persistent):
 
         self._insert_forward(docid, seq)
         self._insert_reverse(docid, seq)
+        self._num_docs.change(1)
 
+        
     def unindex_doc(self, docid):
 
         idx  = self._fwd_index
@@ -75,12 +80,13 @@ class KeywordIndex(Persistent):
             for word in self._rev_index[docid]:
                 idx[word].remove(docid)
                 if not idx[word]: del idx[word] 
-        except KeyError: pass
+        except KeyError: return
         
         try:
             del self._rev_index[docid]
         except KeyError: pass
 
+        self._num_docs.change(-1)
 
     def _insert_forward(self, docid, words):
         """insert a sequence of words into the forward index """
