@@ -26,7 +26,9 @@ from zope.index.interfaces import IInjection, IKeywordQuerying, IStatistics
 from zope.interface import implements
 
 class KeywordIndex(Persistent):
+    """ A case-insensitive keyword index """
 
+    normalize = True
     implements(IInjection, IStatistics, IKeywordQuerying)
 
     def __init__(self):
@@ -61,7 +63,8 @@ class KeywordIndex(Persistent):
             raise TypeError, 'seq argument must be a list/tuple of strings'
     
         if not seq: return
-        seq = [w.lower() for w in seq]
+        if self.normalize:
+            seq = [w.lower() for w in seq]
 
         old_kw = self._rev_index.get(docid, None)
         new_kw = OOSet(seq)
@@ -122,7 +125,8 @@ class KeywordIndex(Persistent):
         if not isinstance(query, (TupleType, ListType)):
             raise TypeError, 'query argument must be a list/tuple of strings'
 
-        query = [w.lower() for w in query]
+        if self.normalize:
+            query = [w.lower() for w in query]
 
         f = {'and' : intersection, 'or' : union}[operator]
     
@@ -133,4 +137,8 @@ class KeywordIndex(Persistent):
             
         if rs:  return rs
         else: return IISet()
-        
+
+
+class CaseSensitiveKeywordIndex(KeywordIndex):
+    """ A case-sensitive keyword index """
+    normalize = False        
