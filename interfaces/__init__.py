@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.5 2003/07/17 18:38:32 andreasjung Exp $
+$Id: __init__.py,v 1.6 2003/10/31 19:07:15 garrett Exp $
 """
 
 from zope.interface import Interface
@@ -51,7 +51,7 @@ class IQuerying(Interface):
         count: the maximum number of results to return (default: all)
         return: ([(docid, rank), ...], total)
 
-        The return value is a triple:
+        The return value is a tuple:
             matches: list of (int, float) tuples, docid and rank
             total: int, the total number of matches
 
