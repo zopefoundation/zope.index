@@ -18,8 +18,10 @@ from zodb.btrees.IIBTree import IISet
 from zope.index.topic.index import TopicIndex
 from zope.index.topic.filter import PythonFilter
 from zope.interface.verify import verifyClass
+from zope.interface.interface import implementedBy
 
-from zope.index.interfaces import ITopicFilter
+
+from zope.index.interfaces import ITopicFilter, IInjection
 
 class O:
     """ a dummy class """
@@ -55,7 +57,12 @@ class TopicIndexTest(TestCase):
         return self._search(query, expected, 'and')
 
     def testInterfaces(self):
-        verifyClass(ITopicFilter, PythonFilter)
+
+        for iface in implementedBy(PythonFilter):
+            verifyClass(iface, PythonFilter)
+
+        for iface in implementedBy(TopicIndex):
+            verifyClass(iface, TopicIndex)
 
     def testOr(self):
         self._search_or('doc1',  [1,2])
