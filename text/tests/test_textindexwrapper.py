@@ -79,14 +79,14 @@ class TextIndexWrapperTest(unittest.TestCase):
         delta += u"\N{GREEK SMALL LETTER LAMDA}"
         delta += u"\N{GREEK SMALL LETTER TAU}"
         delta += u"\N{GREEK SMALL LETTER ALPHA}"
-        assert delta.islower()
+        self.assert_(delta.islower())
         emdash = u"\N{EM DASH}"
-        assert not emdash.isalnum()
+        self.assert_(not emdash.isalnum())
         alpha  = u"\N{GREEK SMALL LETTER ALPHA}"
-        assert alpha.islower()
+        self.assert_(alpha.islower())
         lamda  = u"\N{GREEK SMALL LETTER LAMDA}"
         lamda += u"\N{GREEK SMALL LETTER ALPHA}"
-        assert lamda.islower()
+        self.assert_(lamda.islower())
         doc = delta + emdash + alpha
         w.index_doc(1002, [doc])
         for word in delta, alpha:
