@@ -30,10 +30,8 @@ class IndexTest(TestCase):
         self.lexicon = Lexicon(Splitter())
         self.index = self.IndexFactory(self.lexicon)
 
-    def test_index_document(self, DOCID=1):
-        doc = "simple document contains five words"
-        self.assert_(not self.index.has_doc(DOCID))
-        self.index.index_doc(DOCID, doc)
+
+    def _test_index_document_assertions(self, DOCID=1):
         self.assertEqual(self.index.documentCount(), 1)
         self.assertEqual(self.index.wordCount(), 5)
         self.assertEqual(self.lexicon.wordCount(), 5)
@@ -49,15 +47,35 @@ class IndexTest(TestCase):
             self.assertEqual(len(map), 1)
             self.assert_(map.has_key(DOCID))
 
-    def test_unindex_document(self):
-        DOCID = 1
-        self.test_index_document(DOCID)
-        self.index.unindex_doc(DOCID)
+    def test_index_document(self, DOCID=1):
+        doc = "simple document contains five words"
+        self.assert_(not self.index.has_doc(DOCID))
+        self.index.index_doc(DOCID, doc)
+        self._test_index_document_assertions(DOCID)
+
+    def test_unindex_document_absent_docid(self):
+        self.test_index_document(1)
+        self.index.unindex_doc(2)
+        self._test_index_document_assertions(1)
+
+    def test_clear(self):
+        self.test_index_document(1)
+        self.index.clear()
+        self._test_unindex_document_assertions()
+
+    def _test_unindex_document_assertions(self):
         self.assertEqual(len(self.index._docweight), 0)
         self.assertEqual(len(self.index._wordinfo), 0)
         self.assertEqual(len(self.index._docwords), 0)
         self.assertEqual(len(self.index._wordinfo),
                          self.index.wordCount())
+
+    def test_unindex_document(self):
+        DOCID = 1
+        self.test_index_document(DOCID)
+        self.index.unindex_doc(DOCID)
+        self._test_unindex_document_assertions()
+        
 
     def test_index_two_documents(self):
         self.test_index_document()

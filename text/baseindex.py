@@ -85,6 +85,9 @@ class BaseIndex(Persistent):
         # Use a BTree length for efficient length computation w/o conflicts
         self.wordCount = Length.Length()
 
+    def clear(self):
+        self.__init__(self._lexicon)
+
     def wordCount(self):
         """Return the number of words in the index."""
         # This is overridden per instance
@@ -101,7 +104,7 @@ class BaseIndex(Persistent):
 
     # A subclass may wish to extend or override this.
     def index_doc(self, docid, text):
-        if self._docwords.has_key(docid):
+        if docid in self._docwords:
             return self._reindex_doc(docid, text)
         wids = self._lexicon.sourceToWordIds(text)
         wid2weight, docweight = self._get_frequencies(wids)
@@ -161,10 +164,12 @@ class BaseIndex(Persistent):
         raise NotImplementedError
 
     def has_doc(self, docid):
-        return self._docwords.has_key(docid)
+        return docid in self._docwords
 
     # A subclass may wish to extend or override this.
     def unindex_doc(self, docid):
+        if docid not in self._docwords:
+            return
         for wid in unique(self.get_words(docid)):
             self._del_wordinfo(wid, docid)
         del self._docwords[docid]
