@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Field index
 
-"""Field index"""
-
+$Id: index.py,v 1.6 2004/03/17 17:59:31 srichter Exp $
+"""
 from persistent import Persistent
 
 from BTrees.IOBTree import IOBTree
@@ -79,7 +80,7 @@ class FieldIndex(Persistent):
         self._num_docs.change(-1)
 
     def search(self, values):
-	"See interface ISimpleQuerying"
+        "See interface ISimpleQuerying"
         # values can either be a single value or a sequence of
         # values to be searched.
         if isinstance(values, (ListType, TupleType)):
