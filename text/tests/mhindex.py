@@ -59,12 +59,12 @@ ZOPECODE = "~/projects/Zope3/lib/python"
 zopecode = os.path.expanduser(ZOPECODE)
 sys.path.insert(0, zopecode)
 
-from zodb.db import DB
-from zodb.storage.file import FileStorage
+from ZODB.DB import DB
+from ZODB.Storage.FileStorage import FileStorage
 from transaction import get_transaction
-from zodb.btrees.IOBTree import IOBTree
-from zodb.btrees.OIBTree import OIBTree
-from zodb.btrees.IIBTree import IIBTree
+from BTrees.IOBTree import IOBTree
+from BTrees.OIBTree import OIBTree
+from BTrees.IIBTree import IIBTree
 
 from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.lexicon import Splitter

@@ -45,9 +45,9 @@ If both are specified, the index is performed first.
 You can also interact with the index after it is completed. Load the
 index from the database:
 
-    import zodb
-    from zodb.storage.file import FileStorage
-    fs = FileStorage(<data.fs>
+    import ZODB
+    from ZODB.Storage.FileStorage import FileStorage
+    fs = FileStorage(<data.fs>)
     db = ZODB.DB(fs)
     index = cn.open().root()["index"]
     index.search("python AND unicode")

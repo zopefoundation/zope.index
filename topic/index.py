@@ -16,8 +16,8 @@
 
 from persistent import Persistent
 
-from zodb.btrees.OOBTree import OOBTree
-from zodb.btrees.IIBTree import IISet, union, intersection
+from BTrees.OOBTree import OOBTree
+from BTrees.IIBTree import IISet, union, intersection
 
 from types import ListType, TupleType, StringTypes
 from zope.interface import implements

@@ -20,10 +20,10 @@ import math
 from persistent import Persistent
 from zope.interface import implements
 
-from zodb.btrees.IOBTree import IOBTree
-from zodb.btrees.IIBTree import IIBTree, IITreeSet
-from zodb.btrees.IIBTree import intersection, difference
-from zodb.btrees import Length
+from BTrees.IOBTree import IOBTree
+from BTrees.IIBTree import IIBTree, IITreeSet
+from BTrees.IIBTree import intersection, difference
+from BTrees import Length
 
 from zope.index.interfaces import IInjection, IStatistics, IExtendedQuerying
 from zope.index.text import widcode

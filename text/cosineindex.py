@@ -16,7 +16,7 @@
 
 import math
 
-from zodb.btrees.IIBTree import IIBucket
+from BTrees.IIBTree import IIBucket
 from zope.interface import implements
 
 from zope.index.text.baseindex import BaseIndex, inverse_doc_frequency

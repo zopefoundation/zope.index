@@ -14,7 +14,7 @@
 
 import unittest
 
-from zodb.btrees.IIBTree import IIBucket
+from BTrees.IIBTree import IIBucket
 
 from zope.index.text.queryparser import QueryParser
 from zope.index.text.parsetree import QueryError

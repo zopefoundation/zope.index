@@ -13,7 +13,7 @@
 ##############################################################################
 from time import clock
 
-from zodb.storage.file import FileStorage
+from ZODB.Storage.FileStorage import FileStorage
 
 QUERIES = ["nested recursive functions",
            "explicit better than implicit",

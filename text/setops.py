@@ -14,7 +14,7 @@
 
 """SetOps -- Weighted intersections and unions applied to many inputs."""
 
-from zodb.btrees.IIBTree import \
+from BTrees.IIBTree import \
      IIBucket, weightedIntersection, weightedUnion
 
 from zope.index.text.nbest import NBest

@@ -17,7 +17,7 @@
 # Lots of comments are at the bottom of this file.  Read them to
 # understand what's going on.
 
-from zodb.btrees.IIBTree import IIBucket
+from BTrees.IIBTree import IIBucket
 
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency, scaled_int

@@ -14,7 +14,7 @@
 
 """Filters for TopicIndexes"""
 
-from zodb.btrees.IIBTree import IISet
+from BTrees.IIBTree import IISet
 from zope.index.interfaces import ITopicFilteredSet
 from zope.interface import implements
 

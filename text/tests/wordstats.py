@@ -17,7 +17,7 @@
 usage: wordstats.py data.fs [index key]
 """
 
-from zodb.storage.file import FileStorage
+from ZODB.Storage.FileStorage import FileStorage
 
 def main(fspath, key):
     fs = FileStorage(fspath, read_only=1)

@@ -14,7 +14,7 @@
 
 from unittest import TestCase, TestSuite, main, makeSuite
 
-from zodb.btrees.IIBTree import IISet
+from BTrees.IIBTree import IISet
 from zope.index.field.index import FieldIndex
 from zope.interface.verify import verifyClass
 

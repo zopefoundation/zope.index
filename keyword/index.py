@@ -16,10 +16,10 @@
 
 from persistent import Persistent
 
-from zodb.btrees.IOBTree import IOBTree
-from zodb.btrees.OOBTree import OOBTree, OOSet, difference 
-from zodb.btrees.IIBTree import IISet, union, intersection
-from zodb.btrees.Length import Length
+from BTrees.IOBTree import IOBTree
+from BTrees.OOBTree import OOBTree, OOSet, difference 
+from BTrees.IIBTree import IISet, union, intersection
+from BTrees.Length import Length
 
 from types import ListType, TupleType, StringTypes
 from zope.index.interfaces import IInjection, IKeywordQuerying, IStatistics

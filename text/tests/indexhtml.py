@@ -24,8 +24,8 @@ options:
 import os
 from time import clock
 
-from zodb.storage.file import FileStorage
-from zodb.btrees.IOBTree import IOBTree
+from ZODB.Storage.FileStorage import FileStorage
+from ZODB.BTrees.IOBTree import IOBTree
 
 from zope.index.text.htmlsplitter import HTMLWordSplitter
 from zope.index.text.lexicon import Lexicon, StopWordRemover
