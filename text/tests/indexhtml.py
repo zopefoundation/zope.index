@@ -41,7 +41,7 @@ def make_zc_index():
     caller.lexicon = Lexicon(HTMLWordSplitter(), StopWordRemover())
     return ZCTextIndex("read", extra, caller)
 
-# XXX make a splitter more like the HTMLSplitter for TextIndex
+# TODO: make a splitter more like the HTMLSplitter for TextIndex
 # signature is
 # Splitter(string, stop_words, encoding,
 #          singlechar, indexnumbers, casefolding)
