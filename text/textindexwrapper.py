@@ -15,7 +15,7 @@
 
 This exists to implement IInjection and IQuerying.
 
-$Id: textindexwrapper.py,v 1.3 2004/02/20 16:57:36 fdrake Exp $
+$Id$
 """
 
 from persistent import Persistent

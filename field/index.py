@@ -13,7 +13,7 @@
 ##############################################################################
 """Field index
 
-$Id: index.py,v 1.6 2004/03/17 17:59:31 srichter Exp $
+$Id$
 """
 from persistent import Persistent
 

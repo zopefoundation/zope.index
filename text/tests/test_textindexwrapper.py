@@ -13,7 +13,7 @@
 ##############################################################################
 """Unit tests for TextIndexWrapper.
 
-$Id: test_textindexwrapper.py,v 1.1 2003/07/14 03:53:48 anthony Exp $
+$Id$
 """
 
 import unittest

@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.8 2004/03/06 02:55:06 garrett Exp $
+$Id$
 """
 from zope.interface import Interface
 
