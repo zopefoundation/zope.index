@@ -21,8 +21,6 @@ Will create an index of all files in dir or its subdirectories.
 options:
 -f data.fs  -- the path to the filestorage datafile
 """
-from __future__ import nested_scopes
-
 import os
 from time import clock
 
