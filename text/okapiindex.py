@@ -231,7 +231,7 @@ class OkapiIndex(BaseIndex):
         return BaseIndex._reindex_doc(self, docid, text)
 
     def unindex_doc(self, docid):
-        self._totaldoclen -= self._docweight[docid]
+        self._totaldoclen -= self._docweight.get(docid, 0)
         BaseIndex.unindex_doc(self, docid)
 
     # The workhorse.  Return a list of (IIBucket, weight) pairs, one pair
