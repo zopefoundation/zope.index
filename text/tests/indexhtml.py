@@ -29,7 +29,6 @@ from time import clock
 from zodb.storage.file import FileStorage
 from zodb.btrees.IOBTree import IOBTree
 
-from zope.index.text.textindexwrapper import TextIndexWrapper
 from zope.index.text.htmlsplitter import HTMLWordSplitter
 from zope.index.text.lexicon import Lexicon, StopWordRemover
 
