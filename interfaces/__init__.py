@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.3 2003/07/15 16:07:40 andreasjung Exp $
+$Id: __init__.py,v 1.4 2003/07/16 16:56:34 andreasjung Exp $
 """
 
 from zope.interface import Interface
@@ -137,3 +137,28 @@ class ISimpleQuery(Interface):
     def query(term, start=0, count=None):
         "search for the given term, return a sequence of hubids"
 
+
+class ITopicFilter(Interface):
+    """ interface for filters used by topic indexes """
+    
+    def clear():
+        """clearn the index"""
+
+    def index_doc(docid, context):
+        """index an object"""
+
+    def unindex_doc(docid):
+        """unindex the object with id 'docid'"""
+
+    def getId():
+        """return own filter id"""
+
+    def setExpression(expr):
+        """set the filter expression, e.g.
+           'context.meta_type=='...'
+        """
+    def getExpression():
+        """return the filter expression"""
+
+    def getIds():
+        """return an IISet of docids"""
