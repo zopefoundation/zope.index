@@ -95,5 +95,5 @@ class FieldIndex(persistent.Persistent):
 
         self._num_docs.change(-1)
 
-    def apply_index(self, query):
+    def apply(self, query):
         return multiunion(self._fwd_index.values(*query))        

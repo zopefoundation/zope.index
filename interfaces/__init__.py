@@ -50,14 +50,14 @@ class IInjection(Interface):
 
 class IIndexSearch(Interface):
 
-    def apply_index(query):
+    def apply(query):
         """Apply an index to the given query
 
         The type if the query is index specific.
 
         TODO
             This is somewhat problemetic. It means that application
-            code that calls apply_index has to be aware of the
+            code that calls apply has to be aware of the
             expected query type. This isn't too much of a problem now,
             as we have no more general query language nor do we have
             any sort of automatic query-form generation.
