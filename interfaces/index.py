@@ -13,7 +13,7 @@
 ##############################################################################
 """Interfaces for a text index.
 
-$Id: index.py,v 1.1 2003/07/13 05:51:18 andyh Exp $
+$Id: index.py,v 1.2 2003/07/13 08:23:24 anthony Exp $
 """
 
 from zope.interface import Interface
@@ -120,4 +120,10 @@ class IRangeQuerying(Interface):
 
            value >= minval             if maxval is not None
         """             
+
+class ISimpleQuery(Interface):
+    "a simple query interface"
+
+    def query(term, start=0, count=None):
+        "search for the given term, return a sequence of hubids"
 
