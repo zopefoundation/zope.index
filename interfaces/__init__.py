@@ -13,7 +13,7 @@
 ##############################################################################
 """Basic interfaces shared between different types of index.
 
-$Id: __init__.py,v 1.7 2004/02/20 20:44:23 srichter Exp $
+$Id: __init__.py,v 1.8 2004/03/06 02:55:06 garrett Exp $
 """
 from zope.interface import Interface
 
@@ -147,7 +147,7 @@ class ITopicQuerying(Interface):
         """
 
 class ISimpleQuery(Interface):
-    "S simple query interface."
+    "A simple query interface."
 
     def query(term, start=0, count=None):
         "search for the given term, return a sequence of hubids"
