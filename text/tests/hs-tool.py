@@ -36,7 +36,7 @@ def basename(path, cache={}):
     try:
         return cache[path]
     except KeyError:
-        fn = os.path.split(path)[1]
+        fn = os.path.basename(path)
         cache[path] = fn
         return fn
 
