@@ -17,7 +17,7 @@
 from persistence import Persistent
 
 from zodb.btrees.IOBTree import IOBTree
-from zodb.btrees.OOBTree import OOBTree, OOSet
+from zodb.btrees.OOBTree import OOBTree, OOSet, difference, intersection
 from zodb.btrees.IIBTree import IISet, union, intersection
 from zodb.btrees.Length import Length
 
@@ -40,8 +40,7 @@ class KeywordIndex(Persistent):
 
         # The reverse index maps a docid to its keywords
         # TODO: Using a vocabulary might be the better choice to store
-        # keywords since it would allow use to use integers instead of
-        # strings
+        # keywords since it would allow use to use integers instead of strings
         self._rev_index = IOBTree()
         self._num_docs = Length(0)
 
@@ -58,19 +57,32 @@ class KeywordIndex(Persistent):
 
     def index_doc(self, docid, seq):
         
-        if not seq: return
-        seq = [w.lower() for w in seq]
-            
-        if self.has_doc(docid):       # unindex doc if present
-            self.unindex_doc(docid)
-
         if not isinstance(seq, (TupleType, ListType)):
             raise TypeError, 'seq argument must be a list/tuple of strings'
+    
+        if not seq: return
+        seq = [w.lower() for w in seq]
 
-        self._insert_forward(docid, seq)
-        self._insert_reverse(docid, seq)
-        self._num_docs.change(1)
+        old_kw = self._rev_index.get(docid, None)
+        new_kw = OOSet(seq)
 
+        if old_kw is None:
+            self._insert_forward(docid, new_kw)
+            self._insert_reverse(docid, new_kw)
+            self._num_docs.change(1)
+        else:
+
+            # determine added and removed keywords
+            kw_added = difference(new_kw, old_kw)
+            kw_removed = difference(old_kw, new_kw)
+
+            # removed keywords are removed from the forward index
+            for word in kw_removed:
+                self._fwd_index[word].remove(docid)
+            
+            # now update reverse and forward indexes
+            self._insert_forward(docid, kw_added)
+            self._insert_reverse(docid, new_kw)
         
     def unindex_doc(self, docid):
 
@@ -102,7 +114,7 @@ class KeywordIndex(Persistent):
         """ add words to forward index """
 
         if words:  
-            self._rev_index[docid] = OOSet(words)
+            self._rev_index[docid] = words
 
     def search(self, query, operator='and'):
 

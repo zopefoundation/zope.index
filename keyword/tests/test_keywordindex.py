@@ -84,15 +84,14 @@ class KeywordIndexTest(TestCase):
         self.index.unindex_doc(1)
         self.index.unindex_doc(2)
         self.index.index_doc(1,  ('foo', 'bar', 'doom'))
-        self.index.index_doc(1,  ('foo', 'bar', 'blabla'))
+        self.index.index_doc(1,  ('bar', 'blabla'))
         self.assertEqual(self.index.documentCount(), 3)
         self._search('quick',   IISet())
-        self._search('foo',   IISet([1]))
-        self._search('foo',   IISet([1]))
+        self._search('foo',   IISet())
         self._search('bar',   IISet([1]))
         self._search('doom',   IISet())
         self._search('blabla',   IISet([1]))
-        self._search_and(('foo', 'bar'),   IISet([1]))
+        self._search_and(('bar', 'blabla'),   IISet([1]))
         self._search('cmf',   IISet([5]))
 
 
