@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Pipeline Element Factory interface
 
+$Id$
+"""
 from zope.interface import Interface
 
 class IPipelineElementFactory(Interface):

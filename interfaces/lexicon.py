@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Lexicon interface
 
+$Id$
+"""
 from zope.interface import Interface
 
 class ILexicon(Interface):

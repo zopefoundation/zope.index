@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Splitter interface
 
+$Id$
+"""
 from zope.interface import Interface
 
 class ISplitter(Interface):

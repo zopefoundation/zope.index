@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Set Options tests
 
+$Id$
+"""
 from unittest import TestCase, main, makeSuite
 
 from BTrees.IIBTree import IIBTree, IIBucket

@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Full text index with relevance ranking, using a cosine measure.
 
-"""Full text index with relevance ranking, using a cosine measure."""
-
+$Id$
+"""
 import math
 
 from BTrees.IIBTree import IIBucket

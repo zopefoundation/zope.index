@@ -11,11 +11,12 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-
 """Provide a default list of stop words for the index.
 
 The specific splitter and lexicon are customizable, but the default
 ZCTextIndex should do something useful.
+
+$Id$
 """
 
 def get_stopdict():

@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Lexicon
 
+$Id$
+"""
 import re
 
 from zope.interface import implements

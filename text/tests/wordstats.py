@@ -15,6 +15,8 @@
 """Dump statistics about each word in the index.
 
 usage: wordstats.py data.fs [index key]
+
+$Id$
 """
 
 from ZODB.Storage.FileStorage import FileStorage

@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""Keyword index
 
-"""Keyword index"""
-
+$Id$
+"""
 from persistent import Persistent
 
 from BTrees.IOBTree import IOBTree

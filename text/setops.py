@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
+"""SetOps -- Weighted intersections and unions applied to many inputs.
 
-"""SetOps -- Weighted intersections and unions applied to many inputs."""
-
+$Id$
+"""
 from BTrees.IIBTree import \
      IIBucket, weightedIntersection, weightedUnion
 

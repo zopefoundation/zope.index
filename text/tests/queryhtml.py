@@ -11,6 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Query HTML tests
+
+$Id$
+"""
 from time import clock
 
 from ZODB.Storage.FileStorage import FileStorage

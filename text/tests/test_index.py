@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Text Index Tests
 
+$Id$
+"""
 from unittest import TestCase, TestSuite, main, makeSuite
 
 from zope.index.text.lexicon import Lexicon, Splitter

@@ -20,6 +20,8 @@ Will create an index of all files in dir or its subdirectories.
 
 options:
 -f data.fs  -- the path to the filestorage datafile
+
+$Id$
 """
 import os
 from time import clock

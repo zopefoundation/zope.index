@@ -16,6 +16,8 @@
 An NBest object remembers the N best-scoring items ever passed to its
 .add(item, score) method.  If .add() is called M times, the worst-case
 number of comparisons performed overall is M * log2(N).
+
+$Id$
 """
 
 from bisect import bisect_left as bisect

@@ -11,7 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""N-Best index tests
 
+$Id$
+"""
 from unittest import TestCase, main, makeSuite
 
 from zope.index.text.nbest import NBest

@@ -11,9 +11,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""Query Parser Interface.
 
-"""Query Parser Interface."""
-
+$Id$
+"""
 from zope.interface import Interface
 
 class IQueryParser(Interface):

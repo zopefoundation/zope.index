@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-
 ##############################################################################
 #
 # Copyright (c) 2003 Zope Corporation and Contributors.
@@ -13,7 +12,10 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""HS-Tool
 
+$Id$
+"""
 import cPickle
 import os.path
 import sys
