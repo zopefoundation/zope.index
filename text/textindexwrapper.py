@@ -49,11 +49,9 @@ class TextIndexWrapper(Persistent):
 
     def index_doc(self, docid, text):
         self.index.index_doc(docid, text)
-        self._p_changed = 1 # XXX why is this needed?
 
     def unindex_doc(self, docid):
         self.index.unindex_doc(docid)
-        self._p_changed = 1 # XXX why is this needed?
 
     # Methods implementing IQuerying
 
