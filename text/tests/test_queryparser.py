@@ -119,6 +119,10 @@ class TestQueryParser(TestQueryParserBase):
         self.expect("aa AND NOT bb",
                     AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
 
+    def test008(self):
+        self.expect("aa NOT bb",
+                    AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
+
     def test010(self):
         self.expect('"foo bar"', PhraseNode(["foo", "bar"]))
 

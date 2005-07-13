@@ -17,7 +17,7 @@ This particular parser recognizes the following syntax:
 
 Start = OrExpr
 OrExpr = AndExpr ('OR' AndExpr)*
-AndExpr = Term ('AND' NotExpr)*
+AndExpr = Term ('AND' NotExpr | 'NOT' AndExpr)*
 NotExpr = ['NOT'] Term
 Term = '(' OrExpr ')' | ATOM+
 
@@ -179,14 +179,22 @@ class QueryParser(object):
         if t is not None:
             L.append(t)
         Nots = []
-        while self._check(_AND):
-            t = self._parseNotExpr()
-            if t is None:
-                continue
-            if isinstance(t, parsetree.NotNode):
-                Nots.append(t)
+        while 1:
+            if self._check(_AND):
+                t = self._parseNotExpr()
+                if t is None:
+                    continue
+                if isinstance(t, parsetree.NotNode):
+                    Nots.append(t)
+                else:
+                    L.append(t)
+            elif self._check(_NOT):
+                t = self._parseTerm()
+                if t is None:
+                    continue # Only stopwords
+                Nots.append(parsetree.NotNode(t))
             else:
-                L.append(t)
+                break
         if not L:
             return None # Only stopwords
         L.extend(Nots)
