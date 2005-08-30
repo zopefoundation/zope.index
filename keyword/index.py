@@ -62,7 +62,7 @@ class KeywordIndex(Persistent):
     def index_doc(self, docid, seq):
         
         if not isinstance(seq, (TupleType, ListType)):
-            raise TypeError, 'seq argument must be a list/tuple of strings'
+            raise TypeError('seq argument must be a list/tuple of strings')
     
         if not seq: return
         if self.normalize:
@@ -125,7 +125,7 @@ class KeywordIndex(Persistent):
 
         if isinstance(query, StringTypes): query = [query]
         if not isinstance(query, (TupleType, ListType)):
-            raise TypeError, 'query argument must be a list/tuple of strings'
+            raise TypeError('query argument must be a list/tuple of strings')
 
         if self.normalize:
             query = [w.lower() for w in query]

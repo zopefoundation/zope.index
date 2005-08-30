@@ -61,7 +61,7 @@ class TopicIndex(Persistent):
 
         if isinstance(query, StringTypes): query = [query]
         if not isinstance(query, (TupleType, ListType)):
-            raise TypeError, 'query argument must be a list/tuple of filter ids'
+            raise TypeError('query argument must be a list/tuple of filter ids')
 
         f = {'and' : intersection, 'or' : union}[operator]
     

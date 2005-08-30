@@ -143,7 +143,7 @@ class QueryParser(object):
         if not self._check(tokentype):
             t = self._tokens[self._index]
             msg = "Token %r required, %r found" % (tokentype, t)
-            raise parsetree.ParseError, msg
+            raise parsetree.ParseError(msg)
 
     def _check(self, tokentype):
         if self._tokentypes[self._index] is tokentype:

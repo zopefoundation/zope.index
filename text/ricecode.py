@@ -86,7 +86,7 @@ class RiceCode(object):
     def __init__(self, m):
         """Constructor a RiceCode for m-bit values."""
         if not (0 <= m <= 16):
-            raise ValueError, "m must be between 0 and 16"
+            raise ValueError("m must be between 0 and 16")
         self.init(m)
         self.bits = BitArray()
         self.len = 0
@@ -99,7 +99,7 @@ class RiceCode(object):
     def append(self, val):
         """Append an item to the list."""
         if val < 1:
-            raise ValueError, "value >= 1 expected, got %s" % `val`
+            raise ValueError("value >= 1 expected, got %s" % `val`)
         val -= 1
         # emit the unary part of the code
         q = val >> self.m
