@@ -26,6 +26,15 @@ with a minimum and maximum value:
     >>> index.apply((30, 70))
     IFSet([3, 4, 5, 7, 8])
 
+A common mistake is to pass a single value.  If anything other than a 
+tw-tuple is passed, a type error is raised:
+
+    >>> index.apply('hi')
+    Traceback (most recent call last):
+    ...
+    TypeError: ('two-length tuple expected', 'hi')
+
+
 Open-ended ranges can be provided by provinding None as an end point:
 
     >>> index.apply((30, None))

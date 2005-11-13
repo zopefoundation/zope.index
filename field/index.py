@@ -96,4 +96,6 @@ class FieldIndex(persistent.Persistent):
         self._num_docs.change(-1)
 
     def apply(self, query):
+        if len(query) != 2 or not isinstance(query, tuple):
+            raise TypeError("two-length tuple expected", query)
         return multiunion(self._fwd_index.values(*query))        
