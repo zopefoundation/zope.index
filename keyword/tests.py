@@ -50,14 +50,12 @@ class KeywordIndexTest(TestCase):
     def _search_or(self, query, expected):
         return self._search(query, expected, 'or')
 
-
     def test_interface(self):
         verifyClass(IInjection, KeywordIndex)
         verifyClass(IStatistics, KeywordIndex)
         verifyClass(IKeywordQuerying, KeywordIndex)
 
     def test_empty_index(self):
-
         self.assertEqual(self.index.documentCount(), 0)
         self.assertEqual(self.index.wordCount(), 0)
         self._populate_index()
@@ -68,7 +66,6 @@ class KeywordIndexTest(TestCase):
         self.assertEqual(self.index.wordCount(), 0)
 
     def test_unindex(self):
-
         self._populate_index()
         self.assertEqual(self.index.documentCount(), 4)
         self.index.unindex_doc(1)
@@ -77,9 +74,7 @@ class KeywordIndexTest(TestCase):
         self.index.unindex_doc(-99999)     # no exception should be raised
         self.assertEqual(self.index.documentCount(), 2)
 
-
     def test_reindex(self):
-
         self._populate_index()
         self.assertEqual(self.index.documentCount(), 4)
         self.index.unindex_doc(1)
@@ -90,14 +85,12 @@ class KeywordIndexTest(TestCase):
         self._search('quick',   IISet())
         self._search('foo',   IISet())
         self._search('bar',   IISet([1]))
-        self._search('doom',   IISet())
-        self._search('blabla',   IISet([1]))
+        self._search(['doom'],   IISet())
+        self._search(['blabla'],   IISet([1]))
         self._search_and(('bar', 'blabla'),   IISet([1]))
-        self._search('cmf',   IISet([5]))
-
+        self._search(['cmf'],   IISet([5]))
 
     def test_hasdoc(self):
-    
         self._populate_index()
         self.assertEqual(self.index.has_doc(1), 1)
         self.assertEqual(self.index.has_doc(2), 1)
@@ -106,18 +99,15 @@ class KeywordIndexTest(TestCase):
         self.assertEqual(self.index.has_doc(5), 1)
         self.assertEqual(self.index.has_doc(6), 0)
 
-
     def test_simplesearch(self):
-
         self._populate_index()
-        self._search('',      IISet())
-        self._search('cmf',   IISet([1, 5]))
-        self._search('zope',  IISet([1, 3]))
-        self._search('zope3', IISet([1]))
-        self._search('foo',   IISet())
+        self._search([''],      IISet())
+        self._search(['cmf'],   IISet([1, 5]))
+        self._search(['zope'],  IISet([1, 3]))
+        self._search(['zope3'], IISet([1]))
+        self._search(['foo'],   IISet())
 
     def test_search_and(self):
-
         self._populate_index()
         self._search_and(('cmf', 'zope3'), IISet([1]))
         self._search_and(('cmf', 'zope'),  IISet([1]))
@@ -125,12 +115,14 @@ class KeywordIndexTest(TestCase):
         self._search_and(('zope', 'ZOPE'), IISet([1, 3]))
 
     def test_search_or(self):
-
         self._populate_index()
         self._search_or(('cmf', 'zope3'), IISet([1, 5]))
         self._search_or(('cmf', 'zope'),  IISet([1, 3, 5]))
         self._search_or(('cmf', 'zope4'), IISet([1, 5]))
         self._search_or(('zope', 'ZOPE'), IISet([1,3]))
+
+    def test_index_input(self):
+        self.assertRaises(TypeError, self.index.index_doc, 1, "non-sequence-string")
 
 def test_suite():
     return TestSuite((makeSuite(KeywordIndexTest), ))

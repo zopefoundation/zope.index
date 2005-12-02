@@ -21,9 +21,11 @@ class IKeywordQuerying(Interface):
     """Query over a set of keywords, seperated by white space."""
 
     def search(query, operator='and'):
-        """Execute a search given by 'query' as a list/tuple of
-           (unicode) strings against the index. 'operator' can be either
-           'and' or 'or' to search for all keywords or any keyword. 
+        """Execute a search given by 'query'.
+        
+        'query' can be a (unicode) string or an iterable of (unicode) strings.
+        'operator' can be either 'and' or 'or' to search for documents
+        containing all keywords or any keyword. 
 
-           Return an IISet of docids
+        Return an IISet of docids
         """

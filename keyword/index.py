@@ -22,7 +22,7 @@ from BTrees.OOBTree import OOBTree, OOSet, difference
 from BTrees.IIBTree import IISet, union, intersection
 from BTrees.Length import Length
 
-from types import ListType, TupleType, StringTypes
+from types import StringTypes
 from zope.index.interfaces import IInjection, IStatistics
 from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface import implements
@@ -60,11 +60,12 @@ class KeywordIndex(Persistent):
         return bool(self._rev_index.has_key(docid))
 
     def index_doc(self, docid, seq):
-        
-        if not isinstance(seq, (TupleType, ListType)):
+        if isinstance(seq, StringTypes):
             raise TypeError('seq argument must be a list/tuple of strings')
     
-        if not seq: return
+        if not seq:
+            return
+
         if self.normalize:
             seq = [w.lower() for w in seq]
 
@@ -90,18 +91,20 @@ class KeywordIndex(Persistent):
             self._insert_reverse(docid, new_kw)
         
     def unindex_doc(self, docid):
-
         idx  = self._fwd_index
 
         try:
             for word in self._rev_index[docid]:
                 idx[word].remove(docid)
-                if not idx[word]: del idx[word] 
-        except KeyError: return
+                if not idx[word]:
+                    del idx[word] 
+        except KeyError:
+            return
         
         try:
             del self._rev_index[docid]
-        except KeyError: pass
+        except KeyError:
+            pass
 
         self._num_docs.change(-1)
 
@@ -118,14 +121,13 @@ class KeywordIndex(Persistent):
     def _insert_reverse(self, docid, words):
         """ add words to forward index """
 
-        if words:  
+        if words:
             self._rev_index[docid] = words
 
     def search(self, query, operator='and'):
-
-        if isinstance(query, StringTypes): query = [query]
-        if not isinstance(query, (TupleType, ListType)):
-            raise TypeError('query argument must be a list/tuple of strings')
+        """Execute a search given by 'query'."""
+        if isinstance(query, StringTypes):
+            query = [query]
 
         if self.normalize:
             query = [w.lower() for w in query]
@@ -137,9 +139,10 @@ class KeywordIndex(Persistent):
             docids = self._fwd_index.get(word, IISet())
             rs = f(rs, docids)
             
-        if rs:  return rs
-        else: return IISet()
-
+        if rs:
+            return rs
+        else:
+            return IISet()
 
 class CaseSensitiveKeywordIndex(KeywordIndex):
     """ A case-sensitive keyword index """
