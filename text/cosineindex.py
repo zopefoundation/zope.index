@@ -18,7 +18,6 @@ $Id$
 import math
 
 from BTrees.IFBTree import IFBucket
-from zope.interface import implements
 
 from zope.index.text.baseindex import BaseIndex, inverse_doc_frequency
 

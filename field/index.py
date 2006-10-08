@@ -19,7 +19,7 @@ import persistent
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
-from BTrees.IFBTree import IFTreeSet, IFSet, multiunion
+from BTrees.IFBTree import IFTreeSet, multiunion
 from BTrees.Length import Length
 
 import zope.interface
