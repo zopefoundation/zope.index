@@ -88,7 +88,8 @@ class FieldIndex(persistent.Persistent):
         except KeyError:
             # This is fishy, but we don't want to raise an error.
             # We should probably log something.
-            pass
+            # but keep it from throwing a dirty exception
+            set = 1
 
         if not set:
             del self._fwd_index[value]

@@ -107,3 +107,34 @@ We can also clear the index entirely:
 
     >>> index.apply((30, 70))
     IFSet([])
+
+Bugfix testing:
+---------------
+Happened at least once that the value dropped out of the forward index,
+but the index still contains the object, the unindex broke
+
+    >>> index.index_doc(0, 6)
+    >>> index.index_doc(1, 26)
+    >>> index.index_doc(2, 94)
+    >>> index.index_doc(3, 68)
+    >>> index.index_doc(4, 30)
+    >>> index.index_doc(5, 68)
+    >>> index.index_doc(6, 82)
+    >>> index.index_doc(7, 30)
+    >>> index.index_doc(8, 43)
+    >>> index.index_doc(9, 15)
+    
+    >>> index.apply((None, None))
+    IFSet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+
+Here is the damage:
+
+    >>> del index._fwd_index[68]
+    
+Unindex should succeed:
+    
+    >>> index.unindex_doc(5)
+    >>> index.unindex_doc(3)
+    
+    >>> index.apply((None, None))
+    IFSet([0, 1, 2, 4, 6, 7, 8, 9])
