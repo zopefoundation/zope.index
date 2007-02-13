@@ -18,13 +18,10 @@ $Id$
 
 import os
 
-try:
-    from setuptools import setup, Extension
-except ImportError, e:
-    from distutils.core import setup, Extension
+from setuptools import setup, find_packages
 
 setup(name='zope.index',
-      version='3.4-dev',
+      version='3.4dev',
       url='http://svn.zope.org/zope.index',
       license='ZPL 2.1',
       description='Zope index',
@@ -32,13 +29,7 @@ setup(name='zope.index',
       author_email='zope3-dev@zope.org',
       long_description="Indices for using with catalog like text, field, etc.",
 
-      packages=['zope',
-                'zope.index',
-                'zope.index.field',
-                'zope.index.keyword',
-                'zope.index.text',
-                'zope.index.topic',
-                'zope.index.topic.tests'],
+      packages=find_packages('src'),
       package_dir = {'': 'src'},
 
       namespace_packages=['zope',],
