@@ -34,10 +34,7 @@ setup(name='zope.index',
 
       namespace_packages=['zope',],
       tests_require = ['zope.testing'],
-      install_requires=['BTrees',
-                        'ZODB',
-                        'persistent',
-                        'transaction',
+      install_requires=['ZODB3',
                         'zope.interface'],
       include_package_data = True,
 
