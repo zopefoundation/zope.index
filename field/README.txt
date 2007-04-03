@@ -20,14 +20,14 @@ orderable values.
     >>> index.index_doc(8, 43)
     >>> index.index_doc(9, 15)
 
-Fied indexes are searched with apply.  The argument is a tuple
+Field indexes are searched with apply.  The argument is a tuple
 with a minimum and maximum value:
 
     >>> index.apply((30, 70))
     IFSet([3, 4, 5, 7, 8])
 
 A common mistake is to pass a single value.  If anything other than a 
-tw-tuple is passed, a type error is raised:
+two-tuple is passed, a type error is raised:
 
     >>> index.apply('hi')
     Traceback (most recent call last):
@@ -138,3 +138,31 @@ Unindex should succeed:
     
     >>> index.apply((None, None))
     IFSet([0, 1, 2, 4, 6, 7, 8, 9])
+
+
+Optimizations
+-------------
+
+There is an optimization which makes sure that nothing is changed in the
+internal data structures if the value of the ducument was not changed.
+
+To test this optimization we patch the index instance to make sure unindex_doc
+is not called.
+
+    >>> def unindex_doc(doc_id):
+    ...     raise KeyError
+    >>> index.unindex_doc = unindex_doc
+
+Now we get a KeyError if we try to change the value.
+
+    >>> index.index_doc(9, 14)
+    Traceback (most recent call last):
+    ...
+    KeyError
+
+Leaving the value unchange doesn't call unindex_doc.
+
+    >>> index.index_doc(9, 15)
+    >>> index.apply((15, 15))
+    IFSet([9])
+

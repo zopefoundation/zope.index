@@ -57,6 +57,9 @@ class FieldIndex(persistent.Persistent):
         """See interface IInjection"""
         rev_index = self._rev_index
         if docid in rev_index:
+            if docid in self._fwd_index.get(value, ()):
+                # no need to index the doc, its already up to date
+                return
             # unindex doc if present
             self.unindex_doc(docid)
 
