@@ -235,6 +235,8 @@ class OkapiIndex(BaseIndex):
         return count
 
     def unindex_doc(self, docid):
+        if docid not in self._docwords:
+            return
         self._totaldoclen -= self._docweight.get(docid, 0)
         BaseIndex.unindex_doc(self, docid)
 

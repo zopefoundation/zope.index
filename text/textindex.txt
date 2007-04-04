@@ -150,3 +150,16 @@ But if we change it the state changes too.
     >>> index.index_doc(100, u"an even newer funky value")
     >>> index.index._p_changed
     True
+
+The same as for index_doc applies to unindex_doc, if an object is
+unindexed that is not indexed no indexes chould change state.
+
+    >>> index._p_changed = index.index._p_changed = False
+    >>> index.unindex_doc(100)
+    >>> index.index._p_changed
+    True
+
+    >>> index._p_changed = index.index._p_changed = False
+    >>> index.unindex_doc(100)
+    >>> index._p_changed is index.index._p_changed is False
+    True
