@@ -107,3 +107,46 @@ Text indexes support basic statistics:
     8
     >>> index.wordCount()
     114
+
+Tracking Changes
+================
+
+In order to have as few writes as possible, the index doesn't change
+its state if we index a docid with the same values twice. To
+test this behaviour we have to create a simple data manager.
+
+    >>> class DM:
+    ...     def __init__(self):
+    ...         self.called = 0
+    ...     def register(self, ob):
+    ...         self.called += 1
+    ...     def setstate(self, ob):
+    ...         ob.__setstate__({'x': 42})
+
+If we index a document the first time it changes the state of the
+underlying index. At the start _p_changed is False.
+
+    >>> index._p_jar = index.index._p_jar = DM()
+    >>> index.index._p_changed
+    False
+    >>> index.index_doc(100, u"a new funky value")
+    >>> index.index._p_changed
+    True
+
+Now for testing we set the changed flag to false again.
+
+    >>> index.index._p_changed = False
+
+If we index it a second time, the underlying index should not be
+changed.
+
+    >>> index.index_doc(100, u"a new funky value")
+    >>> index._p_changed is index.index._p_changed is False
+    True
+    >>> index.index._p_changed = False
+
+But if we change it the state changes too.
+
+    >>> index.index_doc(100, u"an even newer funky value")
+    >>> index.index._p_changed
+    True

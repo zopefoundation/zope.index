@@ -104,11 +104,16 @@ class BaseIndex(Persistent):
     # faster than simply unindexing the old version in its entirety and then
     # adding the new version in its entirety.
     def _reindex_doc(self, docid, text):
+
         # Touch as few docid->w(docid, score) maps in ._wordinfo as possible.
         old_wids = self.get_words(docid)
-        old_wid2w, old_docw = self._get_frequencies(old_wids)
-
         new_wids = self._lexicon.sourceToWordIds(text)
+
+        if old_wids == new_wids:
+            # we return -1 if not changed
+            return -1
+        
+        old_wid2w, old_docw = self._get_frequencies(old_wids)
         new_wid2w, new_docw = self._get_frequencies(new_wids)
 
         old_widset = IFTreeSet(old_wid2w.keys())
