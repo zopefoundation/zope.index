@@ -15,7 +15,9 @@
 
 $Id$
 """
-from BTrees.IIBTree import IISet
+
+import BTrees
+
 from zope.index.topic.interfaces import ITopicFilteredSet
 from zope.interface import implements
 
@@ -29,13 +31,17 @@ class FilteredSetBase(object):
 
     implements(ITopicFilteredSet)
 
-    def __init__(self, id, expr):
+    family = BTrees.family32
+
+    def __init__(self, id, expr, family=None):
+        if family is not None:
+            self.family = family
         self.id   = id
         self.expr = expr
         self.clear()
 
     def clear(self):
-        self._ids  = IISet()
+        self._ids = self.family.IIModule.Set()
 
     def index_doc(self, docid, context):
         raise NotImplementedError
@@ -66,10 +72,7 @@ class PythonFilteredSet(FilteredSetBase):
     """ a topic filtered set to check a context against a Python expression """
 
     def index_doc(self, docid, context):
-
         try:
             if eval(self.expr): self._ids.insert(docid)
         except:
             pass  # ignore errors 
-
-

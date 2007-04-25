@@ -17,27 +17,32 @@ $Id$
 """
 from persistent import Persistent
 
-from BTrees.OOBTree import OOBTree
-from BTrees.IIBTree import IISet, union, intersection
+import BTrees
 
-from types import ListType, TupleType, StringTypes
+from BTrees.OOBTree import OOBTree
+
 from zope.interface import implements
 
 from zope.index.interfaces import IInjection
 from zope.index.topic.interfaces import ITopicQuerying
 
+
 class TopicIndex(Persistent):
 
     implements(IInjection, ITopicQuerying)
 
-    def __init__(self):
+    family = BTrees.family32
+
+    def __init__(self, family=None):
+        if family is not None:
+            self.family = family
         self.clear()
 
     def clear(self):
         # mapping filter id -> filter
         self._filters = OOBTree()
 
-    def addFilter(self, f ):
+    def addFilter(self, f):
         """ Add filter 'f' with ID 'id' """
         self._filters[f.getId()] = f
 
@@ -58,12 +63,13 @@ class TopicIndex(Persistent):
             f.unindex_doc(docid)
 
     def search(self, query, operator='and'):
+        if isinstance(query, basestring): query = [query]
+        if not isinstance(query, (tuple, list)):
+            raise TypeError(
+                'query argument must be a list/tuple of filter ids')
 
-        if isinstance(query, StringTypes): query = [query]
-        if not isinstance(query, (TupleType, ListType)):
-            raise TypeError('query argument must be a list/tuple of filter ids')
-
-        f = {'and' : intersection, 'or' : union}[operator]
+        IIModule = self.family.IIModule
+        f = {'and': IIModule.intersection, 'or': IIModule.union}[operator]
     
         rs = None
         for id in self._filters.keys():
@@ -71,6 +77,5 @@ class TopicIndex(Persistent):
                 docids = self._filters[id].getIds()
                 rs = f(rs, docids)
             
-        if rs:  return rs
-        else: return IISet()
-        
+        if rs: return rs
+        else: return self.family.IIModule.Set()

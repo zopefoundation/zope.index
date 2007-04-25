@@ -17,7 +17,10 @@ $Id$
 """
 from unittest import TestCase, main, makeSuite
 
+import BTrees
+
 from BTrees.IFBTree import IFBTree, IFBucket
+from BTrees.LFBTree import LFBucket
 
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
@@ -27,6 +30,23 @@ class TestSetOps(TestCase):
     def testEmptyLists(self):
         self.assertEqual(len(mass_weightedIntersection([])), 0)
         self.assertEqual(len(mass_weightedUnion([])), 0)
+
+    def testEmptyListsHonorFamily(self):
+        # family32
+        t = mass_weightedIntersection([], BTrees.family32)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, IFBucket)
+        t = mass_weightedUnion([], BTrees.family32)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, IFBucket)
+
+        # family64
+        t = mass_weightedIntersection([], BTrees.family64)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, LFBucket)
+        t = mass_weightedUnion([], BTrees.family64)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, LFBucket)
 
     def testIdentity(self):
         t = IFBTree([(1, 2)])

@@ -191,8 +191,6 @@ this measure (and optimizing it by not bothering to multiply by 1 <wink>).
 
 $Id$
 """
-from BTrees.IFBTree import IFBucket
-
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
 
@@ -204,8 +202,8 @@ class OkapiIndex(BaseIndex):
     assert K1 >= 0.0
     assert 0.0 <= B <= 1.0
 
-    def __init__(self, lexicon):
-        BaseIndex.__init__(self, lexicon)
+    def __init__(self, lexicon, family=None):
+        BaseIndex.__init__(self, lexicon, family=family)
 
         # ._wordinfo for Okapi is
         # wid -> {docid -> frequency}; t -> D -> f(D, t)
@@ -267,7 +265,7 @@ class OkapiIndex(BaseIndex):
         for t in wids:
             d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = IFBucket()
+            result = self.family.IFModule.Bucket()
             for docid, f in d2f.items():
                 lenweight = B_from1 + B * docid2len[docid] / meandoclen
                 tf = f * K1_plus1 / (f + K1 * lenweight)
@@ -311,7 +309,7 @@ class OkapiIndex(BaseIndex):
         for t in wids:
             d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = IFBucket()
+            result = self.family.IFModule.Bucket()
             score(result, d2f.items(), docid2len, idf, meandoclen)
             L.append((result, 1))
         return L

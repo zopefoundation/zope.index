@@ -17,9 +17,9 @@ $Id$
 """
 from persistent import Persistent
 
-from BTrees.IOBTree import IOBTree
+import BTrees
+
 from BTrees.OOBTree import OOBTree, OOSet, difference 
-from BTrees.IIBTree import IISet, union, intersection
 from BTrees.Length import Length
 
 from types import StringTypes
@@ -27,13 +27,17 @@ from zope.index.interfaces import IInjection, IStatistics
 from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface import implements
 
+
 class KeywordIndex(Persistent):
     """ A case-insensitive keyword index """
 
+    family = BTrees.family32
     normalize = True
     implements(IInjection, IStatistics, IKeywordQuerying)
 
-    def __init__(self):
+    def __init__(self, family=None):
+        if family is not None:
+            self.family = family
         self.clear()
 
     def clear(self):
@@ -45,7 +49,7 @@ class KeywordIndex(Persistent):
         # The reverse index maps a docid to its keywords
         # TODO: Using a vocabulary might be the better choice to store
         # keywords since it would allow use to use integers instead of strings
-        self._rev_index = IOBTree()
+        self._rev_index = self.family.IOModule.BTree()
         self._num_docs = Length(0)
 
     def documentCount(self):
@@ -115,7 +119,7 @@ class KeywordIndex(Persistent):
         has_key = idx.has_key
         for word in words:
             if not has_key(word):
-                idx[word] = IISet()
+                idx[word] = self.family.IIModule.Set()
             idx[word].insert(docid)
 
     def _insert_reverse(self, docid, words):
@@ -132,17 +136,19 @@ class KeywordIndex(Persistent):
         if self.normalize:
             query = [w.lower() for w in query]
 
-        f = {'and' : intersection, 'or' : union}[operator]
+        f = {'and' : self.family.IIModule.intersection,
+             'or' : self.family.IIModule.union,
+             }[operator]
     
         rs = None
         for word in query:
-            docids = self._fwd_index.get(word, IISet())
+            docids = self._fwd_index.get(word, self.family.IIModule.Set())
             rs = f(rs, docids)
             
         if rs:
             return rs
         else:
-            return IISet()
+            return self.family.IIModule.Set()
 
 class CaseSensitiveKeywordIndex(KeywordIndex):
     """ A case-sensitive keyword index """

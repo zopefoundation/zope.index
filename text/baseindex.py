@@ -20,27 +20,27 @@ import math
 from persistent import Persistent
 from zope.interface import implements
 
-from BTrees.IOBTree import IOBTree
-from BTrees.IFBTree import IFBTree, IFTreeSet
-from BTrees.IFBTree import intersection, difference
+import BTrees
+
 from BTrees import Length
+from BTrees.IOBTree import IOBTree
 
 from zope.index.interfaces import IInjection, IStatistics
 
 from zope.index.text.interfaces import IExtendedQuerying
 from zope.index.text import widcode
 from zope.index.text.setops import mass_weightedIntersection, \
-                                  mass_weightedUnion
+                                   mass_weightedUnion
 
-
-def unique(L):
-    """Return a list of the unique elements in L."""
-    return IFTreeSet(L).keys()
 
 class BaseIndex(Persistent):
     implements(IInjection, IStatistics, IExtendedQuerying)
 
-    def __init__(self, lexicon):
+    family = BTrees.family32
+
+    def __init__(self, lexicon, family=None):
+        if family is not None:
+            self.family = family
         self._lexicon = lexicon
 
         # wid -> {docid -> weight}; t -> D -> w(D, t)
@@ -56,17 +56,19 @@ class BaseIndex(Persistent):
         # may introduce a lexicon word we've never seen.
         # A word is in-vocabulary for this index if and only if
         # _wordinfo.has_key(wid).  Note that wid 0 must not be a key.
+        # This does not use the BTree family since wids are always "I"
+        # flavor trees.
         self._wordinfo = IOBTree()
 
         # docid -> weight
         # Different indexers have different notions of doc weight, but we
         # expect each indexer to use ._docweight to map docids to its
         # notion of what a doc weight is.
-        self._docweight = IFBTree()
+        self._docweight = self.family.IFModule.BTree()
 
         # docid -> WidCode'd list of wids
         # Used for un-indexing, and for phrase search.
-        self._docwords = IOBTree()
+        self._docwords = self.family.IOModule.BTree()
 
         # Use a BTree length for efficient length computation w/o conflicts
         self.wordCount = Length.Length()
@@ -116,12 +118,13 @@ class BaseIndex(Persistent):
         old_wid2w, old_docw = self._get_frequencies(old_wids)
         new_wid2w, new_docw = self._get_frequencies(new_wids)
 
-        old_widset = IFTreeSet(old_wid2w.keys())
-        new_widset = IFTreeSet(new_wid2w.keys())
+        old_widset = self.family.IFModule.TreeSet(old_wid2w.keys())
+        new_widset = self.family.IFModule.TreeSet(new_wid2w.keys())
 
-        in_both_widset = intersection(old_widset, new_widset)
-        only_old_widset = difference(old_widset, in_both_widset)
-        only_new_widset = difference(new_widset, in_both_widset)
+        IFModule = self.family.IFModule
+        in_both_widset = IFModule.intersection(old_widset, new_widset)
+        only_old_widset = IFModule.difference(old_widset, in_both_widset)
+        only_new_widset = IFModule.difference(new_widset, in_both_widset)
         del old_widset, new_widset
 
         for wid in only_old_widset.keys():
@@ -161,7 +164,7 @@ class BaseIndex(Persistent):
     def unindex_doc(self, docid):
         if docid not in self._docwords:
             return
-        for wid in unique(self.get_words(docid)):
+        for wid in self.family.IFModule.TreeSet(self.get_words(docid)).keys():
             self._del_wordinfo(wid, docid)
         del self._docwords[docid]
         del self._docweight[docid]
@@ -171,25 +174,25 @@ class BaseIndex(Persistent):
         if not wids:
             return None # All docs match
         wids = self._remove_oov_wids(wids)
-        return mass_weightedUnion(self._search_wids(wids))
+        return mass_weightedUnion(self._search_wids(wids), self.family)
 
     def search_glob(self, pattern):
         wids = self._lexicon.globToWordIds(pattern)
         wids = self._remove_oov_wids(wids)
-        return mass_weightedUnion(self._search_wids(wids))
+        return mass_weightedUnion(self._search_wids(wids), self.family)
 
     def search_phrase(self, phrase):
         wids = self._lexicon.termToWordIds(phrase)
         cleaned_wids = self._remove_oov_wids(wids)
         if len(wids) != len(cleaned_wids):
             # At least one wid was OOV:  can't possibly find it.
-            return IFBTree()
+            return self.family.IFModule.BTree()
         scores = self._search_wids(wids)
-        hits = mass_weightedIntersection(scores)
+        hits = mass_weightedIntersection(scores, self.family)
         if not hits:
             return hits
         code = widcode.encode(wids)
-        result = IFBTree()
+        result = self.family.IFModule.BTree()
         for docid, weight in hits.items():
             docwords = self._docwords[docid]
             if docwords.find(code) >= 0:
@@ -254,7 +257,7 @@ class BaseIndex(Persistent):
             # len(IFBTree).
             if (isinstance(doc2score, type({})) and
                 len(doc2score) == self.DICT_CUTOFF):
-                doc2score = IFBTree(doc2score)
+                doc2score = self.family.IFModule.BTree(doc2score)
         doc2score[docid] = f
         self._wordinfo[wid] = doc2score # not redundant:  Persistency!
 
@@ -277,7 +280,7 @@ class BaseIndex(Persistent):
                 new_word_count += 1
             elif (isinstance(doc2score, dicttype) and
                   len(doc2score) == self.DICT_CUTOFF):
-                doc2score = IFBTree(doc2score)
+                doc2score = self.family.IFModule.BTree(doc2score)
             doc2score[docid] = weight
             self._wordinfo[wid] = doc2score # not redundant:  Persistency!
         self.wordCount.change(new_word_count)

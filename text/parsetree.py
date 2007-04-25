@@ -15,8 +15,6 @@
 
 $Id$
 """
-from BTrees.IFBTree import difference
-
 from zope.index.text.interfaces import IQueryParseTree
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
@@ -88,10 +86,10 @@ class AndNode(ParseTreeNode):
                 # included.
                 if r is not None:
                     L.append((r, 1))
-        set = mass_weightedIntersection(L)
+        set = mass_weightedIntersection(L, index.family)
         if Nots:
-            notset = mass_weightedUnion(Nots)
-            set = difference(set, notset)
+            notset = mass_weightedUnion(Nots, index.family)
+            set = index.family.IFModule.difference(set, notset)
         return set
 
 class OrNode(ParseTreeNode):
@@ -108,7 +106,7 @@ class OrNode(ParseTreeNode):
             # to act like plain real_word).
             if r is not None:
                 weighted.append((r, 1))
-        return mass_weightedUnion(weighted)
+        return mass_weightedUnion(weighted, index.family)
 
 class AtomNode(ParseTreeNode):
 

@@ -17,7 +17,7 @@ $Id$
 """
 import unittest
 
-from BTrees.IFBTree import IFBucket
+import BTrees
 
 from zope.index.text.queryparser import QueryParser
 from zope.index.text.parsetree import QueryError
@@ -25,8 +25,10 @@ from zope.index.text.lexicon import Lexicon, Splitter
 
 class FauxIndex(object):
 
+    family = BTrees.family32
+
     def search(self, term):
-        b = IFBucket()
+        b = self.family.IFModule.Bucket()
         if term == "foo":
             b[1] = b[3] = 1
         elif term == "bar":

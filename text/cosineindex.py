@@ -17,14 +17,13 @@ $Id$
 """
 import math
 
-from BTrees.IFBTree import IFBucket
-
 from zope.index.text.baseindex import BaseIndex, inverse_doc_frequency
+
 
 class CosineIndex(BaseIndex):
 
-    def __init__(self, lexicon):
-        BaseIndex.__init__(self, lexicon)
+    def __init__(self, lexicon, family=None):
+        BaseIndex.__init__(self, lexicon, family=family)
 
         # ._wordinfo for cosine is wid -> {docid -> weight};
         # t -> D -> w(d, t)/W(d)
@@ -74,7 +73,7 @@ class CosineIndex(BaseIndex):
             idf = inverse_doc_frequency(len(d2w), N)  # an unscaled float
             #print "idf = %.3f" % idf
             if isinstance(d2w, DictType):
-                d2w = IFBucket(d2w)
+                d2w = self.family.IFModule.Bucket(d2w)
             L.append((d2w, idf))
         return L
 

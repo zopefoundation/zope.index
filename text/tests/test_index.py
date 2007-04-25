@@ -17,6 +17,8 @@ $Id$
 """
 from unittest import TestCase, TestSuite, main, makeSuite
 
+import BTrees
+
 from zope.index.text.lexicon import Lexicon, Splitter
 from zope.index.text.cosineindex import CosineIndex
 from zope.index.text.okapiindex import OkapiIndex
@@ -168,6 +170,18 @@ class CosineIndexTest(IndexTest):
 
 class OkapiIndexTest(IndexTest):
     IndexFactory = OkapiIndex
+
+class CosineIndexTest(IndexTest):
+
+    @staticmethod
+    def IndexFactory(*args, **kw):
+        return CosineIndex(family=BTrees.family64, *args, **kw)
+
+class OkapiIndexTest(IndexTest):
+
+    @staticmethod
+    def IndexFactory(*args, **kw):
+        return OkapiIndex(family=BTrees.family64, *args, **kw)
 
 def test_suite():
     return TestSuite((makeSuite(CosineIndexTest),

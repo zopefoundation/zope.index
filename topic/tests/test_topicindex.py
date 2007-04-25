@@ -17,6 +17,8 @@ $Id$
 """
 from unittest import TestCase, TestSuite, main, makeSuite 
 
+import BTrees
+
 from zope.index.topic.index import TopicIndex
 from zope.index.topic.filter import PythonFilteredSet
 from zope.interface.verify import verifyClass
@@ -30,14 +32,19 @@ class O(object):
 
 class TopicIndexTest(TestCase):
 
+    family = BTrees.family32
+
     def setUp(self):
-        self.index = TopicIndex()
-        self.index.addFilter(PythonFilteredSet('doc1',
-                                               "context.meta_type == 'doc1'"))
-        self.index.addFilter(PythonFilteredSet('doc2',
-                                               "context.meta_type == 'doc2'"))
-        self.index.addFilter(PythonFilteredSet('doc3',
-                                               "context.meta_type == 'doc3'"))
+        self.index = TopicIndex(family=self.family)
+        self.index.addFilter(
+            PythonFilteredSet('doc1', "context.meta_type == 'doc1'",
+                              self.family))
+        self.index.addFilter(
+            PythonFilteredSet('doc2', "context.meta_type == 'doc2'",
+                              self.family))
+        self.index.addFilter(
+            PythonFilteredSet('doc3', "context.meta_type == 'doc3'",
+                              self.family))
 
         self.index.index_doc(0 , O('doc0'))
         self.index.index_doc(1 , O('doc1'))
@@ -90,8 +97,15 @@ class TopicIndexTest(TestCase):
         self._search_and(['doc1','doc2'], [])
 
 
+class TopicIndexTest64(TopicIndexTest):
+
+    family = BTrees.family64
+
+
 def test_suite():
-    return TestSuite((makeSuite(TopicIndexTest), ))
+    return TestSuite((makeSuite(TopicIndexTest),
+                      makeSuite(TopicIndexTest64),
+                      ))
 
 if __name__=='__main__':
     main(defaultTest='test_suite')

@@ -14,13 +14,16 @@
 
 from unittest import TestCase, TestSuite, main, makeSuite
 
-from BTrees.IIBTree import IISet
+import BTrees
+
 from zope.index.keyword.index import KeywordIndex
 from zope.index.interfaces import IInjection, IStatistics
 from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface.verify import verifyClass
 
 class KeywordIndexTest(TestCase):
+
+    from BTrees.IIBTree import IISet
 
     def setUp(self):
         self.index = KeywordIndex()
@@ -82,13 +85,13 @@ class KeywordIndexTest(TestCase):
         self.index.index_doc(1,  ('foo', 'bar', 'doom'))
         self.index.index_doc(1,  ('bar', 'blabla'))
         self.assertEqual(self.index.documentCount(), 3)
-        self._search('quick',   IISet())
-        self._search('foo',   IISet())
-        self._search('bar',   IISet([1]))
-        self._search(['doom'],   IISet())
-        self._search(['blabla'],   IISet([1]))
-        self._search_and(('bar', 'blabla'),   IISet([1]))
-        self._search(['cmf'],   IISet([5]))
+        self._search('quick',   self.IISet())
+        self._search('foo',   self.IISet())
+        self._search('bar',   self.IISet([1]))
+        self._search(['doom'],   self.IISet())
+        self._search(['blabla'],   self.IISet([1]))
+        self._search_and(('bar', 'blabla'),   self.IISet([1]))
+        self._search(['cmf'],   self.IISet([5]))
 
     def test_hasdoc(self):
         self._populate_index()
@@ -101,31 +104,43 @@ class KeywordIndexTest(TestCase):
 
     def test_simplesearch(self):
         self._populate_index()
-        self._search([''],      IISet())
-        self._search(['cmf'],   IISet([1, 5]))
-        self._search(['zope'],  IISet([1, 3]))
-        self._search(['zope3'], IISet([1]))
-        self._search(['foo'],   IISet())
+        self._search([''],      self.IISet())
+        self._search(['cmf'],   self.IISet([1, 5]))
+        self._search(['zope'],  self.IISet([1, 3]))
+        self._search(['zope3'], self.IISet([1]))
+        self._search(['foo'],   self.IISet())
 
     def test_search_and(self):
         self._populate_index()
-        self._search_and(('cmf', 'zope3'), IISet([1]))
-        self._search_and(('cmf', 'zope'),  IISet([1]))
-        self._search_and(('cmf', 'zope4'), IISet())
-        self._search_and(('zope', 'ZOPE'), IISet([1, 3]))
+        self._search_and(('cmf', 'zope3'), self.IISet([1]))
+        self._search_and(('cmf', 'zope'),  self.IISet([1]))
+        self._search_and(('cmf', 'zope4'), self.IISet())
+        self._search_and(('zope', 'ZOPE'), self.IISet([1, 3]))
 
     def test_search_or(self):
         self._populate_index()
-        self._search_or(('cmf', 'zope3'), IISet([1, 5]))
-        self._search_or(('cmf', 'zope'),  IISet([1, 3, 5]))
-        self._search_or(('cmf', 'zope4'), IISet([1, 5]))
-        self._search_or(('zope', 'ZOPE'), IISet([1,3]))
+        self._search_or(('cmf', 'zope3'), self.IISet([1, 5]))
+        self._search_or(('cmf', 'zope'),  self.IISet([1, 3, 5]))
+        self._search_or(('cmf', 'zope4'), self.IISet([1, 5]))
+        self._search_or(('zope', 'ZOPE'), self.IISet([1,3]))
 
     def test_index_input(self):
-        self.assertRaises(TypeError, self.index.index_doc, 1, "non-sequence-string")
+        self.assertRaises(
+            TypeError, self.index.index_doc, 1, "non-sequence-string")
+
+
+class KeywordIndexTest64(KeywordIndexTest):
+
+    from BTrees.LLBTree import LLSet as IISet
+
+    def setUp(self):
+        self.index = KeywordIndex(family=BTrees.family64)
+
 
 def test_suite():
-    return TestSuite((makeSuite(KeywordIndexTest), ))
+    return TestSuite((makeSuite(KeywordIndexTest),
+                      makeSuite(KeywordIndexTest64),
+                      ))
 
 if __name__=='__main__':
     main(defaultTest='test_suite')
