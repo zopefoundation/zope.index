@@ -108,6 +108,17 @@ Text indexes support basic statistics:
     >>> index.wordCount()
     114
 
+If we index the same document twice, once with a zero value, and then
+with a normal value, it should still work:
+
+    >>> index2 = TextIndex()
+    >>> index2.index_doc(1, [])
+    >>> index2.index_doc(1, ["Zorro"])
+
+    >>> [(k, "%.4f" % v) for (k, v) in index2.apply("Zorro").items()]
+    [(1, '0.4545')]
+
+
 Tracking Changes
 ================
 
