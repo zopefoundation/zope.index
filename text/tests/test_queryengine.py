@@ -28,7 +28,7 @@ class FauxIndex(object):
     family = BTrees.family32
 
     def search(self, term):
-        b = self.family.IFModule.Bucket()
+        b = self.family.IF.Bucket()
         if term == "foo":
             b[1] = b[3] = 1
         elif term == "bar":

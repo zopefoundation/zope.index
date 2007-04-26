@@ -19,8 +19,6 @@ from persistent import Persistent
 
 import BTrees
 
-from BTrees.OOBTree import OOBTree
-
 from zope.interface import implements
 
 from zope.index.interfaces import IInjection
@@ -40,7 +38,7 @@ class TopicIndex(Persistent):
 
     def clear(self):
         # mapping filter id -> filter
-        self._filters = OOBTree()
+        self._filters = self.family.OO.BTree()
 
     def addFilter(self, f):
         """ Add filter 'f' with ID 'id' """
@@ -68,8 +66,9 @@ class TopicIndex(Persistent):
             raise TypeError(
                 'query argument must be a list/tuple of filter ids')
 
-        IIModule = self.family.IIModule
-        f = {'and': IIModule.intersection, 'or': IIModule.union}[operator]
+        f = {'and': self.family.II.intersection,
+             'or': self.family.II.union,
+             }[operator]
     
         rs = None
         for id in self._filters.keys():
@@ -78,4 +77,4 @@ class TopicIndex(Persistent):
                 rs = f(rs, docids)
             
         if rs: return rs
-        else: return self.family.IIModule.Set()
+        else: return self.family.II.Set()

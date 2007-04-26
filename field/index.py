@@ -19,7 +19,6 @@ import persistent
 
 import BTrees
 
-from BTrees.OOBTree import OOBTree
 from BTrees.Length import Length
 
 import zope.interface
@@ -44,9 +43,9 @@ class FieldIndex(persistent.Persistent):
     def clear(self):
         """Initialize forward and reverse mappings."""
         # The forward index maps indexed values to a sequence of docids
-        self._fwd_index = OOBTree()
+        self._fwd_index = self.family.OO.BTree()
         # The reverse index maps a docid to its index value
-        self._rev_index = self.family.IOModule.BTree()
+        self._rev_index = self.family.IO.BTree()
         self._num_docs = Length(0)
 
     def documentCount(self):
@@ -70,7 +69,7 @@ class FieldIndex(persistent.Persistent):
         # Insert into forward index.
         set = self._fwd_index.get(value)
         if set is None:
-            set = self.family.IFModule.TreeSet()
+            set = self.family.IF.TreeSet()
             self._fwd_index[value] = set
         set.insert(docid)
 
@@ -106,5 +105,5 @@ class FieldIndex(persistent.Persistent):
     def apply(self, query):
         if len(query) != 2 or not isinstance(query, tuple):
             raise TypeError("two-length tuple expected", query)
-        return self.family.IFModule.multiunion(
+        return self.family.IF.multiunion(
             self._fwd_index.values(*query))

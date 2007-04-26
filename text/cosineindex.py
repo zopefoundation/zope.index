@@ -73,7 +73,7 @@ class CosineIndex(BaseIndex):
             idf = inverse_doc_frequency(len(d2w), N)  # an unscaled float
             #print "idf = %.3f" % idf
             if isinstance(d2w, DictType):
-                d2w = self.family.IFModule.Bucket(d2w)
+                d2w = self.family.IF.Bucket(d2w)
             L.append((d2w, idf))
         return L
 

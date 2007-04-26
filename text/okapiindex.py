@@ -265,7 +265,7 @@ class OkapiIndex(BaseIndex):
         for t in wids:
             d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = self.family.IFModule.Bucket()
+            result = self.family.IF.Bucket()
             for docid, f in d2f.items():
                 lenweight = B_from1 + B * docid2len[docid] / meandoclen
                 tf = f * K1_plus1 / (f + K1 * lenweight)
@@ -309,7 +309,7 @@ class OkapiIndex(BaseIndex):
         for t in wids:
             d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = self.family.IFModule.Bucket()
+            result = self.family.IF.Bucket()
             score(result, d2f.items(), docid2len, idf, meandoclen)
             L.append((result, 1))
         return L

@@ -41,7 +41,7 @@ class FilteredSetBase(object):
         self.clear()
 
     def clear(self):
-        self._ids = self.family.IIModule.Set()
+        self._ids = self.family.II.Set()
 
     def index_doc(self, docid, context):
         raise NotImplementedError

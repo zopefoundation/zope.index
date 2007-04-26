@@ -19,10 +19,8 @@ from persistent import Persistent
 
 import BTrees
 
-from BTrees.OOBTree import OOBTree, OOSet, difference 
 from BTrees.Length import Length
 
-from types import StringTypes
 from zope.index.interfaces import IInjection, IStatistics
 from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface import implements
@@ -44,12 +42,12 @@ class KeywordIndex(Persistent):
         """Initialize forward and reverse mappings."""
 
         # The forward index maps index keywords to a sequence of docids
-        self._fwd_index = OOBTree()
+        self._fwd_index = self.family.OO.BTree()
 
         # The reverse index maps a docid to its keywords
         # TODO: Using a vocabulary might be the better choice to store
         # keywords since it would allow use to use integers instead of strings
-        self._rev_index = self.family.IOModule.BTree()
+        self._rev_index = self.family.IO.BTree()
         self._num_docs = Length(0)
 
     def documentCount(self):
@@ -64,7 +62,7 @@ class KeywordIndex(Persistent):
         return bool(self._rev_index.has_key(docid))
 
     def index_doc(self, docid, seq):
-        if isinstance(seq, StringTypes):
+        if isinstance(seq, basestring):
             raise TypeError('seq argument must be a list/tuple of strings')
     
         if not seq:
@@ -74,7 +72,7 @@ class KeywordIndex(Persistent):
             seq = [w.lower() for w in seq]
 
         old_kw = self._rev_index.get(docid, None)
-        new_kw = OOSet(seq)
+        new_kw = self.family.OO.Set(seq)
 
         if old_kw is None:
             self._insert_forward(docid, new_kw)
@@ -83,8 +81,8 @@ class KeywordIndex(Persistent):
         else:
 
             # determine added and removed keywords
-            kw_added = difference(new_kw, old_kw)
-            kw_removed = difference(old_kw, new_kw)
+            kw_added = self.family.OO.difference(new_kw, old_kw)
+            kw_removed = self.family.OO.difference(old_kw, new_kw)
 
             # removed keywords are removed from the forward index
             for word in kw_removed:
@@ -119,7 +117,7 @@ class KeywordIndex(Persistent):
         has_key = idx.has_key
         for word in words:
             if not has_key(word):
-                idx[word] = self.family.IIModule.Set()
+                idx[word] = self.family.II.Set()
             idx[word].insert(docid)
 
     def _insert_reverse(self, docid, words):
@@ -130,25 +128,25 @@ class KeywordIndex(Persistent):
 
     def search(self, query, operator='and'):
         """Execute a search given by 'query'."""
-        if isinstance(query, StringTypes):
+        if isinstance(query, basestring):
             query = [query]
 
         if self.normalize:
             query = [w.lower() for w in query]
 
-        f = {'and' : self.family.IIModule.intersection,
-             'or' : self.family.IIModule.union,
+        f = {'and' : self.family.II.intersection,
+             'or' : self.family.II.union,
              }[operator]
     
         rs = None
         for word in query:
-            docids = self._fwd_index.get(word, self.family.IIModule.Set())
+            docids = self._fwd_index.get(word, self.family.II.Set())
             rs = f(rs, docids)
             
         if rs:
             return rs
         else:
-            return self.family.IIModule.Set()
+            return self.family.II.Set()
 
 class CaseSensitiveKeywordIndex(KeywordIndex):
     """ A case-sensitive keyword index """

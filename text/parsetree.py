@@ -89,7 +89,7 @@ class AndNode(ParseTreeNode):
         set = mass_weightedIntersection(L, index.family)
         if Nots:
             notset = mass_weightedUnion(Nots, index.family)
-            set = index.family.IFModule.difference(set, notset)
+            set = index.family.IF.difference(set, notset)
         return set
 
 class OrNode(ParseTreeNode):
