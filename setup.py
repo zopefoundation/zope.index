@@ -35,7 +35,7 @@ setup(name='zope.index',
       namespace_packages=['zope',],
       tests_require = ['zope.testing'],
       install_requires=['setuptools',
-                        'ZODB3',
+                        'ZODB3 >=3.8.0a1.dev-r74780',
                         'zope.interface'],
       include_package_data = True,
 
