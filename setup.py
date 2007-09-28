@@ -15,29 +15,29 @@
 
 $Id$
 """
-
-import os
-
 from setuptools import setup, find_packages
 
+long_description = (open('README.txt').read() +
+                    '\n\n' +
+                    open('CHANGES.txt').read())
+
 setup(name='zope.index',
-      version='3.4.0a2',
-      url='http://svn.zope.org/zope.index',
+      version='3.4.0',
+      url='http://pypi.zope.org/pypi/zope.index',
       license='ZPL 2.1',
-      description='Zope index',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
-      long_description="Indices for using with catalog like text, field, etc.",
+      description="Indices for using with catalog like text, field, etc.",
+      long_description=long_description,
 
       packages=find_packages('src'),
       package_dir = {'': 'src'},
-
       namespace_packages=['zope',],
-      tests_require = ['zope.testing'],
       install_requires=['setuptools',
-                        'ZODB3 >=3.8.0a1.dev-r74780',
-                        'zope.interface'],
+                        'ZODB3 >=3.8.0b1',
+                        'zope.interface',
+                        # testing dependencies
+                        'zope.testing',],
       include_package_data = True,
-
-      zip_safe = False,
+      zip_safe=False,
       )
