@@ -1,0 +1,13 @@
+Changes
+=======
+
+3.4.0 (2007-09-28)
+------------------
+
+No further changes since 3.4.0a1.
+
+3.4.0a1 (2007-04-22)
+--------------------
+
+Initial release as a separate project, corresponds to zope.index from
+Zope 3.4.0a1
