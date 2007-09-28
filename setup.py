@@ -22,8 +22,8 @@ long_description = (open('README.txt').read() +
                     open('CHANGES.txt').read())
 
 setup(name='zope.index',
-      version='3.4.1dev',
-      url='http://pypi.zope.org/pypi/zope.index',
+      version='3.4.1',
+      url='http://pypi.python.org/pypi/zope.index',
       license='ZPL 2.1',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
