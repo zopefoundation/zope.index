@@ -29,15 +29,12 @@ setup(name='zope.index',
       author_email='zope3-dev@zope.org',
       description="Indices for using with catalog like text, field, etc.",
       long_description=long_description,
-
       packages=find_packages('src'),
       package_dir = {'': 'src'},
       namespace_packages=['zope',],
       install_requires=['setuptools',
-                        'ZODB3 >=3.8.0b1',
-                        'zope.interface',
-                        # testing dependencies
-                        'zope.testing',],
+                        'ZODB3>=3.8.0b1',
+                        'zope.interface'],
       include_package_data = True,
       zip_safe=False,
       )
