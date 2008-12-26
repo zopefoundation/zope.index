@@ -92,6 +92,9 @@ class IIndexSort(Interface):
         
         Return an ordered sequence of document ids. 
         
+        XXX Should this method be a generator and accept
+        limit and reverse options?
+        
         """
 
 class IStatistics(Interface):
