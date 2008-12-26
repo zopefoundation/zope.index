@@ -19,7 +19,7 @@ import unittest
 from zope.testing import doctest
 
 def test_suite():
-    return doctest.DocFileSuite('README.txt')
+    return doctest.DocFileSuite('README.txt', optionflags=doctest.ELLIPSIS)
 
 if __name__=='__main__':
     unittest.main(defaultTest='test_suite')

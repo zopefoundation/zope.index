@@ -108,6 +108,36 @@ We can also clear the index entirely:
     >>> index.apply((30, 70))
     IFSet([])
 
+Sorting
+-------
+
+Field indexes also implement IIndexSort interface that
+provides a method for sorting document ids by their indexed
+values.
+
+    >>> index.index_doc(1, 9)
+    >>> index.index_doc(2, 8)
+    >>> index.index_doc(3, 7)
+    >>> index.index_doc(4, 6)
+    >>> index.index_doc(5, 5)
+    >>> index.index_doc(6, 4)
+    >>> index.index_doc(7, 3)
+    >>> index.index_doc(8, 2)
+    >>> index.index_doc(9, 1)
+
+    >>> index.sort([4, 2, 9, 7, 4, 1, 5])
+    [9, 7, 5, 4, 2, 1]
+
+If we pass an id that is not indexed by this index, the
+KeyError is raised as Interface declares:
+
+    >>> index.sort([10])
+    Traceback (most recent call last):
+    ...
+    KeyError: 'docid 10 is not indexed by <zope.index.field.index.FieldIndex object at 0x...>'
+
+    >>> index.clear()
+
 Bugfix testing:
 ---------------
 Happened at least once that the value dropped out of the forward index,

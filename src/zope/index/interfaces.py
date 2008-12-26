@@ -82,6 +82,18 @@ class IIndexSearch(Interface):
 
         """
 
+class IIndexSort(Interface):
+
+    def sort(docids):
+        """Sort document ids sequence using indexed values
+        
+        If some of docids are not in index, KeyError is 
+        raised.
+        
+        Return an ordered sequence of document ids. 
+        
+        """
+
 class IStatistics(Interface):
     """An index that provides statistical information about itself."""
 

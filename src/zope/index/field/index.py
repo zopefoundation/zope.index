@@ -31,6 +31,7 @@ class FieldIndex(persistent.Persistent):
         interfaces.IInjection,
         interfaces.IStatistics,
         interfaces.IIndexSearch,
+        interfaces.IIndexSort,
         )
 
     family = BTrees.family32
@@ -107,3 +108,23 @@ class FieldIndex(persistent.Persistent):
             raise TypeError("two-length tuple expected", query)
         return self.family.IF.multiunion(
             self._fwd_index.values(*query))
+
+    def sort(self, docids):
+        values = self._rev_index
+        sorted = self.family.OO.BTree()
+
+        for docid in docids:
+            value = values.get(docid, None)
+            if value is None:
+                raise KeyError('docid %d is not indexed by %s' % (docid, self))
+            ids = sorted.get(value, None)
+            if ids is None:
+                ids = self.family.OO.Set()
+                sorted[value] = ids
+            ids.insert(docid)
+        
+        result = []
+        for _, ids in sorted.items():
+            result.extend(ids)
+
+        return result
