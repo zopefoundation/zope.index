@@ -84,17 +84,15 @@ class IIndexSearch(Interface):
 
 class IIndexSort(Interface):
 
-    def sort(docids):
+    def sort(docids, limit=None, reverse=False):
         """Sort document ids sequence using indexed values
         
         If some of docids are not in index, KeyError is 
         raised.
         
-        Return an ordered sequence of document ids. 
-        
-        XXX Should this method be a generator and accept
-        limit and reverse options?
-        
+        Return an iterable of document ids. Limited by
+        value of the "limit" argument and optionally
+        reversed, using the "reverse" argument.
         """
 
 class IStatistics(Interface):
