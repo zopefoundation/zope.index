@@ -142,6 +142,8 @@ class KeywordIndex(Persistent):
         if operator == 'or':
             rs = self.family.IF.multiunion(sets)
         elif operator == 'and':
+            # sort smallest to largest set so we intersect the smallest
+            # number of document identifiers possible
             sets.sort(key=len)
             rs = None
             for set in sets:
