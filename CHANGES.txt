@@ -5,8 +5,20 @@ Changes
 ------------------
 
 - Remove zope.testing from dependencies, as it's not really needed.
+
 - Define IIndexSort interface for indexes that support sorting and
   implement it in the FieldIndex.
+
+- Add an ``apply`` method for KeywordIndex, making it implementing
+  IIndexSearch that can be useful in catalog.
+
+- Make KeywordIndex use IFSets instead of IISets. This makes it more
+  compatible with other indexes. 
+
+- Optimize the ``search`` method of KeywordIndex by using multiunion
+  for the ``or`` operator and sorting before intersection for ``and``.
+
+Thanks Chris McDonough of repoze for supporting and useful code.
 
 3.4.1 (2007-09-28)
 ------------------
