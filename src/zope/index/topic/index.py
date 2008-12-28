@@ -21,13 +21,13 @@ import BTrees
 
 from zope.interface import implements
 
-from zope.index.interfaces import IInjection
+from zope.index.interfaces import IInjection, IIndexSearch
 from zope.index.topic.interfaces import ITopicQuerying
 
 
 class TopicIndex(Persistent):
 
-    implements(IInjection, ITopicQuerying)
+    implements(IInjection, ITopicQuerying, IIndexSearch)
 
     family = BTrees.family32
 
@@ -61,20 +61,42 @@ class TopicIndex(Persistent):
             f.unindex_doc(docid)
 
     def search(self, query, operator='and'):
-        if isinstance(query, basestring): query = [query]
+        if isinstance(query, basestring):
+            query = [query]
+
         if not isinstance(query, (tuple, list)):
             raise TypeError(
                 'query argument must be a list/tuple of filter ids')
 
-        f = {'and': self.family.II.intersection,
-             'or': self.family.II.union,
-             }[operator]
-    
-        rs = None
+        sets = []
         for id in self._filters.keys():
             if id in query:
                 docids = self._filters[id].getIds()
-                rs = f(rs, docids)
+                sets.append(docids)
+
+        if operator == 'or':
+            rs = self.family.IF.multiunion(sets)
+        elif operator == 'and':
+            # sort smallest to largest set so we intersect the smallest
+            # number of document identifiers possible
+            sets.sort(key=len)
+            rs = None
+            for set in sets:
+                rs = self.family.IF.intersection(rs, set)
+                if not rs:
+                    break
+        else:
+            raise TypeError('Topic index only supports `and` and `or` operators, not `%s`.' % operator)
             
-        if rs: return rs
-        else: return self.family.II.Set()
+        if rs:
+            return rs
+        else:
+            return self.family.IF.Set()
+
+    def apply(self, query):
+        operator = 'and'
+        if isinstance(query, dict):
+            if 'operator' in query:
+                operator = query.pop('operator')
+            query = query['query']
+        return self.search(query, operator=operator)

@@ -1,2 +1,1 @@
-#
-# This file is necessary to make this directory a package.
+from zope.index.topic.index import TopicIndex

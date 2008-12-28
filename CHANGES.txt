@@ -9,14 +9,19 @@ Changes
 - Define IIndexSort interface for indexes that support sorting and
   implement it in the FieldIndex.
 
-- Add an ``apply`` method for KeywordIndex, making it implementing
-  IIndexSearch that can be useful in catalog.
+- Add an ``apply`` method for KeywordIndex/TopicIndex, making them
+  implement IIndexSearch that can be useful in catalog.
 
-- Make KeywordIndex use IFSets instead of IISets. This makes it more
-  compatible with other indexes. 
+- Make KeywordIndex/TopicIndex use IFSets instead of IISets. This makes
+  it more compatible with other indexes.
+  
+  IMPORTANT: This change can lead to problems, if your code somehow
+  depends on the II nature of sets, as it was before. Also, TopicIndexes
+  have IISets pickled, their ``getIds`` method now checks if it's still
+  IISet and repickles it as IFSet.
 
-- Optimize the ``search`` method of KeywordIndex by using multiunion
-  for the ``or`` operator and sorting before intersection for ``and``.
+- Optimize the ``search`` method of KeywordIndex/TopicIndex by using
+  multiunion for the ``or`` operator and sorting before intersection for ``and``.
 
 Thanks Chris McDonough of repoze for supporting and useful code.
 

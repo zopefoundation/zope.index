@@ -46,6 +46,11 @@ class TopicIndexTest(TestCase):
             PythonFilteredSet('doc3', "context.meta_type == 'doc3'",
                               self.family))
 
+        self.index.addFilter(
+            PythonFilteredSet('compat', "context.meta_type == 'doc3'",
+                              self.family))
+        self.index._filters['compat']._ids = self.family.II.Set()
+
         self.index.index_doc(0 , O('doc0'))
         self.index.index_doc(1 , O('doc1'))
         self.index.index_doc(2 , O('doc1'))
@@ -64,6 +69,18 @@ class TopicIndexTest(TestCase):
          
     def _search_and(self, query, expected):
         return self._search(query, expected, 'and')
+
+    def _apply(self, query, expected, operator='and'):
+        result = self.index.apply(query)
+        self.assertEqual(result.keys(), expected)
+
+    def _apply_or(self, query, expected):
+        result = self.index.apply({'query': query, 'operator': 'or'})
+        self.assertEqual(result.keys(), expected)
+         
+    def _apply_and(self, query, expected):
+        result = self.index.apply({'query': query, 'operator': 'and'})
+        self.assertEqual(result.keys(), expected)
 
     def testInterfaces(self):
         for iface in implementedBy(PythonFilteredSet):
@@ -96,6 +113,31 @@ class TopicIndexTest(TestCase):
         self._search_and(['doc2'], [3,4])
         self._search_and(['doc1','doc2'], [])
 
+    def test_apply_or(self):
+        self._apply_or('doc1',  [1,2])
+        self._apply_or(['doc1'],[1,2])
+        self._apply_or('doc2',  [3,4]),
+        self._apply_or(['doc2'],[3,4])
+        self._apply_or(['doc1','doc2'], [1,2,3,4])
+
+    def test_apply_and(self):
+        self._apply_and('doc1',   [1,2])
+        self._apply_and(['doc1'], [1,2])
+        self._apply_and('doc2',   [3,4])
+        self._apply_and(['doc2'], [3,4])
+        self._apply_and(['doc1','doc2'], [])
+
+    def test_apply(self):
+        self._apply('doc1',   [1,2])
+        self._apply(['doc1'], [1,2])
+        self._apply('doc2',   [3,4])
+        self._apply(['doc2'], [3,4])
+        self._apply(['doc1','doc2'], [])
+
+    def test_compat(self):
+        result = self.index.search('compat')
+        self.assert_(isinstance(result, self.family.IF.Set))
+        self.assertEqual(result.keys(), [5, 6])
 
 class TopicIndexTest64(TopicIndexTest):
 
