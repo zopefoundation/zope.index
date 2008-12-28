@@ -125,27 +125,25 @@ values.
     >>> index.index_doc(8, 2)
     >>> index.index_doc(9, 1)
 
-    >>> list(index.sort([4, 2, 9, 7, 4, 1, 5]))
-    [9, 7, 5, 4, 4, 2, 1]
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5]))
+    [9, 7, 5, 4, 3, 2, 1]
 
 We can also specify the ``reverse`` argument to reverse results:
 
-    >>> list(index.sort([4, 2, 9, 7, 4, 1, 5], reverse=True))
-    [1, 2, 4, 4, 5, 7, 9]
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], reverse=True))
+    [1, 2, 3, 4, 5, 7, 9]
 
 And as per IIndexSort, we can limit results by specifying the ``limit``
 argument:
 
-    >>> list(index.sort([4, 2, 9, 7, 4, 1, 5], limit=3)) 
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], limit=3)) 
     [9, 7, 5]
 
-If we pass an id that is not indexed by this index, the
-KeyError is raised as Interface declares:
+If we pass an id that is not indexed by this index, it won't be included
+in the result.
 
-    >>> list(index.sort([10]))
-    Traceback (most recent call last):
-    ...
-    KeyError: 'docid 10 is not indexed by <zope.index.field.index.FieldIndex object at 0x...>'
+    >>> list(index.sort([2, 10]))
+    [2]
 
     >>> index.clear()
 

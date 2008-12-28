@@ -6,8 +6,9 @@ Changes
 
 - Remove zope.testing from dependencies, as it's not really needed.
 
-- Define IIndexSort interface for indexes that support sorting and
-  implement it in the FieldIndex.
+- Define IIndexSort interface for indexes that support sorting.
+
+- Implement sorting for FieldIndex (adapted from repoze.catalog/ZCatalog).
 
 - Add an ``apply`` method for KeywordIndex/TopicIndex, making them
   implement IIndexSearch that can be useful in catalog.
