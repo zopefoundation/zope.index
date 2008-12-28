@@ -16,7 +16,7 @@ Changes
   it more compatible with other indexes.
   
   IMPORTANT: This change can lead to problems, if your code somehow
-  depends on the II nature of sets, as it was before. Also, TopicIndexes
+  depends on the II nature of sets, as it was before. Also, FilteredSets
   have IISets pickled, their ``getIds`` method now checks if it's still
   IISet and repickles it as IFSet.
 
