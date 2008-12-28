@@ -1,1 +1,1 @@
-from zope.index.keyword.index import KeywordIndex
+from zope.index.keyword.index import KeywordIndex, CaseSensitiveKeywordIndex
