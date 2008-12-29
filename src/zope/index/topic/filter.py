@@ -36,19 +36,21 @@ class FilteredSetBase(object):
     def __init__(self, id, expr, family=None):
         if family is not None:
             self.family = family
-        self.id   = id
+        self.id = id
         self.expr = expr
         self.clear()
 
     def clear(self):
-        self._ids = self.family.II.Set()
+        self._ids = self.family.IF.Set()
 
     def index_doc(self, docid, context):
         raise NotImplementedError
 
     def unindex_doc(self, docid):
-        try: self._ids.remove(docid)
-        except KeyError: pass
+        try:
+            self._ids.remove(docid)
+        except KeyError:
+            pass
 
     def getId(self):            
         return self.id
@@ -59,11 +61,11 @@ class FilteredSetBase(object):
     def setExpression(self, expr): 
         self.expr = expr
 
-    def getIds(self): 
+    def getIds(self):
         return self._ids
 
     def __repr__(self):
-        return '%s: (%s) %s' % (self.id, self.expr, map(None, self._ids))
+        return '%s: (%s) %s' % (self.id, self.expr, list(self._ids))
 
     __str__ = __repr__
 
@@ -73,6 +75,7 @@ class PythonFilteredSet(FilteredSetBase):
 
     def index_doc(self, docid, context):
         try:
-            if eval(self.expr): self._ids.insert(docid)
+            if eval(self.expr):
+                self._ids.insert(docid)
         except:
             pass  # ignore errors 

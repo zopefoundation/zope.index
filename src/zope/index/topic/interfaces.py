@@ -25,7 +25,7 @@ class ITopicQuerying(Interface):
           'operator' can be 'and' or 'or' to search for matches in all
            or any filter.
 
-           Return an IISet of docids
+           Return an IFSet of docids
         """
 
 class ITopicFilteredSet(Interface):
@@ -50,4 +50,4 @@ class ITopicFilteredSet(Interface):
         """Return the filter expression."""
 
     def getIds():
-        """Return an IISet of docids."""
+        """Return an IFSet of docids."""

@@ -27,5 +27,5 @@ class IKeywordQuerying(Interface):
         'operator' can be either 'and' or 'or' to search for documents
         containing all keywords or any keyword. 
 
-        Return an IISet of docids
+        Return an IFSet of docids
         """

@@ -108,6 +108,45 @@ We can also clear the index entirely:
     >>> index.apply((30, 70))
     IFSet([])
 
+Sorting
+-------
+
+Field indexes also implement IIndexSort interface that
+provides a method for sorting document ids by their indexed
+values.
+
+    >>> index.index_doc(1, 9)
+    >>> index.index_doc(2, 8)
+    >>> index.index_doc(3, 7)
+    >>> index.index_doc(4, 6)
+    >>> index.index_doc(5, 5)
+    >>> index.index_doc(6, 4)
+    >>> index.index_doc(7, 3)
+    >>> index.index_doc(8, 2)
+    >>> index.index_doc(9, 1)
+
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5]))
+    [9, 7, 5, 4, 3, 2, 1]
+
+We can also specify the ``reverse`` argument to reverse results:
+
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], reverse=True))
+    [1, 2, 3, 4, 5, 7, 9]
+
+And as per IIndexSort, we can limit results by specifying the ``limit``
+argument:
+
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], limit=3)) 
+    [9, 7, 5]
+
+If we pass an id that is not indexed by this index, it won't be included
+in the result.
+
+    >>> list(index.sort([2, 10]))
+    [2]
+
+    >>> index.clear()
+
 Bugfix testing:
 ---------------
 Happened at least once that the value dropped out of the forward index,

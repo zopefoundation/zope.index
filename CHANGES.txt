@@ -1,15 +1,40 @@
 Changes
 =======
 
-3.4.2 (unreleased)
+3.5.0 (unreleased)
 ------------------
 
-Remove zope.testing from dependencies, as it's not really needed.
+- Remove zope.testing from dependencies, as it's not really needed.
+
+- Define IIndexSort interface for indexes that support sorting.
+
+- Implement sorting for FieldIndex (adapted from repoze.catalog/ZCatalog).
+
+- Add an ``apply`` method for KeywordIndex/TopicIndex, making them
+  implement IIndexSearch that can be useful in catalog.
+
+- Optimize the ``search`` method of KeywordIndex/TopicIndex by using
+  multiunion for the ``or`` operator and sorting before intersection for ``and``.
+
+- IMPORTANT: KeywordIndex/TopicIndex now use IFSets instead of IISets.
+  This makes it more compatible with other indexes (for example, when
+  using in catalog). This change can lead to problems, if your code somehow
+  depends on the II nature of sets, as it was before.
+  
+  Also, FilteredSets used to use IFSets as well, if you have any
+  FilteredSets pickled in the database, you need to migrate them to
+  IFSets yourself. You can do it like that:
+  
+      filter._ids = filter.family.IF.Set(filter._ids)
+  
+  Where ``filter`` is an instance of FilteredSet.
+
+Thanks Chris McDonough of repoze for supporting and useful code.
 
 3.4.1 (2007-09-28)
 ------------------
 
-Fixed bug in package metadata (wrong homepage URL).
+- Fixed bug in package metadata (wrong homepage URL).
 
 3.4.0 (2007-09-28)
 ------------------

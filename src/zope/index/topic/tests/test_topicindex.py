@@ -65,6 +65,18 @@ class TopicIndexTest(TestCase):
     def _search_and(self, query, expected):
         return self._search(query, expected, 'and')
 
+    def _apply(self, query, expected, operator='and'):
+        result = self.index.apply(query)
+        self.assertEqual(result.keys(), expected)
+
+    def _apply_or(self, query, expected):
+        result = self.index.apply({'query': query, 'operator': 'or'})
+        self.assertEqual(result.keys(), expected)
+         
+    def _apply_and(self, query, expected):
+        result = self.index.apply({'query': query, 'operator': 'and'})
+        self.assertEqual(result.keys(), expected)
+
     def testInterfaces(self):
         for iface in implementedBy(PythonFilteredSet):
             verifyClass(iface, PythonFilteredSet)
@@ -96,6 +108,26 @@ class TopicIndexTest(TestCase):
         self._search_and(['doc2'], [3,4])
         self._search_and(['doc1','doc2'], [])
 
+    def test_apply_or(self):
+        self._apply_or('doc1',  [1,2])
+        self._apply_or(['doc1'],[1,2])
+        self._apply_or('doc2',  [3,4]),
+        self._apply_or(['doc2'],[3,4])
+        self._apply_or(['doc1','doc2'], [1,2,3,4])
+
+    def test_apply_and(self):
+        self._apply_and('doc1',   [1,2])
+        self._apply_and(['doc1'], [1,2])
+        self._apply_and('doc2',   [3,4])
+        self._apply_and(['doc2'], [3,4])
+        self._apply_and(['doc1','doc2'], [])
+
+    def test_apply(self):
+        self._apply('doc1',   [1,2])
+        self._apply(['doc1'], [1,2])
+        self._apply('doc2',   [3,4])
+        self._apply(['doc2'], [3,4])
+        self._apply(['doc1','doc2'], [])
 
 class TopicIndexTest64(TopicIndexTest):
 

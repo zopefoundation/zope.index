@@ -82,6 +82,19 @@ class IIndexSearch(Interface):
 
         """
 
+class IIndexSort(Interface):
+
+    def sort(docids, limit=None, reverse=False):
+        """Sort document ids sequence using indexed values
+        
+        If some of docids are not indexed they are skipped
+        from resulting iterable.
+        
+        Return an iterable of document ids. Limited by
+        value of the "limit" argument and optionally
+        reversed, using the "reverse" argument.
+        """
+
 class IStatistics(Interface):
     """An index that provides statistical information about itself."""
 
