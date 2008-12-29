@@ -46,11 +46,6 @@ class TopicIndexTest(TestCase):
             PythonFilteredSet('doc3', "context.meta_type == 'doc3'",
                               self.family))
 
-        self.index.addFilter(
-            PythonFilteredSet('compat', "context.meta_type == 'doc3'",
-                              self.family))
-        self.index._filters['compat']._ids = self.family.II.Set()
-
         self.index.index_doc(0 , O('doc0'))
         self.index.index_doc(1 , O('doc1'))
         self.index.index_doc(2 , O('doc1'))
@@ -133,11 +128,6 @@ class TopicIndexTest(TestCase):
         self._apply('doc2',   [3,4])
         self._apply(['doc2'], [3,4])
         self._apply(['doc1','doc2'], [])
-
-    def test_compat(self):
-        result = self.index.search('compat')
-        self.assert_(isinstance(result, self.family.IF.Set))
-        self.assertEqual(result.keys(), [5, 6])
 
 class TopicIndexTest64(TopicIndexTest):
 

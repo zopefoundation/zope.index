@@ -13,16 +13,21 @@ Changes
 - Add an ``apply`` method for KeywordIndex/TopicIndex, making them
   implement IIndexSearch that can be useful in catalog.
 
-- Make KeywordIndex/TopicIndex use IFSets instead of IISets. This makes
-  it more compatible with other indexes.
-  
-  IMPORTANT: This change can lead to problems, if your code somehow
-  depends on the II nature of sets, as it was before. Also, FilteredSets
-  have IISets pickled, their ``getIds`` method now checks if it's still
-  IISet and repickles it as IFSet.
-
 - Optimize the ``search`` method of KeywordIndex/TopicIndex by using
   multiunion for the ``or`` operator and sorting before intersection for ``and``.
+
+- IMPORTANT: KeywordIndex/TopicIndex now use IFSets instead of IISets.
+  This makes it more compatible with other indexes (for example, when
+  using in catalog). This change can lead to problems, if your code somehow
+  depends on the II nature of sets, as it was before.
+  
+  Also, FilteredSets used to use IFSets as well, if you have any
+  FilteredSets pickled in the database, you need to migrate them to
+  IFSets yourself. You can do it like that:
+  
+      filter._ids = filter.family.IF.Set(filter._ids)
+  
+  Where ``filter`` is an instance of FilteredSet.
 
 Thanks Chris McDonough of repoze for supporting and useful code.
 

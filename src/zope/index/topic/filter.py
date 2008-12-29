@@ -62,11 +62,6 @@ class FilteredSetBase(object):
         self.expr = expr
 
     def getIds(self):
-        if isinstance(self._ids, self.family.II.Set):
-            # Backward-compatibility. If there was an
-            # IISet ids, repickle it as IFSet.
-            # XXX Is that okay?
-            self._ids = self.family.IF.Set(self._ids)
         return self._ids
 
     def __repr__(self):
