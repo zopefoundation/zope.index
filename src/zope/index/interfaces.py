@@ -84,7 +84,7 @@ class IIndexSearch(Interface):
 
 class IIndexSort(Interface):
 
-    def sort(docids, limit=None, reverse=False):
+    def sort(docids, reverse=False, limit=None):
         """Sort document ids sequence using indexed values
         
         If some of docids are not indexed they are skipped

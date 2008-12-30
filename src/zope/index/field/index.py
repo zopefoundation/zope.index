@@ -110,7 +110,7 @@ class FieldIndex(persistent.Persistent):
         return self.family.IF.multiunion(
             self._fwd_index.values(*query))
 
-    def sort(self, docids, limit=None, reverse=False):
+    def sort(self, docids, reverse=False, limit=None):
         if (limit is not None) and (limit < 1):
             raise ValueError('limit value must be 1 or greater')
 
