@@ -16,8 +16,8 @@ from unittest import TestCase, TestSuite, main, makeSuite
 
 import BTrees
 
-from zope.index.keyword.index import KeywordIndex
-from zope.index.interfaces import IInjection, IStatistics
+from zope.index.keyword.index import CaseInsensitiveKeywordIndex
+from zope.index.interfaces import IInjection, IStatistics, IIndexSearch
 from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface.verify import verifyClass
 
@@ -26,7 +26,7 @@ class KeywordIndexTest(TestCase):
     from BTrees.IFBTree import IFSet
 
     def setUp(self):
-        self.index = KeywordIndex()
+        self.index = CaseInsensitiveKeywordIndex()
 
     def _populate_index(self):
 
@@ -38,13 +38,11 @@ class KeywordIndexTest(TestCase):
 
 
     def _search(self, query, expected, mode='and'):
-
         results = self.index.search(query, mode)
 
         # results and expected are IFSets() but we can not
         # compare them directly since __eq__() does not seem
         # to be implemented for BTrees
-
         self.assertEqual(results.keys(), expected.keys())
 
     def _search_and(self, query, expected):
@@ -66,9 +64,10 @@ class KeywordIndexTest(TestCase):
         self.assertEqual(results.keys(), expected.keys())
 
     def test_interface(self):
-        verifyClass(IInjection, KeywordIndex)
-        verifyClass(IStatistics, KeywordIndex)
-        verifyClass(IKeywordQuerying, KeywordIndex)
+        verifyClass(IInjection, CaseInsensitiveKeywordIndex)
+        verifyClass(IStatistics, CaseInsensitiveKeywordIndex)
+        verifyClass(IIndexSearch, CaseInsensitiveKeywordIndex)
+        verifyClass(IKeywordQuerying, CaseInsensitiveKeywordIndex)
 
     def test_empty_index(self):
         self.assertEqual(self.index.documentCount(), 0)
@@ -167,7 +166,7 @@ class KeywordIndexTest64(KeywordIndexTest):
     from BTrees.LFBTree import LFSet as IFSet
 
     def setUp(self):
-        self.index = KeywordIndex(family=BTrees.family64)
+        self.index = CaseInsensitiveKeywordIndex(family=BTrees.family64)
 
 
 def test_suite():

@@ -29,6 +29,28 @@ Changes
   
   Where ``filter`` is an instance of FilteredSet.
 
+- IMPORTANT: KeywordIndex are now non-normalizing. Because
+  it can be useful for non-string keywords, where case-normalizing
+  doesn't make any sense. Instead, it provides the ``normalize``
+  method that can be overriden by subclasses to provide some
+  normalization.
+  
+  The CaseInsensitiveKeywordIndex class is now provided that
+  do case-normalization for string-based keywords. The old
+  CaseSensitiveKeywordIndex is gone, applications should use
+  KeywordIndex for that.
+
+Looks like the KeywordIndex/TopicIndex was sort of abadonware
+and wasn't used by application developers, so after some
+discussion we decided to refactor them to make them more
+usable, optimal and compatible with other indexes and catalog.
+
+Porting application from old KeywordIndex/TopicIndex to new
+ones are rather easy and explained above, so we believe that
+it isn't a problem. Please, use zope3-users@zope.org or
+zope-dev@zope.org mailing lists, if you have any problems
+with migration.
+
 Thanks Chris McDonough of repoze for supporting and useful code.
 
 3.4.1 (2007-09-28)

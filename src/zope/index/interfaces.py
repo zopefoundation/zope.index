@@ -90,7 +90,7 @@ class IIndexSort(Interface):
         If some of docids are not indexed they are skipped
         from resulting iterable.
         
-        Return an iterable of document ids. Limited by
+        Return a sorted iterable of document ids. Limited by
         value of the "limit" argument and optionally
         reversed, using the "reverse" argument.
         """

@@ -27,11 +27,10 @@ from zope.interface import implements
 
 
 class KeywordIndex(Persistent):
-    """ A case-insensitive keyword index """
+    """Keyword index"""
 
-    family = BTrees.family32
-    normalize = True
     implements(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
+    family = BTrees.family32
 
     def __init__(self, family=None):
         if family is not None:
@@ -61,6 +60,15 @@ class KeywordIndex(Persistent):
     def has_doc(self, docid):
         return bool(self._rev_index.has_key(docid))
 
+    def normalize(self, seq):
+        """Perform normalization on sequence of keywords.
+        
+        Return normalized sequence. This method may be
+        overriden by subclasses.
+        
+        """
+        return seq
+
     def index_doc(self, docid, seq):
         if isinstance(seq, basestring):
             raise TypeError('seq argument must be a list/tuple of strings')
@@ -68,8 +76,7 @@ class KeywordIndex(Persistent):
         if not seq:
             return
 
-        if self.normalize:
-            seq = [w.lower() for w in seq]
+        seq = self.normalize(seq)
 
         old_kw = self._rev_index.get(docid, None)
         new_kw = self.family.OO.Set(seq)
@@ -131,8 +138,7 @@ class KeywordIndex(Persistent):
         if isinstance(query, basestring):
             query = [query]
 
-        if self.normalize:
-            query = [w.lower() for w in query]
+        query = self.normalize(query)
 
         sets = []
         for word in query:
@@ -166,6 +172,8 @@ class KeywordIndex(Persistent):
             query = query['query']
         return self.search(query, operator=operator)
 
-class CaseSensitiveKeywordIndex(KeywordIndex):
-    """ A case-sensitive keyword index """
-    normalize = False        
+class CaseInsensitiveKeywordIndex(KeywordIndex):
+    """A case-normalizing keyword index (for strings as keywords)"""
+
+    def normalize(self, seq):
+        return [w.lower() for w in seq]
