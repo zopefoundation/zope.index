@@ -1,7 +1,12 @@
 Changes
 =======
 
-3.5.0 (unreleased)
+3.5.1 (unreleased)
+------------------
+
+- ...
+
+3.5.0 (2008-12-30)
 ------------------
 
 - Remove zope.testing from dependencies, as it's not really needed.

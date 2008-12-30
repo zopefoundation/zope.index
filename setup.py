@@ -22,11 +22,11 @@ long_description = (open('README.txt').read() +
                     open('CHANGES.txt').read())
 
 setup(name='zope.index',
-      version='3.4.2dev',
+      version='3.5.1dev',
       url='http://pypi.python.org/pypi/zope.index',
       license='ZPL 2.1',
       author='Zope Corporation and Contributors',
-      author_email='zope3-dev@zope.org',
+      author_email='zope-dev@zope.org',
       description="Indices for using with catalog like text, field, etc.",
       long_description=long_description,
       packages=find_packages('src'),
