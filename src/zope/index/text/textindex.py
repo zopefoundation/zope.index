@@ -16,6 +16,8 @@
 $Id$
 """
 
+import sys
+
 from persistent import Persistent
 from zope.interface import implements
 
