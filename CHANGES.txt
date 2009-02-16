@@ -4,7 +4,10 @@ Changes
 3.5.1 (unreleased)
 ------------------
 
-- ...
+- The baseindex, okapiindex, and lexicon used plain counters for various
+  lengths, which is unsuitable for production applications.
+  Backport code from Zope2 indexes which opportunistically replaces the
+  counters with BTree.Length objects.
 
 3.5.0 (2008-12-30)
 ------------------
