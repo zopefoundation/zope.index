@@ -72,6 +72,7 @@ class BaseIndex(Persistent):
 
         # Use a BTree length for efficient length computation w/o conflicts
         self.wordCount = Length.Length()
+        self.documentCount = Length.Length()
 
     def clear(self):
         self.__init__(self._lexicon)
@@ -83,6 +84,7 @@ class BaseIndex(Persistent):
 
     def documentCount(self):
         """Return the number of documents in the index."""
+        # overridden per instance
         return len(self._docweight)
 
     def get_words(self, docid):
@@ -99,6 +101,11 @@ class BaseIndex(Persistent):
         self._mass_add_wordinfo(wid2weight, docid)
         self._docweight[docid] = docweight
         self._docwords[docid] = widcode.encode(wids)
+        try:
+            self.documentCount.change(1)
+        except AttributeError:
+            # upgrade documentCount to Length object
+            self.documentCount = Length.Length(self.documentCount())
         return len(wids)
 
     # A subclass may wish to extend or override this.  This is for adjusting
@@ -106,16 +113,11 @@ class BaseIndex(Persistent):
     # faster than simply unindexing the old version in its entirety and then
     # adding the new version in its entirety.
     def _reindex_doc(self, docid, text):
-
         # Touch as few docid->w(docid, score) maps in ._wordinfo as possible.
         old_wids = self.get_words(docid)
-        new_wids = self._lexicon.sourceToWordIds(text)
-
-        if old_wids == new_wids:
-            # we return -1 if not changed
-            return -1
-        
         old_wid2w, old_docw = self._get_frequencies(old_wids)
+
+        new_wids = self._lexicon.sourceToWordIds(text)
         new_wid2w, new_docw = self._get_frequencies(new_wids)
 
         old_widset = self.family.IF.TreeSet(old_wid2w.keys())
@@ -168,6 +170,11 @@ class BaseIndex(Persistent):
             self._del_wordinfo(wid, docid)
         del self._docwords[docid]
         del self._docweight[docid]
+        try:
+            self.documentCount.change(-1)
+        except AttributeError:
+            # upgrade documentCount to Length object
+            self.documentCount = Length.Length(self.documentCount())
 
     def search(self, term):
         wids = self._lexicon.termToWordIds(term)

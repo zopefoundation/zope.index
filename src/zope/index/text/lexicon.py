@@ -21,6 +21,7 @@ from zope.interface import implements
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OIBTree import OIBTree
+from BTrees.Length import Length
 
 from persistent import Persistent
 
@@ -32,7 +33,6 @@ from zope.index.text.parsetree import QueryError
 class Lexicon(Persistent):
 
     implements(ILexicon)
-
     def __init__(self, *pipeline):
         self._wids = OIBTree()  # word -> wid
         self._words = IOBTree() # wid -> word
@@ -41,16 +41,13 @@ class Lexicon(Persistent):
         # we never saw before, and that isn't a known stopword (or otherwise
         # filtered out).  Returning a special wid value for OOV words is a
         # way to let clients know when an OOV word appears.
-        self._nextwid = 1
+        self.wordCount = Length()
         self._pipeline = pipeline
-
-        # Keep some statistics about indexing
-        self._nbytes = 0 # Number of bytes indexed (at start of pipeline)
-        self._nwords = 0 # Number of words indexed (after pipeline)
 
     def wordCount(self):
         """Return the number of unique terms in the lexicon."""
-        return self._nextwid - 1
+        # overridden per instance
+        return len(self._wids)
 
     def words(self):
         return self._wids.keys()
@@ -63,11 +60,16 @@ class Lexicon(Persistent):
 
     def sourceToWordIds(self, text):
         last = _text2list(text)
-        for t in last:
-            self._nbytes += len(t)
         for element in self._pipeline:
             last = element.process(last)
-        self._nwords += len(last)
+        if not hasattr(self.wordCount, 'change'):
+            # Make sure wordCount is overridden with a BTrees.Length.Length
+            self.wordCount = Length(self.wordCount())        
+        # Strategically unload the length value so that we get the most
+        # recent value written to the database to minimize conflicting wids
+        # Because length is independent, this will load the most
+        # recent value stored, regardless of whether MVCC is enabled
+        self.wordCount._p_deactivate()
         return map(self._getWordIdCreate, last)
 
     def termToWordIds(self, text):
@@ -142,9 +144,14 @@ class Lexicon(Persistent):
         return wid
 
     def _new_wid(self):
-        wid = self._nextwid
-        self._nextwid += 1
-        return wid
+        count = self.wordCount
+        try:
+            count.change(1)
+        except AttributeError:
+            count = self.wordCount = Length.Length(count())
+        while self._words.has_key(count()): # just to be safe
+            count.change(1)
+        return count()
 
 def _text2list(text):
     # Helper: splitter input may be a string or a list of strings
