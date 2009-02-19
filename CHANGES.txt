@@ -9,6 +9,10 @@ Changes
   Backport code from Zope2 indexes which opportunistically replaces the
   counters with BTree.Length objects.
 
+- Backport non-insane version of baseindex._del_wordinfo from
+  Zope2 text index.  This improves deletion performance by
+  several orders of magnitude.
+
 3.5.0 (2008-12-30)
 ------------------
 
