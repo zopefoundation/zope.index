@@ -292,21 +292,14 @@ class BaseIndex(Persistent):
             self._wordinfo[wid] = doc2score # not redundant:  Persistency!
         self.wordCount.change(new_word_count)
 
-
     def _del_wordinfo(self, wid, docid):
         doc2score = self._wordinfo[wid]
         del doc2score[docid]
-        numdocs = len(doc2score)
-        if numdocs == 0:
+        if doc2score:
+            self._wordinfo[wid] = doc2score # not redundant:  Persistency!
+        else:
             del self._wordinfo[wid]
             self.wordCount.change(-1)
-            return
-        if numdocs == self.DICT_CUTOFF:
-            new = {}
-            for k, v in doc2score.items():
-                new[k] = v
-            doc2score = new
-        self._wordinfo[wid] = doc2score # not redundant:  Persistency!
 
 def inverse_doc_frequency(term_count, num_items):
     """Return the inverse doc frequency for a term,
