@@ -13,6 +13,8 @@ Changes
   Zope2 text index.  This improves deletion performance by
   several orders of magnitude.
 
+- Don't modify given query dictionary in the KeywordIndex.apply method.
+
 3.5.0 (2008-12-30)
 ------------------
 

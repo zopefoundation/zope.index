@@ -168,7 +168,7 @@ class KeywordIndex(Persistent):
         operator = 'and'
         if isinstance(query, dict):
             if 'operator' in query:
-                operator = query.pop('operator')
+                operator = query['operator']
             query = query['query']
         return self.search(query, operator=operator)
 
