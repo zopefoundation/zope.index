@@ -1,7 +1,12 @@
 Changes
 =======
 
-3.5.1 (unreleased)
+3.5.2 (unreleased)
+------------------
+
+- ...
+
+3.5.1 (2009-02-27)
 ------------------
 
 - The baseindex, okapiindex, and lexicon used plain counters for various
