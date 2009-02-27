@@ -15,6 +15,9 @@ Changes
 
 - Don't modify given query dictionary in the KeywordIndex.apply method.
 
+- Move FieldIndex's sorting functionality to a mixin class so it can
+  be reused by zc.catalog's ValueIndex.
+
 3.5.0 (2008-12-30)
 ------------------
 
