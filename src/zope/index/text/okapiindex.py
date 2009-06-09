@@ -193,6 +193,10 @@ $Id$
 """
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
+try:
+    from zope.index.text.okascore import score
+except ImportError:
+    score = None
 from BTrees.Length import Length
 
 class OkapiIndex(BaseIndex):
@@ -251,83 +255,86 @@ class OkapiIndex(BaseIndex):
     # D to TF(D,t)*IDF(t) directly, where the product is computed as a float.
     # NOTE:  This may be overridden below, by a function that computes the
     # same thing but with the inner scoring loop in C.
-    def _search_wids(self, wids):
-        if not wids:
-            return []
-        N = float(len(self._docweight))  # total # of docs
-        try:
-            doclen = self._totaldoclen()
-        except TypeError:
-            # _totaldoclen has not yet been upgraded
-            doclen = self._totaldoclen
-        meandoclen = doclen / N
-        K1 = self.K1
-        B = self.B
-        K1_plus1 = K1 + 1.0
-        B_from1 = 1.0 - B
+    if score is None:
+        def _search_wids(self, wids):
+            if not wids:
+                return []
+            N = float(self.documentCount())  # total # of docs
+            try:
+                doclen = self._totaldoclen()
+            except TypeError:
+                # _totaldoclen has not yet been upgraded
+                doclen = self._totaldoclen
+            meandoclen = doclen / N
+            K1 = self.K1
+            B = self.B
+            K1_plus1 = K1 + 1.0
+            B_from1 = 1.0 - B
 
-        #                           f(D, t) * (k1 + 1)
-        #   TF(D, t) =  -------------------------------------------
-        #               f(D, t) + k1 * ((1-b) + b*len(D)/E(len(D)))
+            #                           f(D, t) * (k1 + 1)
+            #   TF(D, t) =  -------------------------------------------
+            #               f(D, t) + k1 * ((1-b) + b*len(D)/E(len(D)))
 
-        L = []
-        docid2len = self._docweight
-        for t in wids:
-            d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
-            idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = self.family.IF.Bucket()
-            for docid, f in d2f.items():
-                lenweight = B_from1 + B * docid2len[docid] / meandoclen
-                tf = f * K1_plus1 / (f + K1 * lenweight)
-                result[docid] = tf * idf
-            L.append((result, 1))
-        return L
+            L = []
+            docid2len = self._docweight
+            for t in wids:
+                d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
+                idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
+                result = self.family.IF.Bucket()
+                for docid, f in d2f.items():
+                    lenweight = B_from1 + B * docid2len[docid] / meandoclen
+                    tf = f * K1_plus1 / (f + K1 * lenweight)
+                    result[docid] = tf * idf
+                L.append((result, 1))
+            return L
 
-        # Note about the above:  the result is tf * idf.  tf is small -- it
-        # can't be larger than k1+1 = 2.2.  idf is formally unbounded, but
-        # is less than 14 for a term that appears in only 1 of a million
-        # documents.  So the product is probably less than 32, or 5 bits
-        # before the radix point.  If we did the scaled-int business on
-        # both of them, we'd be up to 25 bits.  Add 64 of those and we'd
-        # be in overflow territory.  That's pretty unlikely, so we *could*
-        # just store scaled_int(tf) in result[docid], and use scaled_int(idf)
-        # as an invariant weight across the whole result.  But besides
-        # skating near the edge, it's not a speed cure, since the computation
-        # of tf would still be done at Python speed, and it's a lot more
-        # work than just multiplying by idf.
+            # Note about the above: the result is tf * idf.  tf is
+            # small -- it can't be larger than k1+1 = 2.2.  idf is
+            # formally unbounded, but is less than 14 for a term that
+            # appears in only 1 of a million documents.  So the
+            # product is probably less than 32, or 5 bits before the
+            # radix point.  If we did the scaled-int business on both
+            # of them, we'd be up to 25 bits.  Add 64 of those and
+            # we'd be in overflow territory.  That's pretty unlikely,
+            # so we *could* just store scaled_int(tf) in
+            # result[docid], and use scaled_int(idf) as an invariant
+            # weight across the whole result.  But besides skating
+            # near the edge, it's not a speed cure, since the
+            # computation of tf would still be done at Python speed,
+            # and it's a lot more work than just multiplying by idf.
+    else:
+        # The same function as _search_wids above, but with the inner scoring
+        # loop written in C (module okascore, function score()).
+        # Cautions:  okascore hardcodes the values of K, B1, and the scaled_int
+        # function.
+        def _search_wids(self, wids):
+            if not wids:
+                return []
+            N = float(self.documentCount())  # total # of docs
+            try:
+                doclen = self._totaldoclen()
+            except TypeError:
+                # _totaldoclen has not yet been upgraded
+                doclen = self._totaldoclen
+            meandoclen = doclen / N
+            #K1 = self.K1
+            #B = self.B
+            #K1_plus1 = K1 + 1.0
+            #B_from1 = 1.0 - B
 
-    # The same function as _search_wids above, but with the inner scoring
-    # loop written in C (module okascore, function score()).
-    # Cautions:  okascore hardcodes the values of K, B1, and the scaled_int
-    # function.
-    def _search_wids_NOTYET(self, wids):
-        if not wids:
-            return []
-        N = float(len(self._docweight))  # total # of docs
-        try:
-            doclen = self._totaldoclen()
-        except TypeError:
-            # _totaldoclen has not yet been upgraded
-            doclen = self._totaldoclen
-        meandoclen = doclen / N
-        #K1 = self.K1
-        #B = self.B
-        #K1_plus1 = K1 + 1.0
-        #B_from1 = 1.0 - B
+            #                           f(D, t) * (k1 + 1)
+            #   TF(D, t) =  -------------------------------------------
+            #               f(D, t) + k1 * ((1-b) + b*len(D)/E(len(D)))
 
-        #                           f(D, t) * (k1 + 1)
-        #   TF(D, t) =  -------------------------------------------
-        #               f(D, t) + k1 * ((1-b) + b*len(D)/E(len(D)))
-
-        L = []
-        docid2len = self._docweight
-        for t in wids:
-            d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
-            idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
-            result = self.family.IF.Bucket()
-            score(result, d2f.items(), docid2len, idf, meandoclen)
-            L.append((result, 1))
-        return L
+            L = []
+            docid2len = self._docweight
+            for t in wids:
+                d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
+                idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
+                result = self.family.IF.Bucket()
+                score(result, d2f.items(), docid2len, idf, meandoclen)
+                L.append((result, 1))
+            return L
 
     def query_weight(self, terms):
         # Get the wids.

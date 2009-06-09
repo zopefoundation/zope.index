@@ -4,7 +4,13 @@ Changes
 3.5.2 (unreleased)
 ------------------
 
-- ...
+- Port okascore.c optimization used in okapiiindex from Zope2 catalog
+  implementation.  This module is compiled conditionally, based on
+  whether your environment has a working C compiler.
+
+- Don't use ``len(self._docweight)`` in okapiindex _search_wids method
+  (obtaining the length of a BTree is very expensive at scale).
+  Instead use self.documentCount().  Also a Zope2 port.
 
 3.5.1 (2009-02-27)
 ------------------
