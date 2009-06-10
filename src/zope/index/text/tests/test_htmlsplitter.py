@@ -70,6 +70,11 @@ class HTMLWordSplitterTests(unittest.TestCase):
         self.assertEqual(splitter.process(['<h1>abc</h1> &nbsp; <p>def</p>']),
                          ['abc', 'def'])
 
+    def test_process_w_markup_no_spaces(self):
+        splitter = self._makeOne()
+        self.assertEqual(splitter.process(['<h1>abc</h1>&nbsp;<p>def</p>']),
+                         ['abc', 'def'])
+
     def test_process_no_markup_w_glob(self):
         splitter = self._makeOne()
         self.assertEqual(splitter.process(['abc?def hij*klm nop* qrs?']),

@@ -43,5 +43,5 @@ class HTMLWordSplitter(object):
         return result
 
     def _split(self, text, pattern):
-        text = MARKUP.sub('', text.lower())
+        text = MARKUP.sub(' ', text.lower())
         return pattern.findall(text)
