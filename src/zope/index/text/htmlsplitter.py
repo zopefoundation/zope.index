@@ -21,24 +21,27 @@ from zope.interface import implements
 
 from zope.index.text.interfaces import ISplitter
 
+MARKUP = re.compile(r"(<[^<>]*>|&[A-Za-z]+;)")
+WORDS = re.compile(r"(?L)\w+")
+GLOBS = re.compile(r"(?L)\w+[\w*?]*")
+
 class HTMLWordSplitter(object):
 
     implements(ISplitter)
 
-    def process(self, text, wordpat=r"(?L)\w+"):
-        splat = []
-        for t in text:
-            splat += self._split(t, wordpat)
-        return splat
+    def process(self, text):
+        return self._apply(text, WORDS)
 
     def processGlob(self, text):
         # see Lexicon.globToWordIds()
-        return self.process(text, r"(?L)\w+[\w*?]*")
+        return self._apply(text, GLOBS)
 
-    def _split(self, text, wordpat):
-        text = text.lower()
-        remove = [r"<[^<>]*>",
-                  r"&[A-Za-z]+;"]
-        for pat in remove:
-            text = re.sub(pat, " ", text)
-        return re.findall(wordpat, text)
+    def _apply(self, text, pattern):
+        result = []
+        for chunk in text:
+            result.extend(self._split(chunk, pattern))
+        return result
+
+    def _split(self, text, pattern):
+        text = MARKUP.sub('', text.lower())
+        return pattern.findall(text)
