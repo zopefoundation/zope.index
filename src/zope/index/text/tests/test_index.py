@@ -15,178 +15,211 @@
 
 $Id$
 """
-from unittest import TestCase, TestSuite, main, makeSuite
+import unittest
 
-import BTrees
+class IndexTestBase:
+    # Subclasses must define '_getTargetClass' and '_getBTreesFamily'
+    def _makeOne(self):
+        from zope.index.text.lexicon import Lexicon
+        from zope.index.text.lexicon import Splitter
+        lexicon = Lexicon(Splitter())
+        return self._getTargetClass()(lexicon, family=self._getBTreesFamily())
 
-from zope.index.text.lexicon import Lexicon, Splitter
-from zope.index.text.cosineindex import CosineIndex
-from zope.index.text.okapiindex import OkapiIndex
-
-# Subclasses must set a class variable IndexFactory to the appropriate
-# index object constructor.
-
-class IndexTest(TestCase):
-
-    def setUp(self):
-        self.lexicon = Lexicon(Splitter())
-        self.index = self.IndexFactory(self.lexicon)
-
-
-    def _test_index_document_assertions(self, DOCID=1):
-        self.assertEqual(self.index.documentCount(), 1)
-        self.assertEqual(self.index.wordCount(), 5)
-        self.assertEqual(self.lexicon.wordCount(), 5)
-        self.assert_(self.index.has_doc(DOCID))
-        self.assert_(self.index._docweight[DOCID])
-        self.assertEqual(len(self.index._docweight), 1)
-        self.assertEqual(len(self.index._wordinfo), 5)
-        self.assertEqual(len(self.index._docwords), 1)
-        self.assertEqual(len(self.index.get_words(DOCID)), 5)
-        self.assertEqual(len(self.index._wordinfo),
-                         self.index.wordCount())
-        for map in self.index._wordinfo.values():
+    def _check_index_has_document(self, index, docid, word_count=5):
+        self.assertEqual(index.documentCount(), 1)
+        self.assertEqual(index.wordCount(), word_count)
+        self.assertEqual(index._lexicon.wordCount(), word_count)
+        self.assert_(index.has_doc(docid))
+        self.assert_(index._docweight[docid])
+        self.assertEqual(len(index._docweight), 1)
+        self.assertEqual(len(index._wordinfo), word_count)
+        self.assertEqual(len(index._docwords), 1)
+        self.assertEqual(len(index.get_words(docid)), word_count)
+        self.assertEqual(len(index._wordinfo),
+                         index.wordCount())
+        for map in index._wordinfo.values():
             self.assertEqual(len(map), 1)
-            self.assert_(map.has_key(DOCID))
+            self.assert_(map.has_key(docid))
 
-    def test_index_document(self, DOCID=1):
+    def _check_index_is_empty(self, index):
+        self.assertEqual(len(index._docweight), 0)
+        self.assertEqual(len(index._wordinfo), 0)
+        self.assertEqual(len(index._docwords), 0)
+        self.assertEqual(len(index._wordinfo),
+                         index.wordCount())
+
+    def test_empty(self):
+        index = self._makeOne()
+        self._check_index_is_empty(index)
+
+    def test_index_document(self):
         doc = "simple document contains five words"
-        self.assert_(not self.index.has_doc(DOCID))
-        self.index.index_doc(DOCID, doc)
-        self._test_index_document_assertions(DOCID)
-
-    def test_unindex_document_absent_docid(self):
-        self.test_index_document(1)
-        self.index.unindex_doc(2)
-        self._test_index_document_assertions(1)
-
-    def test_clear(self):
-        self.test_index_document(1)
-        self.index.clear()
-        self._test_unindex_document_assertions()
-
-    def _test_unindex_document_assertions(self):
-        self.assertEqual(len(self.index._docweight), 0)
-        self.assertEqual(len(self.index._wordinfo), 0)
-        self.assertEqual(len(self.index._docwords), 0)
-        self.assertEqual(len(self.index._wordinfo),
-                         self.index.wordCount())
+        index = self._makeOne()
+        self.assert_(not index.has_doc(1))
+        index.index_doc(1, doc)
+        self._check_index_has_document(index, 1)
 
     def test_unindex_document(self):
-        DOCID = 1
-        self.test_index_document(DOCID)
-        self.index.unindex_doc(DOCID)
-        self._test_unindex_document_assertions()
-        
+        doc = "simple document contains five words"
+        index = self._makeOne()
+        index.index_doc(1, doc)
+        index.unindex_doc(1)
+        self._check_index_is_empty(index)
+
+    def test_unindex_document_absent_docid(self):
+        doc = "simple document contains five words"
+        index = self._makeOne()
+        index.index_doc(1, doc)
+        index.unindex_doc(2)
+        self._check_index_has_document(index, 1)
+
+    def test_clear(self):
+        doc = "simple document contains five words"
+        index = self._makeOne()
+        index.index_doc(1, doc)
+        index.clear()
+        self._check_index_is_empty(index)
 
     def test_index_two_documents(self):
-        self.test_index_document()
-        doc = "another document just four"
-        DOCID = 2
-        self.index.index_doc(DOCID, doc)
-        self.assert_(self.index._docweight[DOCID])
-        self.assertEqual(len(self.index._docweight), 2)
-        self.assertEqual(len(self.index._wordinfo), 8)
-        self.assertEqual(len(self.index._docwords), 2)
-        self.assertEqual(len(self.index.get_words(DOCID)), 4)
-        self.assertEqual(len(self.index._wordinfo),
-                         self.index.wordCount())
-        wids = self.lexicon.termToWordIds("document")
+        doc1 = "simple document contains five words"
+        doc2 = "another document just four"
+        index = self._makeOne()
+        index.index_doc(1, doc1)
+        index.index_doc(2, doc2)
+        self.failUnless(index._docweight[2])
+        self.assertEqual(len(index._docweight), 2)
+        self.assertEqual(len(index._wordinfo), 8)
+        self.assertEqual(len(index._docwords), 2)
+        self.assertEqual(len(index.get_words(2)), 4)
+        self.assertEqual(len(index._wordinfo),
+                         index.wordCount())
+        wids = index._lexicon.termToWordIds("document")
         self.assertEqual(len(wids), 1)
         document_wid = wids[0]
-        for wid, map in self.index._wordinfo.items():
+        for wid, map in index._wordinfo.items():
             if wid == document_wid:
                 self.assertEqual(len(map), 2)
                 self.assert_(map.has_key(1))
-                self.assert_(map.has_key(DOCID))
+                self.assert_(map.has_key(2))
             else:
                 self.assertEqual(len(map), 1)
 
     def test_index_two_unindex_one(self):
         # index two documents, unindex one, and test the results
-        self.test_index_two_documents()
-        self.index.unindex_doc(1)
-        DOCID = 2
-        self.assertEqual(len(self.index._docweight), 1)
-        self.assert_(self.index._docweight[DOCID])
-        self.assertEqual(len(self.index._wordinfo), 4)
-        self.assertEqual(len(self.index._docwords), 1)
-        self.assertEqual(len(self.index.get_words(DOCID)), 4)
-        self.assertEqual(len(self.index._wordinfo),
-                         self.index.wordCount())
-        for map in self.index._wordinfo.values():
+        doc1 = "simple document contains five words"
+        doc2 = "another document just four"
+        index = self._makeOne()
+        index.index_doc(1, doc1)
+        index.index_doc(2, doc2)
+        index.unindex_doc(1)
+        self.assertEqual(len(index._docweight), 1)
+        self.assert_(index._docweight[2])
+        self.assertEqual(len(index._wordinfo), 4)
+        self.assertEqual(len(index._docwords), 1)
+        self.assertEqual(len(index.get_words(2)), 4)
+        self.assertEqual(len(index._wordinfo),
+                         index.wordCount())
+        for map in index._wordinfo.values():
             self.assertEqual(len(map), 1)
-            self.assert_(map.has_key(DOCID))
+            self.assert_(map.has_key(2))
 
-    def test_index_duplicated_words(self, DOCID=1):
+    def test_index_duplicated_words(self):
         doc = "very simple repeat repeat repeat document test"
-        self.index.index_doc(DOCID, doc)
-        self.assert_(self.index._docweight[DOCID])
-        self.assertEqual(len(self.index._wordinfo), 5)
-        self.assertEqual(len(self.index._docwords), 1)
-        self.assertEqual(len(self.index.get_words(DOCID)), 7)
-        self.assertEqual(len(self.index._wordinfo),
-                         self.index.wordCount())
-        wids = self.lexicon.termToWordIds("repeat")
+        index = self._makeOne()
+        index.index_doc(1, doc)
+        self.assert_(index._docweight[1])
+        self.assertEqual(len(index._wordinfo), 5)
+        self.assertEqual(len(index._docwords), 1)
+        self.assertEqual(len(index.get_words(1)), 7)
+        self.assertEqual(len(index._wordinfo),
+                         index.wordCount())
+        wids = index._lexicon.termToWordIds("repeat")
         self.assertEqual(len(wids), 1)
         repititive_wid = wids[0]
-        for wid, map in self.index._wordinfo.items():
+        for wid, map in index._wordinfo.items():
             self.assertEqual(len(map), 1)
-            self.assert_(map.has_key(DOCID))
+            self.assert_(map.has_key(1))
 
     def test_simple_query_oneresult(self):
-        self.index.index_doc(1, 'not the same document')
-        results = self.index.search("document")
+        index = self._makeOne()
+        index.index_doc(1, 'not the same document')
+        results = index.search("document")
         self.assertEqual(list(results.keys()), [1])
 
     def test_simple_query_noresults(self):
-        self.index.index_doc(1, 'not the same document')
-        results = self.index.search("frobnicate")
+        index = self._makeOne()
+        index.index_doc(1, 'not the same document')
+        results = index.search("frobnicate")
         self.assertEqual(list(results.keys()), [])
 
     def test_query_oneresult(self):
-        self.index.index_doc(1, 'not the same document')
-        self.index.index_doc(2, 'something about something else')
-        results = self.index.search("document")
+        index = self._makeOne()
+        index.index_doc(1, 'not the same document')
+        index.index_doc(2, 'something about something else')
+        results = index.search("document")
         self.assertEqual(list(results.keys()), [1])
 
     def test_search_phrase(self):
-        self.index.index_doc(1, "the quick brown fox jumps over the lazy dog")
-        self.index.index_doc(2, "the quick fox jumps lazy over the brown dog")
-        results = self.index.search_phrase("quick brown fox")
+        index = self._makeOne()
+        index.index_doc(1, "the quick brown fox jumps over the lazy dog")
+        index.index_doc(2, "the quick fox jumps lazy over the brown dog")
+        results = index.search_phrase("quick brown fox")
         self.assertEqual(list(results.keys()), [1])
 
     def test_search_glob(self):
-        self.index.index_doc(1, "how now brown cow")
-        self.index.index_doc(2, "hough nough browne cough")
-        self.index.index_doc(3, "bar brawl")
-        results = self.index.search_glob("bro*")
+        index = self._makeOne()
+        index.index_doc(1, "how now brown cow")
+        index.index_doc(2, "hough nough browne cough")
+        index.index_doc(3, "bar brawl")
+        results = index.search_glob("bro*")
         self.assertEqual(list(results.keys()), [1, 2])
-        results = self.index.search_glob("b*")
+        results = index.search_glob("b*")
         self.assertEqual(list(results.keys()), [1, 2, 3])
 
-class CosineIndexTest(IndexTest):
-    IndexFactory = CosineIndex
+class CosineIndexTest32(IndexTestBase, unittest.TestCase):
 
-class OkapiIndexTest(IndexTest):
-    IndexFactory = OkapiIndex
+    def _getTargetClass(self):
+        from zope.index.text.cosineindex import CosineIndex
+        return CosineIndex
 
-class CosineIndexTest(IndexTest):
+    def _getBTreesFamily(self):
+        import BTrees
+        return BTrees.family32
 
-    @staticmethod
-    def IndexFactory(*args, **kw):
-        return CosineIndex(family=BTrees.family64, *args, **kw)
+class OkapiIndexTest32(IndexTestBase, unittest.TestCase):
 
-class OkapiIndexTest(IndexTest):
+    def _getTargetClass(self):
+        from zope.index.text.okapiindex import OkapiIndex
+        return OkapiIndex
 
-    @staticmethod
-    def IndexFactory(*args, **kw):
-        return OkapiIndex(family=BTrees.family64, *args, **kw)
+    def _getBTreesFamily(self):
+        import BTrees
+        return BTrees.family32
+
+class CosineIndexTest64(IndexTestBase, unittest.TestCase):
+
+    def _getTargetClass(self):
+        from zope.index.text.cosineindex import CosineIndex
+        return CosineIndex
+
+    def _getBTreesFamily(self):
+        import BTrees
+        return BTrees.family64
+
+class OkapiIndexTest64(IndexTestBase, unittest.TestCase):
+
+    def _getTargetClass(self):
+        from zope.index.text.okapiindex import OkapiIndex
+        return OkapiIndex
+
+    def _getBTreesFamily(self):
+        import BTrees
+        return BTrees.family64
 
 def test_suite():
-    return TestSuite((makeSuite(CosineIndexTest),
-                      makeSuite(OkapiIndexTest),
+    return unittest.TestSuite((
+                      unittest.makeSuite(CosineIndexTest32),
+                      unittest.makeSuite(OkapiIndexTest32),
+                      unittest.makeSuite(CosineIndexTest64),
+                      unittest.makeSuite(OkapiIndexTest64),
                     ))
-
-if __name__=='__main__':
-    main(defaultTest='test_suite')
