@@ -42,13 +42,3 @@ class HTMLWordSplitter(object):
         for pat in remove:
             text = re.sub(pat, " ", text)
         return re.findall(wordpat, text)
-
-if __name__ == "__main__":
-    import sys
-    splitter = HTMLWordSplitter()
-    for path in sys.argv[1:]:
-        f = open(path, "rb")
-        buf = f.read()
-        f.close()
-        print path
-        print splitter.process([buf])
