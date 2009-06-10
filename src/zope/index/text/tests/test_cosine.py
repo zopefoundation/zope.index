@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2002 Zope Corporation and Contributors.
+# Copyright (c) 2002, 2009 Zope Corporation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -58,6 +58,44 @@ class CosineIndexTestBase:
         from zope.interface.verify import verifyObject
         from zope.index.text.interfaces import IExtendedQuerying
         verifyObject(IExtendedQuerying, self._makeOne())
+
+    def test__search_wids_empty_wids(self):
+        index = self._makeOne()
+        index.index_doc(1, 'one two three')
+        self.assertEqual(index._search_wids(()), [])
+
+    def test__search_wids_non_empty_wids(self):
+        TEXT = 'one two three'
+        index = self._makeOne()
+        index.index_doc(1, TEXT )
+        wids = [index._lexicon._wids[x] for x in TEXT.split()]
+        relevances = index._search_wids(wids)
+        self.assertEqual(len(relevances), len(wids))
+        for relevance in relevances:
+            self.failUnless(isinstance(relevance[0], index.family.IF.Bucket))
+            self.assertEqual(len(relevance[0]), 1)
+            self.failUnless(isinstance(relevance[0][1], float))
+            self.failUnless(isinstance(relevance[1], float))
+
+    def test_query_weight_empty_wids(self):
+        index = self._makeOne()
+        index.index_doc(1, 'one two three')
+        self.assertEqual(index.query_weight(()), 0.0)
+
+    def test_query_weight_oov_wids(self):
+        index = self._makeOne()
+        index.index_doc(1, 'one two three')
+        self.assertEqual(index.query_weight(['nonesuch']), 0.0)
+
+    def test_query_weight_hit_single_occurence(self):
+        index = self._makeOne()
+        index.index_doc(1, 'one two three')
+        self.failUnless(0.0 < index.query_weight(['one']) < 1.0)
+
+    def test_query_weight_hit_multiple_occurences(self):
+        index = self._makeOne()
+        index.index_doc(1, 'one one two three one')
+        self.failUnless(0.0 < index.query_weight(['one']) < 1.0)
 
 class CosineIndexTest32(CosineIndexTestBase, unittest.TestCase):
 

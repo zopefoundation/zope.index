@@ -17,8 +17,8 @@ $Id$
 """
 import math
 
-from zope.index.text.baseindex import BaseIndex, inverse_doc_frequency
-
+from zope.index.text.baseindex import BaseIndex
+from zope.index.text.baseindex import inverse_doc_frequency
 
 class CosineIndex(BaseIndex):
 
@@ -106,24 +106,6 @@ class CosineIndex(BaseIndex):
             #print "->", d[wid]
         return d, W
 
-    # The rest are helper methods to support unit tests
-
-    def _get_wdt(self, d, t):
-        wid, = self._lexicon.termToWordIds(t)
-        map = self._wordinfo[wid]
-        return map.get(d, 0) * self._docweight[d]
-
-    def _get_Wd(self, d):
-        return self._docweight[d]
-
-    def _get_ft(self, t):
-        wid, = self._lexicon.termToWordIds(t)
-        return len(self._wordinfo[wid])
-
-    def _get_wt(self, t):
-        wid, = self._lexicon.termToWordIds(t)
-        map = self._wordinfo[wid]
-        return math.log(1 + len(self._docweight) / float(len(map)))
 
 def doc_term_weight(count):
     """Return the doc-term weight for a term that appears count times."""
