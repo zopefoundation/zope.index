@@ -16,7 +16,13 @@
 import unittest
 
 class HTMLWordSplitterTests(unittest.TestCase):
-    # Subclasses must define '_getBTreesFamily'
+    _old_locale = None
+
+    def tearDown(self):
+        if self._old_locale is not None:
+            import locale
+            locale.setlocale(locale.LC_ALL, self._old_locale)
+
     def _getTargetClass(self):
         from zope.index.text.htmlsplitter import HTMLWordSplitter
         return HTMLWordSplitter
@@ -41,6 +47,23 @@ class HTMLWordSplitterTests(unittest.TestCase):
     def test_process_no_markup(self):
         splitter = self._makeOne()
         self.assertEqual(splitter.process(['abc def']), ['abc', 'def'])
+
+    def test_process_w_locale_awareness(self):
+        import locale
+        import sys
+        self._old_locale = locale.setlocale(locale.LC_ALL)
+        # set German locale
+        try:
+            if sys.platform == 'win32':
+                locale.setlocale(locale.LC_ALL, 'German_Germany.1252')
+            else:
+                locale.setlocale(locale.LC_ALL, 'de_DE.ISO8859-1')
+        except locale.Error:
+            return # This test doesn't work here :-(
+        expected = ['m\xfclltonne', 'waschb\xe4r',
+                    'beh\xf6rde', '\xfcberflieger']
+        splitter = self._makeOne()
+        self.assertEqual(splitter.process(' '.join(expected)), expected)
 
     def test_process_w_markup(self):
         splitter = self._makeOne()
@@ -70,6 +93,26 @@ class HTMLWordSplitterTests(unittest.TestCase):
         splitter = self._makeOne()
         self.assertEqual(splitter.processGlob(['abc?def hij*klm nop* qrs?']),
                          ['abc?def', 'hij*klm', 'nop*', 'qrs?'])
+
+    def test_process_w_locale_awareness(self):
+        import locale
+        import sys
+        self._old_locale = locale.setlocale(locale.LC_ALL)
+        # set German locale
+        try:
+            if sys.platform == 'win32':
+                locale.setlocale(locale.LC_ALL, 'German_Germany.1252')
+            else:
+                locale.setlocale(locale.LC_ALL, 'de_DE.ISO8859-1')
+        except locale.Error:
+            return # This test doesn't work here :-(
+        expected = ['m\xfclltonne', 'waschb\xe4r',
+                    'beh\xf6rde', '\xfcberflieger']
+        words = [" ".join(expected)]
+        words = Splitter().process(words)
+        self.assertEqual(words, expected)
+        words = HTMLWordSplitter().process(words)
+        self.assertEqual(words, expected)
 
 def test_suite():
     return unittest.TestSuite((

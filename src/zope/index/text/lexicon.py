@@ -26,6 +26,8 @@ from BTrees.Length import Length
 from persistent import Persistent
 
 from zope.index.text.interfaces import ILexicon
+from zope.index.text.interfaces import IPipelineElement
+from zope.index.text.interfaces import ISplitter
 from zope.index.text.stopdict import get_stopdict
 from zope.index.text.parsetree import QueryError
 
@@ -62,7 +64,7 @@ class Lexicon(Persistent):
         last = _text2list(text)
         for element in self._pipeline:
             last = element.process(last)
-        if not hasattr(self.wordCount, 'change'):
+        if not isinstance(self.wordCount, Length):
             # Make sure wordCount is overridden with a BTrees.Length.Length
             self.wordCount = Length(self.wordCount())        
         # Strategically unload the length value so that we get the most
@@ -145,11 +147,9 @@ class Lexicon(Persistent):
 
     def _new_wid(self):
         count = self.wordCount
-        try:
-            count.change(1)
-        except AttributeError:
-            count = self.wordCount = Length.Length(count())
-        while self._words.has_key(count()): # just to be safe
+        count.change(1)
+        while self._words.has_key(count()):
+            # just to be safe
             count.change(1)
         return count()
 
@@ -165,6 +165,7 @@ def _text2list(text):
 # Sample pipeline elements
 
 class Splitter(object):
+    implements(ISplitter)
 
     rx = re.compile(r"(?u)\w+")
     rxGlob = re.compile(r"(?u)\w+[\w*?]*") # See globToWordIds() above
@@ -182,23 +183,19 @@ class Splitter(object):
         return result
 
 class CaseNormalizer(object):
+    implements(IPipelineElement)
 
     def process(self, lst):
         return [w.lower() for w in lst]
 
 class StopWordRemover(object):
+    implements(IPipelineElement)
 
     dict = get_stopdict().copy()
 
-    try:
-        from zope.index.text.stopper import process as _process
-    except ImportError:
-        def process(self, lst):
-            has_key = self.dict.has_key
-            return [w for w in lst if not has_key(w)]
-    else:
-        def process(self, lst):
-            return self._process(self.dict, lst)
+    def process(self, lst):
+        has_key = self.dict.has_key
+        return [w for w in lst if not has_key(w)]
 
 class StopWordAndSingleCharRemover(StopWordRemover):
 

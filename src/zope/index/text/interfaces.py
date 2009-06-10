@@ -74,7 +74,7 @@ class ILexicon(Interface):
     def isGlob(word):
         """Return true if the word is a globbing pattern.
 
-        The word should be one of the words returned by parseTerm().
+        The word should be one of the words returned by parseTerms().
         """
 
 class IQueryParser(Interface):
@@ -161,11 +161,21 @@ class ISearchableText(Interface):
         returning None indicates the object should not be indexed
         """
 
-class ISplitter(Interface):
-    """A splitter."""
+class IPipelineElement(Interface):
+    """ An element in a lexicon's processing pipeline.
+    """
+    def process(terms):
+        """ Transform each term in terms.
 
-    def process(text):
-        """Run the splitter over the input text, returning a list of terms."""
+        Return the sequence of transformed terms.
+        """
+
+class ISplitter(IPipelineElement):
+    """ Split text into a sequence of words.
+    """
+    def processGlob(terms):
+        """ Transform terms, leaving globbing markers in place.
+        """
 
 
 class IExtendedQuerying(Interface):
