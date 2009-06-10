@@ -21,17 +21,15 @@ from persistent import Persistent
 from zope.interface import implements
 
 import BTrees
-
 from BTrees import Length
 from BTrees.IOBTree import IOBTree
 
-from zope.index.interfaces import IInjection, IStatistics
-
+from zope.index.interfaces import IInjection
+from zope.index.interfaces import IStatistics
 from zope.index.text.interfaces import IExtendedQuerying
 from zope.index.text import widcode
-from zope.index.text.setops import mass_weightedIntersection, \
-                                   mass_weightedUnion
-
+from zope.index.text.setops import mass_weightedIntersection
+from zope.index.text.setops import mass_weightedUnion
 
 class BaseIndex(Persistent):
     implements(IInjection, IStatistics, IExtendedQuerying)
@@ -42,7 +40,9 @@ class BaseIndex(Persistent):
         if family is not None:
             self.family = family
         self._lexicon = lexicon
+        self.clear()
 
+    def clear(self):
         # wid -> {docid -> weight}; t -> D -> w(D, t)
         # Different indexers have different notions of term weight, but we
         # expect each indexer to use ._wordinfo to map wids to its notion
@@ -74,22 +74,20 @@ class BaseIndex(Persistent):
         self.wordCount = Length.Length()
         self.documentCount = Length.Length()
 
-    def clear(self):
-        self.__init__(self._lexicon)
-
     def wordCount(self):
         """Return the number of words in the index."""
-        # This is overridden per instance
-        return len(self._wordinfo)
+        # This must be overridden by subclasses which do not set the
+        # attribute on their instances.
+        raise NotImplementedError
 
     def documentCount(self):
         """Return the number of documents in the index."""
-        # overridden per instance
-        return len(self._docweight)
+        # This must be overridden by subclasses which do not set the
+        # attribute on their instances.
+        raise NotImplementedError
 
     def get_words(self, docid):
         """Return a list of the wordids for a given docid."""
-        # Note this is overridden in the instance
         return widcode.decode(self._docwords[docid])
 
     # A subclass may wish to extend or override this.
@@ -105,7 +103,7 @@ class BaseIndex(Persistent):
             self.documentCount.change(1)
         except AttributeError:
             # upgrade documentCount to Length object
-            self.documentCount = Length.Length(self.documentCount())
+            self.documentCount = Length.Length(len(self._docweight))
         return len(wids)
 
     # A subclass may wish to extend or override this.  This is for adjusting
@@ -174,7 +172,7 @@ class BaseIndex(Persistent):
             self.documentCount.change(-1)
         except AttributeError:
             # upgrade documentCount to Length object
-            self.documentCount = Length.Length(self.documentCount())
+            self.documentCount = Length.Length(len(self._docweight))
 
     def search(self, term):
         wids = self._lexicon.termToWordIds(term)
@@ -254,8 +252,13 @@ class BaseIndex(Persistent):
         # holds up to 120 key-value pairs in a single bucket.
         doc2score = self._wordinfo.get(wid)
         if doc2score is None:
-            doc2score = {}
-            self.wordCount.change(1)
+            doc2score = {} # XXX Holy ConflictError, Batman!
+            try:
+                self.wordCount.change(1)
+            except AttributeError:
+                # upgrade wordCount to Length object
+                self.wordCount = Length.Length(len(self._wordinfo))
+                self.wordCount.change(1)
         else:
             # _add_wordinfo() is called for each update.  If the map
             # size exceeds the DICT_CUTOFF, convert to an IFBTree.
@@ -290,7 +293,11 @@ class BaseIndex(Persistent):
                 doc2score = self.family.IF.BTree(doc2score)
             doc2score[docid] = weight
             self._wordinfo[wid] = doc2score # not redundant:  Persistency!
-        self.wordCount.change(new_word_count)
+        try:
+            self.wordCount.change(new_word_count)
+        except AttributeError:
+            # upgrade wordCount to Length object
+            self.wordCount = Length.Length(len(self._wordinfo))
 
     def _del_wordinfo(self, wid, docid):
         doc2score = self._wordinfo[wid]
@@ -299,7 +306,11 @@ class BaseIndex(Persistent):
             self._wordinfo[wid] = doc2score # not redundant:  Persistency!
         else:
             del self._wordinfo[wid]
-            self.wordCount.change(-1)
+            try:
+                self.wordCount.change(-1)
+            except AttributeError:
+                # upgrade wordCount to Length object
+                self.wordCount = Length.Length(len(self._wordinfo))
 
 def inverse_doc_frequency(term_count, num_items):
     """Return the inverse doc frequency for a term,
