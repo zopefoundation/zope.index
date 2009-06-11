@@ -38,7 +38,8 @@ class SortingIndexMixin(object):
         if not numdocs:
             raise StopIteration
 
-        if not isinstance(docids, (self.family.IF.Set, self.family.IF.TreeSet)):
+        if not isinstance(docids,
+                          (self.family.IF.Set, self.family.IF.TreeSet)):
             docids = self.family.IF.Set(docids)
         if not docids:
             raise StopIteration
@@ -112,7 +113,8 @@ class SortingIndexMixin(object):
                 # that this case is rarely exercised in practice.
                 n = 0
                 for stored_docids in fwd_index.values():
-                    for docid in self.family.IF.intersection(docids, stored_docids):
+                    for docid in self.family.IF.intersection(docids,
+                                                             stored_docids):
                         n += 1
                         yield docid
                         if limit and n >= limit:
