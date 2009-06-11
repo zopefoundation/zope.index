@@ -50,6 +50,12 @@ class ParseTreeNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertEqual(repr(node), "ParseTreeNode([FV:XXX])")
 
+    def test___repr___subclass(self):
+        class Derived(self._getTargetClass()):
+            pass
+        node = Derived('XXX')
+        self.assertEqual(repr(node), "Derived('XXX')")
+
     def test_terms(self):
         node = self._makeOne()
         self.assertEqual(list(node.terms()), ['XXX'])
@@ -73,12 +79,8 @@ class NotNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertEqual(node.nodeType(), 'NOT')
 
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "NotNode([FV:XXX])")
-
     def test_terms(self):
-        node = self._makeOne()
+        node = self._makeOne(object())
         self.assertEqual(list(node.terms()), [])
 
     def test_executeQuery_raises(self):
@@ -86,7 +88,15 @@ class NotNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertRaises(QueryError, node.executeQuery, FauxIndex())
 
-class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+class BucketMaker:
+
+    def _makeBucket(self, index, count, start=0):
+        bucket = index.family.IF.Bucket()
+        for i in range(start, count):
+            bucket[i] = count * 3.1415926
+        return bucket
+
+class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
     def _getTargetClass(self):
         from zope.index.text.parsetree import AndNode
@@ -101,21 +111,34 @@ class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertEqual(node.nodeType(), 'AND')
 
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "AndNode([FV:XXX])")
-
     def test_executeQuery_no_results(self):
-        from zope.index.text.parsetree import QueryError
         node = self._makeOne([FauxSubnode('FOO', None)])
         result = node.executeQuery(FauxIndex())
         self.assertEqual(dict(result), {})
 
-class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+    def test_executeQuery_w_positive_results(self):
+        index = FauxIndex()
+        node = self._makeOne(
+                    [FauxSubnode('FOO', self._makeBucket(index, 5)),
+                     FauxSubnode('FOO', self._makeBucket(index, 6)),
+                    ])
+        result = node.executeQuery(index)
+        self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
+
+    def test_executeQuery_w_negative_results(self): # TODO
+        index = FauxIndex()
+        node = self._makeOne(
+                    [FauxSubnode('NOT', self._makeBucket(index, 5)),
+                     FauxSubnode('FOO', self._makeBucket(index, 6)),
+                    ])
+        result = node.executeQuery(index)
+        self.assertEqual(sorted(result.keys()), [5])
+
+class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
     def _getTargetClass(self):
-        from zope.index.text.parsetree import AtomNode
-        return AtomNode
+        from zope.index.text.parsetree import OrNode
+        return OrNode
 
     def _makeOne(self, value=None):
         if value is None:
@@ -124,13 +147,23 @@ class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
     def test_nodeType(self):
         node = self._makeOne()
-        self.assertEqual(node.nodeType(), 'ATOM')
+        self.assertEqual(node.nodeType(), 'OR')
 
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "AtomNode([FV:XXX])")
+    def test_executeQuery_no_results(self):
+        node = self._makeOne([FauxSubnode('FOO', None)])
+        result = node.executeQuery(FauxIndex())
+        self.assertEqual(dict(result), {})
 
-class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+    def test_executeQuery_w_results(self):
+        index = FauxIndex()
+        node = self._makeOne(
+                    [FauxSubnode('FOO', self._makeBucket(index, 5)),
+                     FauxSubnode('FOO', self._makeBucket(index, 6)),
+                    ])
+        result = node.executeQuery(index)
+        self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4, 5])
+
+class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
     def _getTargetClass(self):
         from zope.index.text.parsetree import AtomNode
@@ -145,13 +178,16 @@ class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertEqual(node.nodeType(), 'ATOM')
 
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "AtomNode('XXX')")
-
     def test_terms(self):
         node = self._makeOne()
         self.assertEqual(node.terms(), ['XXX'])
+
+    def test_executeQuery(self):
+        node = self._makeOne()
+        index = FauxIndex()
+        index.search = lambda term:  self._makeBucket(index, 5)
+        result = node.executeQuery(index)
+        self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
 
 class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
@@ -167,10 +203,6 @@ class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
     def test_nodeType(self):
         node = self._makeOne()
         self.assertEqual(node.nodeType(), 'PHRASE')
-
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "PhraseNode('XXX YYY')")
 
     def test_executeQuery(self):
         _called_with = []
@@ -197,10 +229,6 @@ class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
     def test_nodeType(self):
         node = self._makeOne()
         self.assertEqual(node.nodeType(), 'GLOB')
-
-    def test___repr__(self):
-        node = self._makeOne()
-        self.assertEqual(repr(node), "GlobNode('XXX*')")
 
     def test_executeQuery(self):
         _called_with = []
@@ -233,13 +261,18 @@ class FauxValue:
 
 
 class FauxSubnode:
-    def __init__(self, node_type, query_results):
+    def __init__(self, node_type, query_results, value=None):
         self._nodeType = node_type
         self._query_results = query_results
+        self._value = value
     def nodeType(self):
         return self._nodeType
     def executeQuery(self, index):
         return self._query_results
+    def getValue(self):
+        if self._value is not None:
+            return self._value
+        return self
 
 def test_suite():
     return unittest.TestSuite((
