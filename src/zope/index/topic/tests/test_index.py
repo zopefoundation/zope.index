@@ -17,18 +17,6 @@ $Id$
 """
 import unittest
 
-import BTrees
-
-from zope.index.topic.filter import PythonFilteredSet
-from zope.interface.verify import verifyClass
-from zope.interface.interface import implementedBy
-
-class O(object):
-    """ a dummy class """
-
-    def __init__(self, meta_type):
-        self.meta_type = meta_type
-
 _marker = object()
 
 class TopicIndexTest(unittest.TestCase):
@@ -291,6 +279,7 @@ class TopicIndexTest(unittest.TestCase):
 class _NotYet:
 
     def _addFilters(self, index):
+        from zope.index.topic.filter import PythonFilteredSet
         index.addFilter(
             PythonFilteredSet('doc1', "context.meta_type == 'doc1'",
                               index.family))
@@ -302,6 +291,13 @@ class _NotYet:
                               index.family))
 
     def _populate(self, index):
+
+        class O(object):
+            """ a dummy class """
+
+            def __init__(self, meta_type):
+                self.meta_type = meta_type
+
         index.index_doc(0 , O('doc0'))
         index.index_doc(1 , O('doc1'))
         index.index_doc(2 , O('doc1'))
