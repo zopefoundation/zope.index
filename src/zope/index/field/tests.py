@@ -16,18 +16,25 @@
 $Id$
 """
 import unittest
-from BTrees.IFBTree import IFSet
-from zope.testing import doctest
 
-from zope.index.field import FieldIndex
+_marker = object()
 
-class TestFieldIndexSorting(unittest.TestCase):
+class FieldIndexTests(unittest.TestCase):
+
+    def _getTargetClass(self):
+        from zope.index.field import FieldIndex
+        return FieldIndex
+
+    def _makeOne(self, family=_marker):
+        if family is _marker:
+            return self._getTargetClass()()
+        return self._getTargetClass()(family)
 
     def _populateIndex(self, index):
         index.index_doc(5, 1) # docid, obj
         index.index_doc(2, 2)
         index.index_doc(1, 3)
-        index.index_doc(3, 4) 
+        index.index_doc(3, 4)
         index.index_doc(4, 5)
         index.index_doc(8, 6)
         index.index_doc(9, 7)
@@ -36,8 +43,130 @@ class TestFieldIndexSorting(unittest.TestCase):
         index.index_doc(11, 10)
         index.index_doc(10, 11)
 
+    def test_class_conforms_to_IInjection(self):
+        from zope.interface.verify import verifyClass
+        from zope.index.interfaces import IInjection
+        verifyClass(IInjection, self._getTargetClass())
+
+    def test_instance_conforms_to_IInjection(self):
+        from zope.interface.verify import verifyObject
+        from zope.index.interfaces import IInjection
+        verifyObject(IInjection, self._makeOne())
+
+    def test_class_conforms_to_IIndexSearch(self):
+        from zope.interface.verify import verifyClass
+        from zope.index.interfaces import IIndexSearch
+        verifyClass(IIndexSearch, self._getTargetClass())
+
+    def test_instance_conforms_to_IIndexSearch(self):
+        from zope.interface.verify import verifyObject
+        from zope.index.interfaces import IIndexSearch
+        verifyObject(IIndexSearch, self._makeOne())
+
+    def test_class_conforms_to_IStatistics(self):
+        from zope.interface.verify import verifyClass
+        from zope.index.interfaces import IStatistics
+        verifyClass(IStatistics, self._getTargetClass())
+
+    def test_instance_conforms_to_IStatistics(self):
+        from zope.interface.verify import verifyObject
+        from zope.index.interfaces import IStatistics
+        verifyObject(IStatistics, self._makeOne())
+
+    def test_ctor_defaults(self):
+        import BTrees
+        index = self._makeOne()
+        self.failUnless(index.family is BTrees.family32)
+        self.assertEqual(index.documentCount(), 0)
+        self.assertEqual(index.wordCount(), 0)
+
+    def test_ctor_explicit_family(self):
+        import BTrees
+        index = self._makeOne(BTrees.family64)
+        self.failUnless(index.family is BTrees.family64)
+
+    def test_index_doc_new(self):
+        index = self._makeOne()
+        index.index_doc(1, 'value')
+        self.assertEqual(index.documentCount(), 1)
+        self.assertEqual(index.wordCount(), 1)
+        self.failUnless(1 in index._rev_index)
+        self.failUnless('value' in index._fwd_index)
+
+    def test_index_doc_existing_same_value(self):
+        index = self._makeOne()
+        index.index_doc(1, 'value')
+        index.index_doc(1, 'value')
+        self.assertEqual(index.documentCount(), 1)
+        self.assertEqual(index.wordCount(), 1)
+        self.failUnless(1 in index._rev_index)
+        self.failUnless('value' in index._fwd_index)
+        self.assertEqual(list(index._fwd_index['value']), [1])
+
+    def test_index_doc_existing_new_value(self):
+        index = self._makeOne()
+        index.index_doc(1, 'value')
+        index.index_doc(1, 'new_value')
+        self.assertEqual(index.documentCount(), 1)
+        self.assertEqual(index.wordCount(), 1)
+        self.failUnless(1 in index._rev_index)
+        self.failIf('value' in index._fwd_index)
+        self.failUnless('new_value' in index._fwd_index)
+        self.assertEqual(list(index._fwd_index['new_value']), [1])
+
+    def test_unindex_doc_nonesuch(self):
+        index = self._makeOne()
+        index.unindex_doc(1) # doesn't raise
+
+    def test_unindex_doc_no_residual_fwd_values(self):
+        index = self._makeOne()
+        index.index_doc(1, 'value')
+        index.unindex_doc(1) # doesn't raise
+        self.assertEqual(index.documentCount(), 0)
+        self.assertEqual(index.wordCount(), 0)
+        self.failIf(1 in index._rev_index)
+        self.failIf('value' in index._fwd_index)
+
+    def test_unindex_doc_w_residual_fwd_values(self):
+        index = self._makeOne()
+        index.index_doc(1, 'value')
+        index.index_doc(2, 'value')
+        index.unindex_doc(1) # doesn't raise
+        self.assertEqual(index.documentCount(), 1)
+        self.assertEqual(index.wordCount(), 1)
+        self.failIf(1 in index._rev_index)
+        self.failUnless(2 in index._rev_index)
+        self.failUnless('value' in index._fwd_index)
+        self.assertEqual(list(index._fwd_index['value']), [2])
+
+    def test_apply_non_tuple_raises(self):
+        index = self._makeOne()
+        self.assertRaises(TypeError, index.apply, ['a', 'b'])
+
+    def test_apply_empty_tuple_raises(self):
+        index = self._makeOne()
+        self.assertRaises(TypeError, index.apply, ('a',))
+
+    def test_apply_one_tuple_raises(self):
+        index = self._makeOne()
+        self.assertRaises(TypeError, index.apply, ('a',))
+
+    def test_apply_three_tuple_raises(self):
+        index = self._makeOne()
+        self.assertRaises(TypeError, index.apply, ('a', 'b', 'c'))
+
+    def test_apply_two_tuple_miss(self):
+        index = self._makeOne()
+        self.assertEqual(list(index.apply(('a', 'b'))), [])
+
+    def test_apply_two_tuple_hit(self):
+        index = self._makeOne()
+        index.index_doc(1, 'albatross')
+        self.assertEqual(list(index.apply(('a', 'b'))), [1])
+
     def test_sort_lazy_nolimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_lazy = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
@@ -45,7 +174,8 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [5, 2, 1, 3, 4])
 
     def test_sort_lazy_withlimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_lazy = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
@@ -53,42 +183,48 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [5, 2, 1])
 
     def test_sort_nonlazy_nolimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1)
         self.assertEqual(list(result), [5, 2, 1, 3, 4])
 
     def test_sort_nonlazy_missingdocid(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5, 99])
         result = index.sort(c1)
         self.assertEqual(list(result), [5, 2, 1, 3, 4]) # 99 not present
 
     def test_sort_nonlazy_withlimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1, limit=3)
         self.assertEqual(list(result), [5, 2, 1])
 
     def test_sort_nonlazy_reverse_nolimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1, reverse=True)
         self.assertEqual(list(result), [4, 3, 1, 2, 5])
 
     def test_sort_nonlazy_reverse_withlimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1, reverse=True, limit=3)
         self.assertEqual(list(result), [4, 3, 1])
 
     def test_sort_nbest(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_nbest = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
@@ -96,7 +232,8 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [5, 2, 1])
 
     def test_sort_nbest_reverse(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_nbest = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
@@ -104,7 +241,8 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [4, 3, 1])
 
     def test_sort_nbest_missing(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_nbest = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5, 99])
@@ -112,7 +250,8 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [5, 2, 1])
 
     def test_sort_nbest_missing_reverse(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         index._use_nbest = True
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5, 99])
@@ -120,29 +259,33 @@ class TestFieldIndexSorting(unittest.TestCase):
         self.assertEqual(list(result), [4, 3, 1])
 
     def test_sort_nodocs(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1)
         self.assertEqual(list(result), [])
 
     def test_sort_nodocids(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet()
         result = index.sort(c1)
         self.assertEqual(list(result), [])
 
     def test_sort_badlimit(self):
-        index = FieldIndex()
+        from BTrees.IFBTree import IFSet
+        index = self._makeOne()
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5])
         result = index.sort(c1, limit=0)
         self.assertRaises(ValueError, list, result)
 
 def test_suite():
+    from zope.testing import doctest
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt', optionflags=doctest.ELLIPSIS),
-        unittest.makeSuite(TestFieldIndexSorting),
+        unittest.makeSuite(FieldIndexTests),
         ))
 
 if __name__=='__main__':

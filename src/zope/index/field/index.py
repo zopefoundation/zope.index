@@ -89,7 +89,7 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
         try:
             set = self._fwd_index[value]
             set.remove(docid)
-        except KeyError:
+        except KeyError: #pragma NO COVERAGE
             # This is fishy, but we don't want to raise an error.
             # We should probably log something.
             # but keep it from throwing a dirty exception
