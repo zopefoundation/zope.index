@@ -17,8 +17,6 @@ $Id$
 """
 import unittest
 
-from zope.index.text.lexicon import Lexicon
-
 
 class LexiconTests(unittest.TestCase):
 
