@@ -122,13 +122,3 @@ def _fill():
     _encoding = tuple(_encoding)
 
 _fill()
-
-def test():
-    for i in range(2**20):
-        if i % 1000 == 0: print i
-        wids = [i]
-        code = encode(wids)
-        assert decode(code) == wids, (wids, code, decode(code))
-
-if __name__ == "__main__":
-    test()
