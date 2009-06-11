@@ -48,6 +48,12 @@ class TopicIndex(Persistent):
         """ remove a filter given by its ID 'id' """
         del self._filters[id]
 
+    def clearFilters(self):
+        """ Clear existing filters of their docids, but leave them in place.
+        """
+        for filter in self._filters.values():
+            filter.clear()
+
     def index_doc(self, docid, obj):
         """index an object"""
 
@@ -86,7 +92,8 @@ class TopicIndex(Persistent):
                 if not rs:
                     break
         else:
-            raise TypeError('Topic index only supports `and` and `or` operators, not `%s`.' % operator)
+            raise TypeError('Topic index only supports `and` and `or` '
+                            'operators, not `%s`.' % operator)
             
         if rs:
             return rs
