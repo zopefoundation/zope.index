@@ -17,15 +17,12 @@ $Id$
 """
 import unittest
 
-import BTrees
-
-from zope.index.text.queryparser import QueryParser
-from zope.index.text.parsetree import QueryError
-from zope.index.text.lexicon import Lexicon, Splitter
-
 class FauxIndex(object):
 
-    family = BTrees.family32
+    def _get_family(self):
+        import BTrees
+        return BTrees.family32
+    family = property(_get_family,)
 
     def search(self, term):
         b = self.family.IF.Bucket()
@@ -39,36 +36,44 @@ class FauxIndex(object):
 
 class TestQueryEngine(unittest.TestCase):
 
-    def setUp(self):
-        self.lexicon = Lexicon(Splitter())
-        self.parser = QueryParser(self.lexicon)
-        self.index = FauxIndex()
+    def _makeIndexAndParser(self):
+        from zope.index.text.lexicon import Lexicon
+        from zope.index.text.lexicon import Splitter
+        from zope.index.text.queryparser import QueryParser
+        lexicon = Lexicon(Splitter())
+        parser = QueryParser(lexicon)
+        index = FauxIndex()
+        return index, parser
 
-    def compareSet(self, set, dict):
+    def _compareSet(self, set, dict):
         d = {}
         for k, v in set.items():
             d[k] = v
         self.assertEqual(d, dict)
 
-    def compareQuery(self, query, dict):
-        tree = self.parser.parseQuery(query)
-        set = tree.executeQuery(self.index)
-        self.compareSet(set, dict)
+    def _compareQuery(self, query, dict):
+        index, parser = self._makeIndexAndParser()
+        tree = parser.parseQuery(query)
+        set = tree.executeQuery(index)
+        self._compareSet(set, dict)
 
     def testExecuteQuery(self):
-        self.compareQuery("foo AND bar", {1: 2})
-        self.compareQuery("foo OR bar", {1: 2, 2: 1, 3:1})
-        self.compareQuery("foo AND NOT bar", {3: 1})
-        self.compareQuery("foo AND foo AND foo", {1: 3, 3: 3})
-        self.compareQuery("foo OR foo OR foo", {1: 3, 3: 3})
-        self.compareQuery("ham AND NOT foo AND NOT bar", {4: 1})
-        self.compareQuery("ham OR foo OR bar", {1: 3, 2: 2, 3: 2, 4: 1})
-        self.compareQuery("ham AND foo AND bar", {1: 3})
+        self._compareQuery("foo AND bar", {1: 2})
+        self._compareQuery("foo OR bar", {1: 2, 2: 1, 3:1})
+        self._compareQuery("foo AND NOT bar", {3: 1})
+        self._compareQuery("foo AND foo AND foo", {1: 3, 3: 3})
+        self._compareQuery("foo OR foo OR foo", {1: 3, 3: 3})
+        self._compareQuery("ham AND NOT foo AND NOT bar", {4: 1})
+        self._compareQuery("ham OR foo OR bar", {1: 3, 2: 2, 3: 2, 4: 1})
+        self._compareQuery("ham AND foo AND bar", {1: 3})
 
     def testInvalidQuery(self):
-        from zope.index.text.parsetree import NotNode, AtomNode
+        from zope.index.text.parsetree import AtomNode
+        from zope.index.text.parsetree import NotNode
+        from zope.index.text.parsetree import QueryError
+        index, parser = self._makeIndexAndParser()
         tree = NotNode(AtomNode("foo"))
-        self.assertRaises(QueryError, tree.executeQuery, self.index)
+        self.assertRaises(QueryError, tree.executeQuery, index)
 
 def test_suite():
     return unittest.makeSuite(TestQueryEngine)
