@@ -15,62 +15,75 @@
 
 $Id$
 """
-from unittest import TestCase, main, makeSuite
+import unittest
 
-import BTrees
+_marker = object()
 
-from BTrees.IFBTree import IFBTree, IFBucket
-from BTrees.LFBTree import LFBucket
+class Test_mass_weightedIntersection(unittest.TestCase):
 
-from zope.index.text.setops import mass_weightedIntersection
-from zope.index.text.setops import mass_weightedUnion
+    def _callFUT(self, L, family=_marker):
+        from zope.index.text.setops import mass_weightedIntersection
+        if family is _marker:
+            return mass_weightedIntersection(L)
+        return mass_weightedIntersection(L, family)
 
-class TestSetOps(TestCase):
-
-    def testEmptyLists(self):
-        self.assertEqual(len(mass_weightedIntersection([])), 0)
-        self.assertEqual(len(mass_weightedUnion([])), 0)
-
-    def testEmptyListsHonorFamily(self):
-        # family32
-        t = mass_weightedIntersection([], BTrees.family32)
-        self.assertEqual(len(t), 0)
-        self.assertEqual(t.__class__, IFBucket)
-        t = mass_weightedUnion([], BTrees.family32)
+    def test_empty_list_no_family(self):
+        from BTrees.IFBTree import IFBucket
+        t = self._callFUT([])
         self.assertEqual(len(t), 0)
         self.assertEqual(t.__class__, IFBucket)
 
-        # family64
-        t = mass_weightedIntersection([], BTrees.family64)
+    def test_empty_list_family32(self):
+        import BTrees
+        from BTrees.IFBTree import IFBucket
+        t = self._callFUT([], BTrees.family32)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, IFBucket)
+
+    def test_empty_list_family64(self):
+        import BTrees
+        from BTrees.LFBTree import LFBucket
+        t = self._callFUT([], BTrees.family64)
         self.assertEqual(len(t), 0)
         self.assertEqual(t.__class__, LFBucket)
-        t = mass_weightedUnion([], BTrees.family64)
-        self.assertEqual(len(t), 0)
-        self.assertEqual(t.__class__, LFBucket)
 
-    def testIdentity(self):
-        t = IFBTree([(1, 2)])
-        b = IFBucket([(1, 2)])
-        for x in t, b:
-            for func in mass_weightedUnion, mass_weightedIntersection:
-                result = func([(x, 1)])
-                self.assertEqual(len(result), 1)
-                self.assertEqual(list(result.items()), list(x.items()))
+    def test_identity_tree(self):
+        from BTrees.IFBTree import IFBTree
+        x = IFBTree([(1, 2)])
+        result = self._callFUT([(x, 1)])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(list(result.items()), list(x.items()))
 
-    def testScalarMultiply(self):
-        t = IFBTree([(1, 2), (2, 3), (3, 4)])
-        allkeys = [1, 2, 3]
-        b = IFBucket(t)
-        for x in t, b:
-            self.assertEqual(list(x.keys()), allkeys)
-            for func in mass_weightedUnion, mass_weightedIntersection:
-                for factor in 0, 1, 5, 10:
-                    result = func([(x, factor)])
-                    self.assertEqual(allkeys, list(result.keys()))
-                    for key in x.keys():
-                        self.assertEqual(x[key] * factor, result[key])
+    def test_identity_bucket(self):
+        from BTrees.IFBTree import IFBucket
+        x = IFBucket([(1, 2)])
+        result = self._callFUT([(x, 1)])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(list(result.items()), list(x.items()))
 
-    def testPairs(self):
+    def test_scalar_multiply_tree(self):
+        from BTrees.IFBTree import IFBTree
+        x = IFBTree([(1, 2), (2, 3), (3, 4)])
+        allkeys = list(x.keys())
+        for factor in 0, 1, 5, 10:
+            result = self._callFUT([(x, factor)])
+            self.assertEqual(allkeys, list(result.keys()))
+            for key in x.keys():
+                self.assertEqual(result[key], x[key]*factor)
+
+    def test_scalar_multiply_bucket(self):
+        from BTrees.IFBTree import IFBucket
+        x = IFBucket([(1, 2), (2, 3), (3, 4)])
+        allkeys = list(x.keys())
+        for factor in 0, 1, 5, 10:
+            result = self._callFUT([(x, factor)])
+            self.assertEqual(allkeys, list(result.keys()))
+            for key in x.keys():
+                self.assertEqual(result[key], x[key]*factor)
+
+    def test_pairs(self):
+        from BTrees.IFBTree import IFBTree
+        from BTrees.IFBTree import IFBucket
         t1 = IFBTree([(1, 10), (3, 30), (7, 70)])
         t2 = IFBTree([(3, 30), (5, 50), (7, 7), (9, 90)])
         allkeys = [1, 3, 5, 7, 9]
@@ -81,32 +94,20 @@ class TestSetOps(TestCase):
                 self.assertEqual(key in allkeys, 1)
             for y in t1, t2, b1, b2:
                 for w1, w2 in (0, 0), (1, 10), (10, 1), (2, 3):
-                    # Test the union.
-                    expected = []
-                    for key in allkeys:
-                        if x.has_key(key) or y.has_key(key):
-                            result = x.get(key, 0) * w1 + y.get(key, 0) * w2
-                            expected.append((key, result))
-                    expected.sort()
-                    got = mass_weightedUnion([(x, w1), (y, w2)])
-                    self.assertEqual(expected, list(got.items()))
-                    got = mass_weightedUnion([(y, w2), (x, w1)])
-                    self.assertEqual(expected, list(got.items()))
-
-                    # Test the intersection.
                     expected = []
                     for key in allkeys:
                         if x.has_key(key) and y.has_key(key):
                             result = x[key] * w1 + y[key] * w2
                             expected.append((key, result))
                     expected.sort()
-                    got = mass_weightedIntersection([(x, w1), (y, w2)])
+                    got = self._callFUT([(x, w1), (y, w2)])
                     self.assertEqual(expected, list(got.items()))
-                    got = mass_weightedIntersection([(y, w2), (x, w1)])
+                    got = self._callFUT([(y, w2), (x, w1)])
                     self.assertEqual(expected, list(got.items()))
 
     def testMany(self):
         import random
+        from BTrees.IFBTree import IFBTree
         N = 15  # number of IFBTrees to feed in
         L = []
         commonkey = N * 1000
@@ -123,18 +124,6 @@ class TestSetOps(TestCase):
         allkeys = allkeys.keys()
         allkeys.sort()
 
-        # Test the union.
-        expected = []
-        for key in allkeys:
-            sum = 0
-            for t, w in L:
-                if t.has_key(key):
-                    sum += t[key] * w
-            expected.append((key, sum))
-        # print 'union', expected
-        got = mass_weightedUnion(L)
-        self.assertEqual(expected, list(got.items()))
-
         # Test the intersection.
         expected = []
         for key in allkeys:
@@ -148,11 +137,127 @@ class TestSetOps(TestCase):
                 # We didn't break out of the loop so it's in the intersection.
                 expected.append((key, sum))
         # print 'intersection', expected
-        got = mass_weightedIntersection(L)
+        got = self._callFUT(L)
+        self.assertEqual(expected, list(got.items()))
+
+class Test_mass_weightedUnion(unittest.TestCase):
+
+    def _callFUT(self, L, family=_marker):
+        from zope.index.text.setops import mass_weightedUnion
+        if family is _marker:
+            return mass_weightedUnion(L)
+        return mass_weightedUnion(L, family)
+
+    def test_empty_list_no_family(self):
+        from BTrees.IFBTree import IFBucket
+        t = self._callFUT([])
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, IFBucket)
+
+    def test_empty_list_family32(self):
+        import BTrees
+        from BTrees.IFBTree import IFBucket
+        t = self._callFUT([], BTrees.family32)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, IFBucket)
+
+    def test_empty_list_family64(self):
+        import BTrees
+        from BTrees.LFBTree import LFBucket
+        t = self._callFUT([], BTrees.family64)
+        self.assertEqual(len(t), 0)
+        self.assertEqual(t.__class__, LFBucket)
+
+    def test_identity_tree(self):
+        from BTrees.IFBTree import IFBTree
+        x = IFBTree([(1, 2)])
+        result = self._callFUT([(x, 1)])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(list(result.items()), list(x.items()))
+
+    def test_identity_bucket(self):
+        from BTrees.IFBTree import IFBucket
+        x = IFBucket([(1, 2)])
+        result = self._callFUT([(x, 1)])
+        self.assertEqual(len(result), 1)
+        self.assertEqual(list(result.items()), list(x.items()))
+
+    def test_scalar_multiply_tree(self):
+        from BTrees.IFBTree import IFBTree
+        x = IFBTree([(1, 2), (2, 3), (3, 4)])
+        allkeys = list(x.keys())
+        for factor in 0, 1, 5, 10:
+            result = self._callFUT([(x, factor)])
+            self.assertEqual(allkeys, list(result.keys()))
+            for key in x.keys():
+                self.assertEqual(result[key], x[key]*factor)
+
+    def test_scalar_multiply_bucket(self):
+        from BTrees.IFBTree import IFBucket
+        x = IFBucket([(1, 2), (2, 3), (3, 4)])
+        allkeys = list(x.keys())
+        for factor in 0, 1, 5, 10:
+            result = self._callFUT([(x, factor)])
+            self.assertEqual(allkeys, list(result.keys()))
+            for key in x.keys():
+                self.assertEqual(result[key], x[key]*factor)
+
+    def test_pairs(self):
+        from BTrees.IFBTree import IFBTree
+        from BTrees.IFBTree import IFBucket
+        t1 = IFBTree([(1, 10), (3, 30), (7, 70)])
+        t2 = IFBTree([(3, 30), (5, 50), (7, 7), (9, 90)])
+        allkeys = [1, 3, 5, 7, 9]
+        b1 = IFBucket(t1)
+        b2 = IFBucket(t2)
+        for x in t1, t2, b1, b2:
+            for key in x.keys():
+                self.assertEqual(key in allkeys, 1)
+            for y in t1, t2, b1, b2:
+                for w1, w2 in (0, 0), (1, 10), (10, 1), (2, 3):
+                    expected = []
+                    for key in allkeys:
+                        if x.has_key(key) or y.has_key(key):
+                            result = x.get(key, 0) * w1 + y.get(key, 0) * w2
+                            expected.append((key, result))
+                    expected.sort()
+                    got = self._callFUT([(x, w1), (y, w2)])
+                    self.assertEqual(expected, list(got.items()))
+                    got = self._callFUT([(y, w2), (x, w1)])
+                    self.assertEqual(expected, list(got.items()))
+
+    def test_many(self):
+        import random
+        from BTrees.IFBTree import IFBTree
+        N = 15  # number of IFBTrees to feed in
+        L = []
+        commonkey = N * 1000
+        allkeys = {commonkey: 1}
+        for i in range(N):
+            t = IFBTree()
+            t[commonkey] = i
+            for j in range(N-i):
+                key = i + j
+                allkeys[key] = 1
+                t[key] = N*i + j
+            L.append((t, i+1))
+        random.shuffle(L)
+        allkeys = allkeys.keys()
+        allkeys.sort()
+
+        expected = []
+        for key in allkeys:
+            sum = 0
+            for t, w in L:
+                if t.has_key(key):
+                    sum += t[key] * w
+            expected.append((key, sum))
+        # print 'union', expected
+        got = self._callFUT(L)
         self.assertEqual(expected, list(got.items()))
 
 def test_suite():
-    return makeSuite(TestSetOps)
-
-if __name__=="__main__":
-    main(defaultTest='test_suite')
+    return unittest.TestSuite((
+        unittest.makeSuite(Test_mass_weightedIntersection),
+        unittest.makeSuite(Test_mass_weightedUnion),
+    ))
