@@ -15,18 +15,20 @@
 
 $Id$
 """
-
 import sys
 
 from persistent import Persistent
 from zope.interface import implements
 
-from zope.index.text.okapiindex import OkapiIndex
+from zope.index.interfaces import IIndexSearch
+from zope.index.interfaces import IInjection
+from zope.index.interfaces import IStatistics
+from zope.index.text.lexicon import CaseNormalizer
 from zope.index.text.lexicon import Lexicon
-from zope.index.text.lexicon import Splitter, CaseNormalizer, StopWordRemover
+from zope.index.text.lexicon import Splitter
+from zope.index.text.lexicon import StopWordRemover
+from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.queryparser import QueryParser
-
-from zope.index.interfaces import IInjection, IIndexSearch, IStatistics
 
 class TextIndex(Persistent):
 
@@ -35,7 +37,8 @@ class TextIndex(Persistent):
     def __init__(self, lexicon=None, index=None):
         """Provisional constructor.
 
-        This creates the lexicon and index if not passed in."""
+        This creates the lexicon and index if not passed in.
+        """
         if lexicon is None:
             lexicon = Lexicon(Splitter(), CaseNormalizer(), StopWordRemover())
         if index is None:
