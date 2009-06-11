@@ -164,6 +164,37 @@ class FieldIndexTests(unittest.TestCase):
         index.index_doc(1, 'albatross')
         self.assertEqual(list(index.apply(('a', 'b'))), [1])
 
+    def test_sort_w_limit_lt_1(self):
+        index = self._makeOne()
+        self.assertRaises(ValueError,
+                          lambda: list(index.sort([1, 2, 3], limit=0)))
+
+    def test_sort_w_empty_index(self):
+        index = self._makeOne()
+        self.assertEqual(list(index.sort([1, 2, 3])), [])
+
+    def test_sort_w_empty_docids(self):
+        index = self._makeOne()
+        index.index_doc(1, 'albatross')
+        self.assertEqual(list(index.sort([])), [])
+
+    def test_sort_w_missing_docids(self):
+        index = self._makeOne()
+        index.index_doc(1, 'albatross')
+        self.assertEqual(list(index.sort([2, 3])), [])
+
+    def test_sort_force_nbest_w_missing_docids(self):
+        index = self._makeOne()
+        index._use_nbest = True
+        index.index_doc(1, 'albatross')
+        self.assertEqual(list(index.sort([2, 3])), [])
+
+    def test_sort_force_lazy_w_missing_docids(self):
+        index = self._makeOne()
+        index._use_lazy = True
+        index.index_doc(1, 'albatross')
+        self.assertEqual(list(index.sort([2, 3])), [])
+
     def test_sort_lazy_nolimit(self):
         from BTrees.IFBTree import IFSet
         index = self._makeOne()
