@@ -20,6 +20,3 @@ from zope.testing import doctest
 
 def test_suite():
     return doctest.DocFileSuite("../textindex.txt")
-
-if __name__=='__main__':
-    unittest.main(defaultTest='test_suite')
