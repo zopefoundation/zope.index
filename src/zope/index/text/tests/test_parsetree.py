@@ -111,6 +111,108 @@ class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         result = node.executeQuery(FauxIndex())
         self.assertEqual(dict(result), {})
 
+class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+
+    def _getTargetClass(self):
+        from zope.index.text.parsetree import AtomNode
+        return AtomNode
+
+    def _makeOne(self, value=None):
+        if value is None:
+            value = [FauxValue('XXX')]
+        return self._getTargetClass()(value)
+
+    def test_nodeType(self):
+        node = self._makeOne()
+        self.assertEqual(node.nodeType(), 'ATOM')
+
+    def test___repr__(self):
+        node = self._makeOne()
+        self.assertEqual(repr(node), "AtomNode([FV:XXX])")
+
+class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+
+    def _getTargetClass(self):
+        from zope.index.text.parsetree import AtomNode
+        return AtomNode
+
+    def _makeOne(self, value=None):
+        if value is None:
+            value = 'XXX'
+        return self._getTargetClass()(value)
+
+    def test_nodeType(self):
+        node = self._makeOne()
+        self.assertEqual(node.nodeType(), 'ATOM')
+
+    def test___repr__(self):
+        node = self._makeOne()
+        self.assertEqual(repr(node), "AtomNode('XXX')")
+
+    def test_terms(self):
+        node = self._makeOne()
+        self.assertEqual(node.terms(), ['XXX'])
+
+class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+
+    def _getTargetClass(self):
+        from zope.index.text.parsetree import PhraseNode
+        return PhraseNode
+
+    def _makeOne(self, value=None):
+        if value is None:
+            value = 'XXX YYY'
+        return self._getTargetClass()(value)
+
+    def test_nodeType(self):
+        node = self._makeOne()
+        self.assertEqual(node.nodeType(), 'PHRASE')
+
+    def test___repr__(self):
+        node = self._makeOne()
+        self.assertEqual(repr(node), "PhraseNode('XXX YYY')")
+
+    def test_executeQuery(self):
+        _called_with = []
+        def _search(*args, **kw):
+            _called_with.append((args, kw))
+            return []
+        index = FauxIndex()
+        index.search_phrase = _search
+        node = self._makeOne()
+        self.assertEqual(node.executeQuery(index), [])
+        self.assertEqual(_called_with[0], (('XXX YYY',), {}))
+
+class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
+
+    def _getTargetClass(self):
+        from zope.index.text.parsetree import GlobNode
+        return GlobNode
+
+    def _makeOne(self, value=None):
+        if value is None:
+            value = 'XXX*'
+        return self._getTargetClass()(value)
+
+    def test_nodeType(self):
+        node = self._makeOne()
+        self.assertEqual(node.nodeType(), 'GLOB')
+
+    def test___repr__(self):
+        node = self._makeOne()
+        self.assertEqual(repr(node), "GlobNode('XXX*')")
+
+    def test_executeQuery(self):
+        _called_with = []
+        def _search(*args, **kw):
+            _called_with.append((args, kw))
+            return []
+        index = FauxIndex()
+        index.search_glob = _search
+        node = self._makeOne()
+        self.assertEqual(node.executeQuery(index), [])
+        self.assertEqual(_called_with[0], (('XXX*',), {}))
+
 class FauxIndex(object):
 
     def _get_family(self):
@@ -144,4 +246,8 @@ def test_suite():
         unittest.makeSuite(ParseTreeNodeTests),
         unittest.makeSuite(NotNodeTests),
         unittest.makeSuite(AndNodeTests),
+        unittest.makeSuite(OrNodeTests),
+        unittest.makeSuite(AtomNodeTests),
+        unittest.makeSuite(PhraseNodeTests),
+        unittest.makeSuite(GlobNodeTests),
     ))
