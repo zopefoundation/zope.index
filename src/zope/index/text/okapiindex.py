@@ -195,7 +195,7 @@ from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
 try:
     from zope.index.text.okascore import score
-except ImportError:
+except ImportError: #pragma NO COVERAGE
     score = None
 from BTrees.Length import Length
 
@@ -255,7 +255,7 @@ class OkapiIndex(BaseIndex):
     # D to TF(D,t)*IDF(t) directly, where the product is computed as a float.
     # NOTE:  This may be overridden below, by a function that computes the
     # same thing but with the inner scoring loop in C.
-    if score is None:
+    if score is None: #pragma NO COVERAGE
         def _search_wids(self, wids):
             if not wids:
                 return []
