@@ -62,17 +62,17 @@ class KeywordIndex(Persistent):
 
     def normalize(self, seq):
         """Perform normalization on sequence of keywords.
-        
+
         Return normalized sequence. This method may be
         overriden by subclasses.
-        
+
         """
         return seq
 
     def index_doc(self, docid, seq):
         if isinstance(seq, basestring):
             raise TypeError('seq argument must be a list/tuple of strings')
-    
+
         if not seq:
             return
 
@@ -93,12 +93,15 @@ class KeywordIndex(Persistent):
 
             # removed keywords are removed from the forward index
             for word in kw_removed:
-                self._fwd_index[word].remove(docid)
-            
+                fwd = self._fwd_index[word]
+                fwd.remove(docid)
+                if len(fwd) == 0:
+                    del self._fwd_index[word]
+
             # now update reverse and forward indexes
             self._insert_forward(docid, kw_added)
             self._insert_reverse(docid, new_kw)
-        
+
     def unindex_doc(self, docid):
         idx  = self._fwd_index
 
@@ -106,14 +109,15 @@ class KeywordIndex(Persistent):
             for word in self._rev_index[docid]:
                 idx[word].remove(docid)
                 if not idx[word]:
-                    del idx[word] 
+                    del idx[word]
         except KeyError:
+            msg = 'WAAA!  Inconsistent'
             return
-        
+
         try:
             del self._rev_index[docid]
-        except KeyError:
-            pass
+        except KeyError: #pragma NO COVERAGE
+            msg = 'WAAA!  Inconsistent'
 
         self._num_docs.change(-1)
 
@@ -157,8 +161,9 @@ class KeywordIndex(Persistent):
                 if not rs:
                     break
         else:
-            raise TypeError('Keyword index only supports `and` and `or` operators, not `%s`.' % operator)
-        
+            raise TypeError('Keyword index only supports `and` and `or` '
+                            'operators, not `%s`.' % operator)
+
         if rs:
             return rs
         else:
