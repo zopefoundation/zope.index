@@ -6,7 +6,6 @@ indexing and searching.  A text index can be created without passing
 any arguments:
 
     >>> from zope.index.text.textindex import TextIndex
-    >>> from zope.index.text.okapiindex import score
     >>> index = TextIndex()
 
 By default, it uses an "Okapi" inverted index and a lexicon with a
@@ -66,18 +65,13 @@ We index text using the `index_doc` method:
     ... """)
 
 Then we can search using the apply method, which takes a search
-string.  If we use the okascore.c module, we get different results
-because it uses different constants:
+string.
 
-    >>> if score is not None: result = [(1, '787.6832'), (2, '839.0846')]
-    >>> if score is None: result = [(1, '0.6153'), (2, '0.6734')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown fox').items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown fox').items()]
+    [(1, '0.6153'), (2, '0.6734')]
 
-    >>> if score is not None: result = [(1, '787.7337')]
-    >>> if score is None: result = [(1, '0.6153')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'quick fox').items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'quick fox').items()]
+    [(1, '0.6153')]
 
     >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown python').items()]
     []
@@ -85,41 +79,27 @@ because it uses different constants:
     >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'dalmatian').items()]
     []
 
-    >>> if score is not None: result = [(1, '333.0285'), (2, '333.0285'), (8, '454.7052')]
-    >>> if score is None: result = [(1, '0.2602'), (2, '0.2529'), (8, '0.0934')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown or python').items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'brown or python').items()]
+    [(1, '0.2602'), (2, '0.2529'), (8, '0.0934')]
 
-    >>> from zope.index.text.okapiindex import score
-    >>> if score is not None: result = [(7, '787.7707')]
-    >>> if score is None: result =  [(7, '0.6948')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'butts').items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u'butts').items()]
+    [(7, '0.6948')]
 
-The outputs are mappings from document ids to integer scored. Items
+The outputs are mappings from document ids to float scores. Items
 with higher scores are more relevent.
 
-We can use unicode characters in search strings.  If we use the
-okascore.c module, we get different results because it uses different
-constants:
+We can use unicode characters in search strings.
 
-    >>> if score is not None: result = [(4, '787.7707')]
-    >>> if score is None: result = [(4, '0.7427')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u"Fran\xe7ois").items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(u"Fran\xe7ois").items()]
+    [(4, '0.7427')]
 
-    >>> if score is not None: result = [(5, '787.7707')]
-    >>> if score is None: result = [(5, '0.7179')]
-    >>> [(k, "%.4f" % v) for (k, v) in index.apply(word).items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index.apply(word).items()]
+    [(5, '0.7179')]
 
-We can use globbing in search strings.  If we use the okascore.c
-module, we get different results because it uses different constants:
+We can use globbing in search strings.
 
-    >>> if score is not None: result = [(1, '2789.000'), (2, '3153.000'), (3, '3808.000')]
-    >>> if score is None: result = [(1, '2.179'), (2, '2.651'), (3, '2.041')]
-    >>> [(k, "%.3f" % v) for (k, v) in index.apply('fo*').items()] == result
-    True
+    >>> [(k, "%.3f" % v) for (k, v) in index.apply('fo*').items()]
+    [(1, '2.179'), (2, '2.651'), (3, '2.041')]
 
 Text indexes support basic statistics:
 
@@ -134,14 +114,8 @@ with a normal value, it should still work:
     >>> index2 = TextIndex()
     >>> index2.index_doc(1, [])
     >>> index2.index_doc(1, ["Zorro"])
-
-If we use the okascore.c module, we get different results because it
-uses different constants:
-
-    >>> if score is not None: result = [(1, '787.5803')]
-    >>> if score is None: result = [(1, '0.4545')]
-    >>> [(k, "%.4f" % v) for (k, v) in index2.apply("Zorro").items()] == result
-    True
+    >>> [(k, "%.4f" % v) for (k, v) in index2.apply("Zorro").items()]
+    [(1, '0.4545')]
 
 
 Tracking Changes

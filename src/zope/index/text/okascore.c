@@ -63,7 +63,6 @@ score(PyObject *self, PyObject *args)
 						   &idf, &meandoclen))
 		return NULL;
 
-	idf *= 1024.0;	/* float out part of the scaled_int computation */
 	n = PyObject_Length(d2fitems);
 	for (i = 0; i < n; ++i) {
 		PyObject *d_and_f;	/* d2f[i], a (d, f) pair */
@@ -72,7 +71,7 @@ score(PyObject *self, PyObject *args)
 		PyObject *doclen;	/* ._docweight[d] */
 		double lenweight;
 		double tf;
-		PyObject *scaled_int;
+		PyObject *doc_score;
 		int status;
 
 		d_and_f = PySequence_GetItem(d2fitems, i);
@@ -93,17 +92,17 @@ score(PyObject *self, PyObject *args)
 			Py_DECREF(d_and_f);
 			return NULL;
 		}
-		lenweight = B_FROM1 + B * PyInt_AS_LONG(doclen) / meandoclen;
+		lenweight = B_FROM1 + B * PyInt_AsLong(doclen) / meandoclen;
 
 		tf = f * K1_PLUS1 / (f + K1 * lenweight);
-		scaled_int = PyInt_FromLong((long)(tf * idf + 0.5));
-		if (scaled_int == NULL)
+		doc_score = PyFloat_FromDouble(tf * idf);
+		if (doc_score == NULL)
 			status = -1;
 		else
-			status = PyObject_SetItem(result, d, scaled_int);
+			status = PyObject_SetItem(result, d, doc_score);
 		Py_DECREF(d_and_f);
 		Py_DECREF(doclen);
-		Py_XDECREF(scaled_int);
+		Py_XDECREF(doc_score);
 		if (status < 0)
 			return NULL;
 	}

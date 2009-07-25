@@ -4,7 +4,13 @@ Changes
 3.5.3 (unreleased)
 ------------------
 
-- ...
+- Fixed a broken optimization in okascore.c: it was passing a Python
+  float to the PyInt_AS_LONG() macro. This resulted in wrong scores,
+  especially on 64 bit platforms, where all scores typically ended up
+  being zero.
+
+- Changed okascore.c to produce the same results as its Python
+  equivalent, reducing the brittleness of the text index tests.
 
 3.5.2 (2009-06-09)
 ------------------
