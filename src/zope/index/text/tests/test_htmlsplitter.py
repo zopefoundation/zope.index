@@ -99,26 +99,6 @@ class HTMLWordSplitterTests(unittest.TestCase):
         self.assertEqual(splitter.processGlob(['abc?def hij*klm nop* qrs?']),
                          ['abc?def', 'hij*klm', 'nop*', 'qrs?'])
 
-    def test_process_w_locale_awareness(self):
-        import locale
-        import sys
-        self._old_locale = locale.setlocale(locale.LC_ALL)
-        # set German locale
-        try:
-            if sys.platform == 'win32':
-                locale.setlocale(locale.LC_ALL, 'German_Germany.1252')
-            else:
-                locale.setlocale(locale.LC_ALL, 'de_DE.ISO8859-1')
-        except locale.Error:
-            return # This test doesn't work here :-(
-        expected = ['m\xfclltonne', 'waschb\xe4r',
-                    'beh\xf6rde', '\xfcberflieger']
-        words = [" ".join(expected)]
-        words = Splitter().process(words)
-        self.assertEqual(words, expected)
-        words = HTMLWordSplitter().process(words)
-        self.assertEqual(words, expected)
-
 def test_suite():
     return unittest.TestSuite((
         unittest.makeSuite(HTMLWordSplitterTests),
