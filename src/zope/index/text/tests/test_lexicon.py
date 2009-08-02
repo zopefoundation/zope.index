@@ -247,7 +247,7 @@ class SplitterTests(unittest.TestCase):
         expected = ['m\xfclltonne', 'waschb\xe4r',
                     'beh\xf6rde', '\xfcberflieger']
         splitter = self._makeOne()
-        self.assertEqual(splitter.process(' '.join(expected)), expected)
+        self.assertEqual(splitter.process([' '.join(expected)]), expected)
 
     def test_process_w_glob(self):
         splitter = self._makeOne()
