@@ -166,7 +166,7 @@ class LexiconTests(unittest.TestCase):
         lexicon.sourceToWordIds('cats and dogs are enemies')
         self.assertEqual(lexicon.globToWordIds('a*'), [2, 4])
 
-    def test_globToWordIds_simple_pattern(self):
+    def test_globToWordIds_simple_pattern2(self):
         lexicon = self._makeOne()
         lexicon.sourceToWordIds('cats and dogs are enemies')
         self.assertEqual(lexicon.globToWordIds('a?e'), [4])
