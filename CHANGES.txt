@@ -4,6 +4,8 @@ Changes
 3.6.0 (2009-08-03)
 ------------------
 
+- Improved test readability and reached 100% test coverage.
+
 - Fixed a broken optimization in okascore.c: it was passing a Python
   float to the PyInt_AS_LONG() macro. This resulted in wrong scores,
   especially on 64 bit platforms, where all scores typically ended up
