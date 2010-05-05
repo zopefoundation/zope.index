@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2006 Zope Corporation and Contributors.
+# Copyright (c) 2006 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -66,7 +66,7 @@ setup(name='zope.index',
       version='3.6.1dev',
       url='http://pypi.python.org/pypi/zope.index',
       license='ZPL 2.1',
-      author='Zope Corporation and Contributors',
+      author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       description="Indices for using with catalog like text, field, etc.",
       long_description=long_description,
