@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Basic interfaces shared between different types of index.
-
-$Id$
 """
 from zope.interface import Interface
 

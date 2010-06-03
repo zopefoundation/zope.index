@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """SetOps -- Weighted intersections and unions applied to many inputs.
-
-$Id$
 """
 
 import BTrees

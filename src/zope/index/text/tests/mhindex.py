@@ -40,8 +40,6 @@ Indexing options:
 Querying options:
   -m N -- show at most N matching lines from the message (default 3)
   -n N -- show the N best matching messages (default 3)
-
-$Id$
 """
 import os
 import re

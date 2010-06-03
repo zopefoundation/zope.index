@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Keyword-index search interface
-
-$Id$
 """
 from zope.interface import Interface
 

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """N-Best index tests
-
-$Id$
 """
 from unittest import TestCase, main, makeSuite
 

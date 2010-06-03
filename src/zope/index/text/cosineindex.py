@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Full text index with relevance ranking, using a cosine measure.
-
-$Id$
 """
 import math
 

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """A sorting mixin class for FieldIndex-like indexes.
-
-$Id$
 """
 import heapq
 import bisect

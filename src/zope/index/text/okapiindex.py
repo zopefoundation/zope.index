@@ -188,8 +188,6 @@ to always be 1, and then that quotient is
 
 regardless of k3's value.  So, in a trivial sense, we are incorporating
 this measure (and optimizing it by not bothering to multiply by 1 <wink>).
-
-$Id$
 """
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency

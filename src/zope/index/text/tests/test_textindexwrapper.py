@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Unit tests for TextIndexWrapper.
-
-$Id$
 """
 import unittest
 from zope.testing import doctest

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Generic parser support: exception and parse tree nodes.
-
-$Id$
 """
 from zope.index.text.interfaces import IQueryParseTree
 from zope.index.text.setops import mass_weightedIntersection

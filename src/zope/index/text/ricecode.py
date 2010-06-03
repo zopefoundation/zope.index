@@ -32,8 +32,6 @@ Compute the length of the unary part, q, where
    Emit q 1 bits followed by a 0 bit.
 
 Emit the lower m bits of x-1, treating x-1 as a binary value.
-
-$Id$
 """
 
 import array

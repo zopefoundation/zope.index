@@ -17,8 +17,6 @@
 # Zope Toolkit policies as described by this documentation.
 ##############################################################################
 """Setup for zope.index package
-
-$Id$
 """
 import sys
 import os

@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """Abstract base class for full text index with relevance ranking.
-
-$Id$
 """
 import math
 

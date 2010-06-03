@@ -57,8 +57,6 @@ If it contains 22 thru 28 bits,
    0000abcd efghijkL mnopqrst uvwxyzAB
 the encoding is
    1abcdefg 0hijkLmn 0opqrstu 0vwxyzAB
-
-$Id$
 """
 assert 0x80**2 == 0x4000
 assert 0x80**4 == 0x10000000
