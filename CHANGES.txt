@@ -1,8 +1,8 @@
 Changes
 =======
 
-Unreleased
-----------
+3.6.1 (2010-07-08)
+------------------
 
 - TextIndex:  reuse the lexicon from the underlying Okapi / Cosine
   index, if passed.  (LP #232516)
