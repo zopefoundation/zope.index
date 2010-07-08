@@ -13,6 +13,7 @@
 ##############################################################################
 """Text-indexing interfaces
 """
+from zope.interface import Attribute
 from zope.interface import Interface
 
 class ILexicon(Interface):
@@ -74,6 +75,10 @@ class ILexicon(Interface):
 
         The word should be one of the words returned by parseTerms().
         """
+
+class ILexiconBasedIndex(Interface):
+    """ Interface for indexes which hold a lexicon."""
+    lexicon = Attribute(u'Lexicon used by the index.')
 
 class IQueryParser(Interface):
     """Interface for Query Parsers."""

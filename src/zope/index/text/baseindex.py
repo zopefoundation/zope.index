@@ -25,14 +25,17 @@ from BTrees.IOBTree import IOBTree
 from zope.index.interfaces import IInjection
 from zope.index.interfaces import IStatistics
 from zope.index.text.interfaces import IExtendedQuerying
+from zope.index.text.interfaces import ILexiconBasedIndex
 from zope.index.text import widcode
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
 
 class BaseIndex(Persistent):
-    implements(IInjection, IStatistics, IExtendedQuerying)
+    implements(IInjection, IStatistics, ILexiconBasedIndex, IExtendedQuerying)
 
     family = BTrees.family32
+
+    lexicon = property(lambda self: self._lexicon,)
 
     def __init__(self, lexicon, family=None):
         if family is not None:

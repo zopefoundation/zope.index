@@ -49,6 +49,16 @@ class BaseIndexTestBase:
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
+    def test_class_conforms_to_ILexiconBasedIndex(self):
+        from zope.interface.verify import verifyClass
+        from zope.index.text.interfaces import ILexiconBasedIndex
+        verifyClass(ILexiconBasedIndex, self._getTargetClass())
+
+    def test_instance_conforms_to_ILexiconBasedIndex(self):
+        from zope.interface.verify import verifyObject
+        from zope.index.text.interfaces import ILexiconBasedIndex
+        verifyObject(ILexiconBasedIndex, self._makeOne())
+
     def test_class_conforms_to_IExtendedQuerying(self):
         from zope.interface.verify import verifyClass
         from zope.index.text.interfaces import IExtendedQuerying
