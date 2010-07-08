@@ -53,6 +53,17 @@ class LexiconTests(unittest.TestCase):
         # No write-on-read!
         self.failIf(isinstance(lexicon.wordCount, Length))
 
+    def test_sourceToWordIds_empty_string(self):
+        lexicon = self._makeOne()
+        wids = lexicon.sourceToWordIds('')
+        self.assertEqual(wids, [])
+
+    def test_sourceToWordIds_none(self):
+        # See LP #598776
+        lexicon = self._makeOne()
+        wids = lexicon.sourceToWordIds(None)
+        self.assertEqual(wids, [])
+
     def test_sourceToWordIds(self):
         lexicon = self._makeOne()
         wids = lexicon.sourceToWordIds('cats and dogs')

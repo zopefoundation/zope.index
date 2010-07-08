@@ -59,6 +59,8 @@ class Lexicon(Persistent):
         return self._wids.items()
 
     def sourceToWordIds(self, text):
+        if text is None:
+            text = ''
         last = _text2list(text)
         for element in self._pipeline:
             last = element.process(last)
