@@ -4,7 +4,10 @@ Changes
 Unreleased
 ----------
 
-- Avoid raising an exception when indexing None. (LP #598776)
+- TextIndex:  reuse the lexicon from the underlying Okapi / Cosine
+  index, if passed.  (LP #232516)
+
+- Lexicon:  avoid raising an exception when indexing None. (LP #598776)
 
 3.6.0 (2009-08-03)
 ------------------

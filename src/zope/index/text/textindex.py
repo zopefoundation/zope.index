@@ -37,11 +37,13 @@ class TextIndex(Persistent):
 
         This creates the lexicon and index if not passed in.
         """
+        _explicit_lexicon = True
         if lexicon is None:
+            _explicit_lexicon = False
             lexicon = Lexicon(Splitter(), CaseNormalizer(), StopWordRemover())
         if index is None:
             index = OkapiIndex(lexicon)
-        self.lexicon = lexicon
+        self.lexicon = _explicit_lexicon and lexicon or index.lexicon
         self.index = index
 
     def index_doc(self, docid, text):

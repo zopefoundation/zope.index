@@ -106,19 +106,12 @@ class TextIndexTests(unittest.TestCase):
         self.failUnless(index.index._lexicon is lexicon)
 
     def test_ctor_explicit_index(self):
-        from zope.index.text.lexicon import CaseNormalizer
-        from zope.index.text.lexicon import Lexicon
-        from zope.index.text.lexicon import Splitter
-        from zope.index.text.lexicon import StopWordRemover
-        okapi = object()
+        lexicon = object()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(index=okapi)
         self.failUnless(index.index is okapi)
-        self.failUnless(isinstance(index.lexicon, Lexicon))
-        pipeline = index.lexicon._pipeline
-        self.assertEqual(len(pipeline), 3)
-        self.failUnless(isinstance(pipeline[0], Splitter))
-        self.failUnless(isinstance(pipeline[1], CaseNormalizer))
-        self.failUnless(isinstance(pipeline[2], StopWordRemover))
+        # See LP #232516
+        self.failUnless(index.lexicon is lexicon)
 
     def test_ctor_explicit_lexicon_and_index(self):
         lexicon = object()
@@ -129,40 +122,40 @@ class TextIndexTests(unittest.TestCase):
 
     def test_index_doc(self):
         lexicon = object()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         index.index_doc(1, 'cats and dogs')
         self.assertEqual(okapi._indexed[0], (1, 'cats and dogs'))
 
     def test_unindex_doc(self):
         lexicon = object()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         index.unindex_doc(1)
         self.assertEqual(okapi._unindexed[0], 1)
 
     def test_clear(self):
         lexicon = object()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         index.clear()
         self.failUnless(okapi._cleared)
 
     def test_documentCount(self):
         lexicon = object()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         self.assertEqual(index.documentCount(), 4)
 
     def test_wordCount(self):
         lexicon = object()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         self.assertEqual(index.wordCount(), 45)
 
     def test_apply_no_results(self):
         lexicon = DummyLexicon()
-        okapi = DummyOkapi({})
+        okapi = DummyOkapi(lexicon, {})
         index = self._makeOne(lexicon, okapi)
         self.assertEqual(index.apply('anything'), {})
         self.assertEqual(okapi._query_weighted, [])
@@ -170,7 +163,7 @@ class TextIndexTests(unittest.TestCase):
 
     def test_apply_w_results(self):
         lexicon = DummyLexicon()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         results = index.apply('anything')
         self.assertEqual(results[1], 14.0 / 42.0)
@@ -181,7 +174,7 @@ class TextIndexTests(unittest.TestCase):
 
     def test_apply_w_results_zero_query_weight(self):
         lexicon = DummyLexicon()
-        okapi = DummyOkapi()
+        okapi = DummyOkapi(lexicon)
         okapi._query_weight = 0
         index = self._makeOne(lexicon, okapi)
         results = index.apply('anything')
@@ -196,7 +189,7 @@ class TextIndexTests(unittest.TestCase):
         DIVISOR = sys.maxint / 10
         lexicon = DummyLexicon()
         # cause TypeError in division
-        okapi = DummyOkapi({1: '14.0', 2: '7.4', 3: '3.2'})
+        okapi = DummyOkapi(lexicon, {1: '14.0', 2: '7.4', 3: '3.2'})
         index = self._makeOne(lexicon, okapi)
         results = index.apply('anything')
         self.assertEqual(results[1], DIVISOR)
@@ -212,7 +205,8 @@ class DummyOkapi:
     _word_count = 45
     _query_weight = 42.0
 
-    def __init__(self, search_results=None):
+    def __init__(self, lexicon, search_results=None):
+        self.lexicon = lexicon
         self._indexed = []
         self._unindexed = []
         self._searched = []
