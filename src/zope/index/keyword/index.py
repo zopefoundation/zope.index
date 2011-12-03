@@ -97,7 +97,7 @@ class KeywordIndex(Persistent):
             for word in kw_removed:
                 fwd = self._fwd_index[word]
                 fwd.remove(docid)
-                if len(fwd) == 0:
+                if not fwd:
                     del self._fwd_index[word]
 
             # now update reverse and forward indexes

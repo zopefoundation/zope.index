@@ -1,6 +1,12 @@
 Changes
 =======
 
+3.6.3 (2011-12-03)
+------------------
+
+- KeywordIndex: Minor optimization; use __nonzero__ instead of __len__
+  to avoid loading the full TreeSet.
+
 3.6.2 (2011-12-03)
 ------------------
 
