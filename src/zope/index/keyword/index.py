@@ -32,7 +32,7 @@ class KeywordIndex(Persistent):
 
     # If a word is referenced by at least tree_threshold docids,
     # use a TreeSet for that word instead of a Set.
-    tree_threshold = 100
+    tree_threshold = 64
 
     def __init__(self, family=None):
         if family is not None:
