@@ -30,6 +30,10 @@ class KeywordIndex(Persistent):
     implements(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
     family = BTrees.family32
 
+    # If a word is referenced by at least tree_threshold docids,
+    # use a TreeSet for that word instead of a Set.
+    tree_threshold = 100
+
     def __init__(self, family=None):
         if family is not None:
             self.family = family
@@ -123,11 +127,19 @@ class KeywordIndex(Persistent):
         """insert a sequence of words into the forward index """
 
         idx = self._fwd_index
-        has_key = idx.has_key
+        get_word_idx = idx.get
+        IF = self.family.IF
+        Set = IF.Set
+        TreeSet = IF.TreeSet
         for word in words:
-            if not has_key(word):
-                idx[word] = self.family.IF.Set()
-            idx[word].insert(docid)
+            word_idx = get_word_idx(word)
+            if word_idx is None:
+                idx[word] = word_idx = Set()
+            word_idx.insert(docid)
+            if (not isinstance(word_idx, TreeSet) and
+                    len(word_idx) >= self.tree_threshold):
+                # Convert to a TreeSet.
+                idx[word] = TreeSet(word_idx)
 
     def _insert_reverse(self, docid, words):
         """ add words to forward index """
@@ -174,6 +186,28 @@ class KeywordIndex(Persistent):
                 operator = query['operator']
             query = query['query']
         return self.search(query, operator=operator)
+
+    def optimize(self):
+        """Optimize the index. Call this after changing tree_threshold.
+
+        This converts internal data structures between
+        Sets and TreeSets based on tree_threshold.
+        """
+        idx = self._fwd_index
+        IF = self.family.IF
+        Set = IF.Set
+        TreeSet = IF.TreeSet
+        items = list(self._fwd_index.items())
+        for word, word_idx in items:
+            if len(word_idx) >= self.tree_threshold:
+                if not isinstance(word_idx, TreeSet):
+                    # Convert to a TreeSet.
+                    idx[word] = TreeSet(word_idx)
+            else:
+                if isinstance(word_idx, TreeSet):
+                    # Convert to a Set.
+                    idx[word] = Set(word_idx)
+
 
 class CaseInsensitiveKeywordIndex(KeywordIndex):
     """A case-normalizing keyword index (for strings as keywords)"""

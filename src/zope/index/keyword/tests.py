@@ -85,6 +85,60 @@ class _KeywordIndexTestsBase:
         self._apply_or(index, ('cmf', 'zope4'), self.IFSet([5]))
         self._apply_or(index, ('zope', 'Zope'), self.IFSet([1,3]))
 
+    def test_apply_with_only_tree_set(self):
+        index = self._makeOne()
+        index.tree_threshold = 0
+        self._populate(index)
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFTreeSet()))
+        self._apply_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
+        self._apply_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
+        self._apply_and(index, ('quick', 'FOX'), self.IFSet([2]))
+
+    def test_apply_with_mix_of_tree_set_and_simple_set(self):
+        index = self._makeOne()
+        index.tree_threshold = 2
+        self._populate(index)
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFSet()))
+        self._apply_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
+        self._apply_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
+        self._apply_and(index, ('quick', 'FOX'), self.IFSet([2]))
+
+    def test_optimize_converts_to_tree_set(self):
+        index = self._makeOne()
+        self._populate(index)
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFSet()))
+        index.tree_threshold = 0
+        index.optimize()
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFTreeSet()))
+
+    def test_optimize_converts_to_simple_set(self):
+        index = self._makeOne()
+        index.tree_threshold = 0
+        self._populate(index)
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFTreeSet()))
+        index.tree_threshold = 99
+        index.optimize()
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFSet()))
+
+    def test_optimize_leaves_words_alone(self):
+        index = self._makeOne()
+        self._populate(index)
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFSet()))
+        index.tree_threshold = 99
+        index.optimize()
+        self.assertEqual(type(index._fwd_index['zope']),
+            type(self.IFSet()))
+
+
 class CaseInsensitiveKeywordIndexTestsBase:
 
     def _getTargetClass(self):
@@ -166,6 +220,10 @@ class _ThirtyTwoBitBase:
         from BTrees.IFBTree import IFSet
         return IFSet(*args, **kw)
 
+    def IFTreeSet(self, *args, **kw):
+        from BTrees.IFBTree import IFTreeSet
+        return IFTreeSet(*args, **kw)
+
 class _SixtyFourBitBase:
 
     def _get_family(self):
@@ -175,6 +233,10 @@ class _SixtyFourBitBase:
     def IFSet(self, *args, **kw):
         from BTrees.LFBTree import LFSet
         return LFSet(*args, **kw)
+
+    def IFTreeSet(self, *args, **kw):
+        from BTrees.LFBTree import LFTreeSet
+        return LFTreeSet(*args, **kw)
 
 _marker = object()
 

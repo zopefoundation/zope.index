@@ -4,7 +4,11 @@ Changes
 3.6.2 (unreleased)
 ------------------
 
-- TBD
+- KeywordIndex: Store docids in TreeSet rather than a Set when the
+  number of documents matching a word reaches a configurable
+  threshold (default 100). The rule is applied to individual words at
+  indexing time, but you can call the new optimize method to optimize
+  all the words in an index at once. Designed to fix LP #881950.
 
 3.6.1 (2010-07-08)
 ------------------
