@@ -14,6 +14,7 @@
 """Test field index
 """
 import unittest
+import doctest
 
 _marker = object()
 
@@ -311,7 +312,6 @@ class FieldIndexTests(unittest.TestCase):
         self.assertRaises(ValueError, list, result)
 
 def test_suite():
-    from zope.testing import doctest
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt', optionflags=doctest.ELLIPSIS),
         unittest.makeSuite(FieldIndexTests),

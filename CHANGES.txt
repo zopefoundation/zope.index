@@ -1,6 +1,11 @@
 Changes
 =======
 
+3.6.4 (unreleased)
+------------------
+
+- Use the standard Python doctest module instead of zope.testing.doctest
+
 3.6.3 (2011-12-03)
 ------------------
 
