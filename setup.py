@@ -61,7 +61,7 @@ class optional_build_ext(build_ext):
         print >> sys.stderr, '*' * 80
 
 setup(name='zope.index',
-      version='3.6.3',
+      version='3.6.4dev',
       url='http://pypi.python.org/pypi/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
