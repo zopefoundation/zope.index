@@ -75,12 +75,14 @@ class KeywordIndex(Persistent):
         if isinstance(seq, basestring):
             raise TypeError('seq argument must be a list/tuple of strings')
 
+        old_kw = self._rev_index.get(docid, None)
         if not seq:
+            if old_kw:
+                self.unindex_doc(docid)
             return
 
         seq = self.normalize(seq)
 
-        old_kw = self._rev_index.get(docid, None)
         new_kw = self.family.OO.Set(seq)
 
         if old_kw is None:

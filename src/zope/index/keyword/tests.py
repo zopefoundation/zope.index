@@ -138,6 +138,13 @@ class _KeywordIndexTestsBase:
         self.assertEqual(type(index._fwd_index['zope']),
             type(self.IFSet()))
 
+    def test_index_with_empty_sequence_unindexes(self):
+        index = self._makeOne()
+        self._populate(index)
+        self._search(index, 'cmf', self.IFSet([5]))
+        index.index_doc(5, ())
+        self._search(index, 'cmf', self.IFSet([]))
+
 
 class CaseInsensitiveKeywordIndexTestsBase:
 
