@@ -1,7 +1,7 @@
 Changes
 =======
 
-3.6.4 (unreleased)
+3.6.4 (2012-03-12)
 ------------------
 
 - Insure proper unindex behavior if index_doc is called with a empty sequence.
