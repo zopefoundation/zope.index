@@ -17,12 +17,11 @@ import heapq
 import bisect
 from itertools import islice
 
-from zope.interface import implements
+from zope.interface import implementer
 from zope.index.interfaces import IIndexSort
 
+@implementer(IIndexSort)
 class SortingIndexMixin(object):
-
-    implements(IIndexSort)
 
     _sorting_num_docs_attr = '_num_docs'   # Length object
     _sorting_fwd_index_attr = '_fwd_index' # forward BTree index

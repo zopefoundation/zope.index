@@ -21,13 +21,12 @@ from BTrees.Length import Length
 from zope.index import interfaces
 from zope.index.field.sorting import SortingIndexMixin
 
-class FieldIndex(SortingIndexMixin, persistent.Persistent):
-
-    zope.interface.implements(
+@zope.interface.implementer(
         interfaces.IInjection,
         interfaces.IStatistics,
         interfaces.IIndexSearch,
         )
+class FieldIndex(SortingIndexMixin, persistent.Persistent):
 
     family = BTrees.family32
 

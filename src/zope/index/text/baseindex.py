@@ -16,7 +16,7 @@
 import math
 
 from persistent import Persistent
-from zope.interface import implements
+from zope.interface import implementer
 
 import BTrees
 from BTrees import Length
@@ -30,8 +30,8 @@ from zope.index.text import widcode
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
 
+@implementer(IInjection, IStatistics, ILexiconBasedIndex, IExtendedQuerying)
 class BaseIndex(Persistent):
-    implements(IInjection, IStatistics, ILexiconBasedIndex, IExtendedQuerying)
 
     family = BTrees.family32
 

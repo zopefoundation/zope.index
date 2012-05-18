@@ -1,10 +1,13 @@
 Changes
 =======
 
-3.6.5 (unreleased)
+4.0.0 (unreleased)
 ------------------
 
-- TBD
+- Replaced deprecated ``zope.interface.implements`` usage with equivalent
+  ``zope.interface.implementer`` decorator.
+
+- Dropped support for Python 2.4 and 2.5.
 
 3.6.4 (2012-03-12)
 ------------------

@@ -17,15 +17,14 @@ from persistent import Persistent
 
 import BTrees
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.index.interfaces import IInjection, IIndexSearch
 from zope.index.topic.interfaces import ITopicQuerying
 
 
+@implementer(IInjection, ITopicQuerying, IIndexSearch)
 class TopicIndex(Persistent):
-
-    implements(IInjection, ITopicQuerying, IIndexSearch)
 
     family = BTrees.family32
 

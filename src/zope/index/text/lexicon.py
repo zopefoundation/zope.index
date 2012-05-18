@@ -15,7 +15,7 @@
 """
 import re
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OIBTree import OIBTree
@@ -30,9 +30,9 @@ from zope.index.text.stopdict import get_stopdict
 from zope.index.text.parsetree import QueryError
 
 
+@implementer(ILexicon)
 class Lexicon(Persistent):
 
-    implements(ILexicon)
     def __init__(self, *pipeline):
         self._wids = OIBTree()  # word -> wid
         self._words = IOBTree() # wid -> word
@@ -164,8 +164,8 @@ def _text2list(text):
 
 # Sample pipeline elements
 
+@implementer(ISplitter)
 class Splitter(object):
-    implements(ISplitter)
 
     rx = re.compile(r"(?u)\w+")
     rxGlob = re.compile(r"(?u)\w+[\w*?]*") # See globToWordIds() above
@@ -182,14 +182,14 @@ class Splitter(object):
             result += self.rxGlob.findall(s)
         return result
 
+@implementer(IPipelineElement)
 class CaseNormalizer(object):
-    implements(IPipelineElement)
 
     def process(self, lst):
         return [w.lower() for w in lst]
 
+@implementer(IPipelineElement)
 class StopWordRemover(object):
-    implements(IPipelineElement)
 
     dict = get_stopdict().copy()
 

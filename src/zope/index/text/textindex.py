@@ -16,7 +16,7 @@
 import sys
 
 from persistent import Persistent
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.index.interfaces import IIndexSearch
 from zope.index.interfaces import IInjection
@@ -28,9 +28,8 @@ from zope.index.text.lexicon import StopWordRemover
 from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.queryparser import QueryParser
 
+@implementer(IInjection, IIndexSearch, IStatistics)
 class TextIndex(Persistent):
-
-    implements(IInjection, IIndexSearch, IStatistics)
 
     def __init__(self, lexicon=None, index=None):
         """Provisional constructor.

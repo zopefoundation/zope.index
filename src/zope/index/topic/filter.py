@@ -17,8 +17,9 @@
 import BTrees
 
 from zope.index.topic.interfaces import ITopicFilteredSet
-from zope.interface import implements
+from zope.interface import implementer
 
+@implementer(ITopicFilteredSet)
 class FilteredSetBase(object):
     """ Base class for all filtered sets.
     
@@ -26,8 +27,6 @@ class FilteredSetBase(object):
         by their document ids that match a common criteria given
         by a condition.
     """
-
-    implements(ITopicFilteredSet)
 
     family = BTrees.family32
 

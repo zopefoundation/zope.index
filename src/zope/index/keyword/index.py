@@ -21,13 +21,13 @@ from BTrees.Length import Length
 
 from zope.index.interfaces import IInjection, IStatistics, IIndexSearch
 from zope.index.keyword.interfaces import IKeywordQuerying
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
 class KeywordIndex(Persistent):
     """Keyword index"""
 
-    implements(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
     family = BTrees.family32
 
     # If a word is referenced by at least tree_threshold docids,

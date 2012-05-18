@@ -55,7 +55,7 @@ Summarizing the default operator rules:
 """
 
 import re
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.index.text.interfaces import IQueryParser
 from zope.index.text import parsetree
@@ -93,9 +93,8 @@ _tokenizer_regex = re.compile(r"""
     )
 """, re.VERBOSE)
 
+@implementer(IQueryParser)
 class QueryParser(object):
-
-    implements(IQueryParser)
 
     # This class is not thread-safe;
     # each thread should have its own instance

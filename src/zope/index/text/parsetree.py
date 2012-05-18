@@ -17,7 +17,7 @@ from zope.index.text.interfaces import IQueryParseTree
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
 
-from zope.interface import implements
+from zope.interface import implementer
 
 class QueryError(Exception):
     pass
@@ -25,9 +25,8 @@ class QueryError(Exception):
 class ParseError(Exception):
     pass
 
+@implementer(IQueryParseTree)
 class ParseTreeNode(object):
-
-    implements(IQueryParseTree)
 
     _nodeType = None
 

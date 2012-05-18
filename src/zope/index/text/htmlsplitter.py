@@ -15,7 +15,7 @@
 """
 import re
 
-from zope.interface import implements
+from zope.interface import implementer
 
 from zope.index.text.interfaces import ISplitter
 
@@ -23,9 +23,8 @@ MARKUP = re.compile(r"(<[^<>]*>|&[A-Za-z]+;)")
 WORDS = re.compile(r"(?L)\w+")
 GLOBS = re.compile(r"(?L)\w+[\w*?]*")
 
+@implementer(ISplitter)
 class HTMLWordSplitter(object):
-
-    implements(ISplitter)
 
     def process(self, text):
         return self._apply(text, WORDS)
