@@ -21,20 +21,20 @@ class Test_widcode(unittest.TestCase):
 
     def test_encode_1_to_7_bits(self):
         from zope.index.text.widcode import encode
-        for wid in xrange(2**7):
+        for wid in range(2**7):
             code = encode([wid])
             self.assertEqual(code, chr(wid + 128))
 
     def test_encode_8_to_14_bits(self):
         from zope.index.text.widcode import encode
-        for wid in xrange(2**7, 2**14):
+        for wid in range(2**7, 2**14):
             hi, lo = divmod(wid, 128)
             code = encode([wid])
             self.assertEqual(code, chr(hi + 128) + chr(lo))
 
     def test_encode_15_to_21_bits(self):
         from zope.index.text.widcode import encode
-        for wid in xrange(2**14, 2**21, 255):
+        for wid in range(2**14, 2**21, 255):
             mid, lo = divmod(wid, 128)
             hi, mid = divmod(mid, 128)
             code = encode([wid])
@@ -43,7 +43,7 @@ class Test_widcode(unittest.TestCase):
     def test_encode_22_to_28_bits(self):
         from zope.index.text.widcode import encode
         STEP = (256 * 512) - 1
-        for wid in xrange(2**21, 2**28, STEP):
+        for wid in range(2**21, 2**28, STEP):
             lmid, lo = divmod(wid, 128)
             hmid, lmid = divmod(lmid, 128)
             hi, hmid = divmod(hmid, 128)
@@ -98,7 +98,7 @@ class Test_widcode(unittest.TestCase):
     def test_symmetric(self):
         from zope.index.text.widcode import decode
         from zope.index.text.widcode import encode
-        for wid in xrange(2**28, 1117):
+        for wid in range(2**28, 1117):
             wids = [wid]
             code = encode(wids)
             self.assertEqual(decode(code), wids)

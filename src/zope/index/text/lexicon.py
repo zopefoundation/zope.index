@@ -66,13 +66,13 @@ class Lexicon(Persistent):
             last = element.process(last)
         if not isinstance(self.wordCount, Length):
             # Make sure wordCount is overridden with a BTrees.Length.Length
-            self.wordCount = Length(self.wordCount())        
+            self.wordCount = Length(self.wordCount())
         # Strategically unload the length value so that we get the most
         # recent value written to the database to minimize conflicting wids
         # Because length is independent, this will load the most
         # recent value stored, regardless of whether MVCC is enabled
         self.wordCount._p_deactivate()
-        return map(self._getWordIdCreate, last)
+        return list(map(self._getWordIdCreate, last))
 
     def termToWordIds(self, text):
         last = _text2list(text)
@@ -148,7 +148,7 @@ class Lexicon(Persistent):
     def _new_wid(self):
         count = self.wordCount
         count.change(1)
-        while self._words.has_key(count()):
+        while count() in self._words:
             # just to be safe
             count.change(1)
         return count()
@@ -194,8 +194,7 @@ class StopWordRemover(object):
     dict = get_stopdict().copy()
 
     def process(self, lst):
-        has_key = self.dict.has_key
-        return [w for w in lst if not has_key(w)]
+        return [w for w in lst if not w in self.dict]
 
 class StopWordAndSingleCharRemover(StopWordRemover):
 

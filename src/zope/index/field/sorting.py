@@ -45,7 +45,7 @@ class SortingIndexMixin(object):
 
         fwd_index = getattr(self, self._sorting_fwd_index_attr)
         rev_index = getattr(self, self._sorting_rev_index_attr)
-        getValue = rev_index.get
+        getValue = lambda x, d=-1: rev_index.get(x, d)
         marker = object()
 
         # use_lazy and use_nbest computations lifted wholesale from
@@ -58,7 +58,7 @@ class SortingIndexMixin(object):
             use_lazy = True
         if getattr(self, '_use_nbest', False):
             use_nbest = True
-        
+
         if use_nbest:
             # this is a sort with a limit that appears useful, try to
             # take advantage of the fact that we can keep a smaller

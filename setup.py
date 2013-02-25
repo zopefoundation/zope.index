@@ -18,6 +18,7 @@
 ##############################################################################
 """Setup for zope.index package
 """
+from __future__ import print_function
 import sys
 import os
 
@@ -38,27 +39,43 @@ class optional_build_ext(build_ext):
     def run(self):
         try:
             build_ext.run(self)
-        
-        except DistutilsPlatformError, e:
+
+        except DistutilsPlatformError as e:
             self._unavailable(e)
 
     def build_extension(self, ext):
        try:
            build_ext.build_extension(self, ext)
-        
-       except (CCompilerError, DistutilsExecError), e:
+
+       except (CCompilerError, DistutilsExecError) as e:
            self._unavailable(e)
 
     def _unavailable(self, e):
-        print >> sys.stderr, '*' * 80
-        print >> sys.stderr, """WARNING:
+        print('*' * 80, file=sys.stderr)
+        print("""WARNING:
 
         An optional code optimization (C extension) could not be compiled.
 
-        Optimizations for this package will not be available!"""
-        print >> sys.stderr
-        print >> sys.stderr, e
-        print >> sys.stderr, '*' * 80
+        Optimizations for this package will not be available!""",
+              file=sys.stderr)
+        print('', file=sys.stderr)
+        print(e, file=sys.stderr)
+        print('*' * 80, file=sys.stderr)
+
+def alltests():
+    import os
+    import sys
+    import unittest
+    # use the zope.testrunner machinery to find all the
+    # test suites we've put under ourselves
+    import zope.testrunner.find
+    import zope.testrunner.options
+    here = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src'))
+    args = sys.argv[:]
+    defaults = ["--test-path", here]
+    options = zope.testrunner.options.get_options(args, defaults)
+    suites = list(zope.testrunner.find.find_suites(options))
+    return unittest.TestSuite(suites)
 
 setup(name='zope.index',
       version='4.0.0dev',
@@ -76,6 +93,9 @@ setup(name='zope.index',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: Implementation :: CPython',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Topic :: Internet :: WWW/HTTP',
@@ -84,15 +104,21 @@ setup(name='zope.index',
       packages=find_packages('src'),
       package_dir = {'': 'src'},
       namespace_packages=['zope',],
-      extras_require={'test': []},
-      install_requires=['setuptools',
-                        'ZODB3>=3.8',
-                        'zope.interface'],
-      include_package_data = True,
+      extras_require={
+        'test': [],
+        'tools': ['ZODB', 'transaction']},
+      install_requires=[
+        'BTrees',
+        'persistent',
+        'setuptools',
+        'zope.interface'],
+      tests_require = ['zope.testrunner'],
+      test_suite = '__main__.alltests',
       ext_modules=[
           Extension('zope.index.text.okascore',
               [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
       ],
-      zip_safe=False,
       cmdclass = {'build_ext':optional_build_ext},
+      include_package_data = True,
+      zip_safe=False,
       )

@@ -244,7 +244,7 @@ class OkapiIndex(BaseIndex):
             self._totaldoclen.change(delta)
         except AttributeError:
             # Opportunistically upgrade _totaldoclen attribute to Length object
-            self._totaldoclen = Length(long(self._totaldoclen + delta))
+            self._totaldoclen = Length(int(self._totaldoclen + delta))
 
     # The workhorse.  Return a list of (IFBucket, weight) pairs, one pair
     # for each wid t in wids.  The IFBucket, times the weight, maps D to

@@ -206,7 +206,7 @@ class BaseIndex(Persistent):
         return result
 
     def _remove_oov_wids(self, wids):
-        return filter(self._wordinfo.has_key, wids)
+        return list(filter(self._wordinfo.has_key, wids))
 
     # Subclass must override.
     # The workhorse.  Return a list of (IFBucket, weight) pairs, one pair

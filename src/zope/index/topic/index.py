@@ -13,10 +13,9 @@
 ##############################################################################
 """Topic index
 """
-from persistent import Persistent
-
 import BTrees
-
+import six
+from persistent import Persistent
 from zope.interface import implementer
 
 from zope.index.interfaces import IInjection, IIndexSearch
@@ -64,7 +63,7 @@ class TopicIndex(Persistent):
             f.unindex_doc(docid)
 
     def search(self, query, operator='and'):
-        if isinstance(query, basestring):
+        if isinstance(query, six.string_types):
             query = [query]
 
         if not isinstance(query, (tuple, list)):

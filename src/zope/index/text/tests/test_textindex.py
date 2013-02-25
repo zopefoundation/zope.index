@@ -186,7 +186,7 @@ class TextIndexTests(unittest.TestCase):
 
     def test_apply_w_results_bogus_query_weight(self):
         import sys
-        DIVISOR = sys.maxint / 10
+        DIVISOR = 2**64 // 10
         lexicon = DummyLexicon()
         # cause TypeError in division
         okapi = DummyOkapi(lexicon, {1: '14.0', 2: '7.4', 3: '3.2'})

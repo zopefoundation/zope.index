@@ -67,7 +67,7 @@ class NBest(object):
         assert n == len(scores)
 
     def getbest(self):
-        result = zip(self._items, self._scores)
+        result = list(zip(self._items, self._scores))
         result.reverse()
         return result
 

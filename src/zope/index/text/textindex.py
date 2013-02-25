@@ -27,6 +27,7 @@ from zope.index.text.lexicon import Splitter
 from zope.index.text.lexicon import StopWordRemover
 from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.queryparser import QueryParser
+import six
 
 @implementer(IInjection, IIndexSearch, IStatistics)
 class TextIndex(Persistent):
@@ -68,19 +69,19 @@ class TextIndex(Persistent):
         results = tree.executeQuery(self.index)
         if results:
             qw = self.index.query_weight(tree.terms())
-            
+
             # Hack to avoid ZeroDivisionError
             if qw == 0:
                 qw = 1.0
 
             qw *= 1.0
 
-            for docid, score in results.iteritems():
+            for docid, score in six.iteritems(results):
                 try:
                     results[docid] = score/qw
                 except TypeError:
                     # We overflowed the score, perhaps wildly unlikely.
                     # Who knows.
-                    results[docid] = sys.maxint/10
+                    results[docid] = 2**64 // 10
 
         return results

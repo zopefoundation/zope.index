@@ -33,6 +33,12 @@ Compute the length of the unary part, q, where
 
 Emit the lower m bits of x-1, treating x-1 as a binary value.
 """
+from __future__ import print_function
+from __future__ import print_function
+from __future__ import print_function
+from __future__ import print_function
+from __future__ import print_function
+from __future__ import print_function
 
 import array
 
@@ -75,7 +81,8 @@ class BitArray(object):
     def __getstate__(self):
         return self.nbits, self.bitsleft, self.tostring()
 
-    def __setstate__(self, (nbits, bitsleft, s)):
+    def __setstate__(self, xxx_todo_changeme):
+        (nbits, bitsleft, s) = xxx_todo_changeme
         self.bytes = array.array('B', s)
         self.nbits = nbits
         self.bitsleft = bitsleft
@@ -97,7 +104,7 @@ class RiceCode(object):
     def append(self, val):
         """Append an item to the list."""
         if val < 1:
-            raise ValueError("value >= 1 expected, got %s" % `val`)
+            raise ValueError("value >= 1 expected, got %s" % repr(val))
         val -= 1
         # emit the unary part of the code
         q = val >> self.m
@@ -119,7 +126,7 @@ class RiceCode(object):
         """Return the items as a list."""
         l = []
         i = 0 # bit offset
-        binary_range = range(self.m)
+        binary_range = list(range(self.m))
         for j in range(self.len):
             unary = 0
             while self.bits[i] == 1:
@@ -144,7 +151,8 @@ class RiceCode(object):
     def __getstate__(self):
         return self.m, self.bits
 
-    def __setstate__(self, (m, bits)):
+    def __setstate__(self, xxx_todo_changeme1):
+        (m, bits) = xxx_todo_changeme1
         self.init(m)
         self.bits = bits
 
@@ -179,13 +187,13 @@ def test():
         c = encode(random.randint(1, 16), l)
         assert c.tolist() == l
     for size in [10, 20, 50, 100, 200]:
-        l = range(random.randint(1, size), size + random.randint(1, size))
+        l = list(range(random.randint(1, size), size + random.randint(1, size)))
         t = encode_deltas(l)
         l2 = decode_deltas(*t)
         assert l == l2
         if l != l2:
-            print l
-            print l2
+            print(l)
+            print(l2)
 
 def pickle_efficiency():
     import pickle
@@ -196,12 +204,12 @@ def pickle_efficiency():
                 l = [random.randint(1, elt_range) for i in range(size)]
                 raw = pickle.dumps(l, 1)
                 enc = pickle.dumps(encode(m, l), 1)
-                print "m=%2d size=%4d range=%4d" % (m, size, elt_range),
-                print "%5d %5d" % (len(raw), len(enc)),
+                print("m=%2d size=%4d range=%4d" % (m, size, elt_range), end=' ')
+                print("%5d %5d" % (len(raw), len(enc)), end=' ')
                 if len(raw) > len(enc):
-                    print "win"
+                    print("win")
                 else:
-                    print "lose"
+                    print("lose")
 
 if __name__ == "__main__":
     test()

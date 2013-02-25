@@ -13,10 +13,9 @@
 ##############################################################################
 """Keyword index
 """
-from persistent import Persistent
-
 import BTrees
-
+import six
+from persistent import Persistent
 from BTrees.Length import Length
 
 from zope.index.interfaces import IInjection, IStatistics, IIndexSearch
@@ -60,7 +59,7 @@ class KeywordIndex(Persistent):
         return len(self._fwd_index)
 
     def has_doc(self, docid):
-        return bool(self._rev_index.has_key(docid))
+        return bool(docid in self._rev_index)
 
     def normalize(self, seq):
         """Perform normalization on sequence of keywords.
@@ -72,7 +71,7 @@ class KeywordIndex(Persistent):
         return seq
 
     def index_doc(self, docid, seq):
-        if isinstance(seq, basestring):
+        if isinstance(seq, six.string_types):
             raise TypeError('seq argument must be a list/tuple of strings')
 
         old_kw = self._rev_index.get(docid, None)
@@ -151,7 +150,7 @@ class KeywordIndex(Persistent):
 
     def search(self, query, operator='and'):
         """Execute a search given by 'query'."""
-        if isinstance(query, basestring):
+        if isinstance(query, six.string_types):
             query = [query]
 
         query = self.normalize(query)
