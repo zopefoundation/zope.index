@@ -4,7 +4,8 @@ Changes
 4.0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added the forgotten dependency on ``six``.
+  Fixes https://github.com/zopefoundation/zope.index/issues/1.
 
 
 4.0.0 (2013-02-25)
