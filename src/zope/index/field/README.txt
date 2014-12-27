@@ -20,10 +20,17 @@ orderable values.
     >>> index.index_doc(8, 43)
     >>> index.index_doc(9, 15)
 
-Field indexes are searched with apply.  The argument is a tuple
-with a minimum and maximum value:
+Field indexes are searched with ``apply``, which returns an instance of
+``IFSet`.  Let's write a function to display those sets portably
+(across CPython and PyPy):
 
-    >>> index.apply((30, 70))
+The argument to ``apply`` is a tuple with a minimum and maximum value.
+
+    >>> def show_ifset(ifset):
+    ...     print('IFSet(%s)' % list(ifset))
+    ...
+
+    >>> show_ifset(index.apply((30, 70)))
     IFSet([3, 4, 5, 7, 8])
 
 A common mistake is to pass a single value.  If anything other than a 
@@ -37,21 +44,21 @@ two-tuple is passed, a type error is raised:
 
 Open-ended ranges can be provided by provinding None as an end point:
 
-    >>> index.apply((30, None))
+    >>> show_ifset(index.apply((30, None)))
     IFSet([2, 3, 4, 5, 6, 7, 8])
 
-    >>> index.apply((None, 70))
+    >>> show_ifset(index.apply((None, 70)))
     IFSet([0, 1, 3, 4, 5, 7, 8, 9])
 
-    >>> index.apply((None, None))
+    >>> show_ifset(index.apply((None, None)))
     IFSet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 To do an exact value search, supply equal minimum and maximum values:
 
-    >>> index.apply((30, 30))
+    >>> show_ifset(index.apply((30, 30)))
     IFSet([4, 7])
 
-    >>> index.apply((70, 70))
+    >>> show_ifset(index.apply((70, 70)))
     IFSet([])
 
 Field indexes support basic statistics:
@@ -63,13 +70,13 @@ Field indexes support basic statistics:
 
 Documents can be reindexed:
 
-    >>> index.apply((15, 15))
+    >>> show_ifset(index.apply((15, 15)))
     IFSet([9])
     >>> index.index_doc(9, 14)
 
-    >>> index.apply((15, 15))
+    >>> show_ifset(index.apply((15, 15)))
     IFSet([])
-    >>> index.apply((14, 14))
+    >>> show_ifset(index.apply((14, 14)))
     IFSet([9])
     
 Documents can be unindexed:
@@ -85,7 +92,7 @@ Documents can be unindexed:
     >>> index.wordCount()
     7
 
-    >>> index.apply((30, 70))
+    >>> show_ifset(index.apply((30, 70)))
     IFSet([3, 4, 5])
 
 Unindexing a document id that isn't present is ignored:
@@ -105,7 +112,7 @@ We can also clear the index entirely:
     >>> index.wordCount()
     0
 
-    >>> index.apply((30, 70))
+    >>> show_ifset(index.apply((30, 70)))
     IFSet([])
 
 Sorting
@@ -163,7 +170,7 @@ but the index still contains the object, the unindex broke
     >>> index.index_doc(8, 43)
     >>> index.index_doc(9, 15)
     
-    >>> index.apply((None, None))
+    >>> show_ifset(index.apply((None, None)))
     IFSet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 Here is the damage:
@@ -175,7 +182,7 @@ Unindex should succeed:
     >>> index.unindex_doc(5)
     >>> index.unindex_doc(3)
     
-    >>> index.apply((None, None))
+    >>> show_ifset(index.apply((None, None)))
     IFSet([0, 1, 2, 4, 6, 7, 8, 9])
 
 
@@ -202,6 +209,6 @@ Now we get a KeyError if we try to change the value.
 Leaving the value unchange doesn't call unindex_doc.
 
     >>> index.index_doc(9, 15)
-    >>> index.apply((15, 15))
+    >>> show_ifset(index.apply((15, 15)))
     IFSet([9])
 
