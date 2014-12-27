@@ -28,9 +28,13 @@ from distutils.errors import CCompilerError
 from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 
-long_description = (open('README.txt').read() +
+def read(*rnames):
+    with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
+        return f.read()
+
+long_description = (open('README.rst').read() +
                     '\n\n' +
-                    open('CHANGES.txt').read())
+                    open('CHANGES.rst').read())
 
 class optional_build_ext(build_ext):
     """This class subclasses build_ext and allows
