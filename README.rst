@@ -1,5 +1,8 @@
-Overview
---------
+``zope.index``
+==============
+
+.. image:: https://travis-ci.org/zopefoundation/zope.index.png?branch=master
+        :target: https://travis-ci.org/zopefoundation/zope.index
 
 The ``zope.index`` package provides several indices for the Zope
 catalog.  These include:
