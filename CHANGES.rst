@@ -1,28 +1,30 @@
 Changes
 =======
 
-4.0.2 (unreleased)
+4.1.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add support for Python 3.4.
+
+- Add support for testing on Travis.
 
 
 4.0.1 (2013-02-28)
 ------------------
 
-- Added the forgotten dependency on ``six``.
+- Add the forgotten dependency on ``six``.
   Fixes https://github.com/zopefoundation/zope.index/issues/1.
 
 
 4.0.0 (2013-02-25)
 ------------------
 
-- Added support for Python 3.3.
+- Add support for Python 3.3.
 
-- Replaced deprecated ``zope.interface.implements`` usage with equivalent
+- Replace deprecated ``zope.interface.implements`` usage with equivalent
   ``zope.interface.implementer`` decorator.
 
-- Dropped support for Python 2.4 and 2.5.
+- Drop support for Python 2.4 and 2.5.
 
 3.6.4 (2012-03-12)
 ------------------
@@ -57,14 +59,14 @@ Changes
 3.6.0 (2009-08-03)
 ------------------
 
-- Improved test readability and reached 100% test coverage.
+- Improve test readability and reached 100% test coverage.
 
-- Fixed a broken optimization in okascore.c: it was passing a Python
+- Fix a broken optimization in okascore.c: it was passing a Python
   float to the PyInt_AS_LONG() macro. This resulted in wrong scores,
   especially on 64 bit platforms, where all scores typically ended up
   being zero.
 
-- Changed okascore.c to produce the same results as its Python
+- Change okascore.c to produce the same results as its Python
   equivalent, reducing the brittleness of the text index tests.
 
 3.5.2 (2009-06-09)
@@ -150,7 +152,7 @@ Thanks Chris McDonough of repoze for supporting and useful code.
 3.4.1 (2007-09-28)
 ------------------
 
-- Fixed bug in package metadata (wrong homepage URL).
+- Fix bug in package metadata (wrong homepage URL).
 
 3.4.0 (2007-09-28)
 ------------------

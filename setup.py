@@ -82,7 +82,7 @@ def alltests():
     return unittest.TestSuite(suites)
 
 setup(name='zope.index',
-      version='4.0.2.dev0',
+      version='4.1.0.dev0',
       url='http://pypi.python.org/pypi/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
@@ -99,6 +99,7 @@ setup(name='zope.index',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
         'Natural Language :: English',
         'Operating System :: OS Independent',
