@@ -88,37 +88,37 @@ class TextIndexTests(unittest.TestCase):
         from zope.index.text.lexicon import Splitter
         from zope.index.text.lexicon import StopWordRemover
         from zope.index.text.okapiindex import OkapiIndex
-        self.failUnless(isinstance(index.index, OkapiIndex))
-        self.failUnless(isinstance(index.lexicon, Lexicon))
-        self.failUnless(index.index._lexicon is index.lexicon)
+        self.assertTrue(isinstance(index.index, OkapiIndex))
+        self.assertTrue(isinstance(index.lexicon, Lexicon))
+        self.assertTrue(index.index._lexicon is index.lexicon)
         pipeline = index.lexicon._pipeline
         self.assertEqual(len(pipeline), 3)
-        self.failUnless(isinstance(pipeline[0], Splitter))
-        self.failUnless(isinstance(pipeline[1], CaseNormalizer))
-        self.failUnless(isinstance(pipeline[2], StopWordRemover))
+        self.assertTrue(isinstance(pipeline[0], Splitter))
+        self.assertTrue(isinstance(pipeline[1], CaseNormalizer))
+        self.assertTrue(isinstance(pipeline[2], StopWordRemover))
 
     def test_ctor_explicit_lexicon(self):
         from zope.index.text.okapiindex import OkapiIndex
         lexicon = object()
         index = self._makeOne(lexicon)
-        self.failUnless(index.lexicon is lexicon)
-        self.failUnless(isinstance(index.index, OkapiIndex))
-        self.failUnless(index.index._lexicon is lexicon)
+        self.assertTrue(index.lexicon is lexicon)
+        self.assertTrue(isinstance(index.index, OkapiIndex))
+        self.assertTrue(index.index._lexicon is lexicon)
 
     def test_ctor_explicit_index(self):
         lexicon = object()
         okapi = DummyOkapi(lexicon)
         index = self._makeOne(index=okapi)
-        self.failUnless(index.index is okapi)
+        self.assertTrue(index.index is okapi)
         # See LP #232516
-        self.failUnless(index.lexicon is lexicon)
+        self.assertTrue(index.lexicon is lexicon)
 
     def test_ctor_explicit_lexicon_and_index(self):
         lexicon = object()
         okapi = object()
         index = self._makeOne(lexicon, okapi)
-        self.failUnless(index.lexicon is lexicon)
-        self.failUnless(index.index is okapi)
+        self.assertTrue(index.lexicon is lexicon)
+        self.assertTrue(index.index is okapi)
 
     def test_index_doc(self):
         lexicon = object()
@@ -139,7 +139,7 @@ class TextIndexTests(unittest.TestCase):
         okapi = DummyOkapi(lexicon)
         index = self._makeOne(lexicon, okapi)
         index.clear()
-        self.failUnless(okapi._cleared)
+        self.assertTrue(okapi._cleared)
 
     def test_documentCount(self):
         lexicon = object()

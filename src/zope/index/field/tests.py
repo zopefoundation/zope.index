@@ -75,22 +75,22 @@ class FieldIndexTests(unittest.TestCase):
     def test_ctor_defaults(self):
         import BTrees
         index = self._makeOne()
-        self.failUnless(index.family is BTrees.family32)
+        self.assertTrue(index.family is BTrees.family32)
         self.assertEqual(index.documentCount(), 0)
         self.assertEqual(index.wordCount(), 0)
 
     def test_ctor_explicit_family(self):
         import BTrees
         index = self._makeOne(BTrees.family64)
-        self.failUnless(index.family is BTrees.family64)
+        self.assertTrue(index.family is BTrees.family64)
 
     def test_index_doc_new(self):
         index = self._makeOne()
         index.index_doc(1, 'value')
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 1)
-        self.failUnless(1 in index._rev_index)
-        self.failUnless('value' in index._fwd_index)
+        self.assertTrue(1 in index._rev_index)
+        self.assertTrue('value' in index._fwd_index)
 
     def test_index_doc_existing_same_value(self):
         index = self._makeOne()
@@ -98,8 +98,8 @@ class FieldIndexTests(unittest.TestCase):
         index.index_doc(1, 'value')
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 1)
-        self.failUnless(1 in index._rev_index)
-        self.failUnless('value' in index._fwd_index)
+        self.assertTrue(1 in index._rev_index)
+        self.assertTrue('value' in index._fwd_index)
         self.assertEqual(list(index._fwd_index['value']), [1])
 
     def test_index_doc_existing_new_value(self):
@@ -108,9 +108,9 @@ class FieldIndexTests(unittest.TestCase):
         index.index_doc(1, 'new_value')
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 1)
-        self.failUnless(1 in index._rev_index)
-        self.failIf('value' in index._fwd_index)
-        self.failUnless('new_value' in index._fwd_index)
+        self.assertTrue(1 in index._rev_index)
+        self.assertFalse('value' in index._fwd_index)
+        self.assertTrue('new_value' in index._fwd_index)
         self.assertEqual(list(index._fwd_index['new_value']), [1])
 
     def test_unindex_doc_nonesuch(self):
@@ -123,8 +123,8 @@ class FieldIndexTests(unittest.TestCase):
         index.unindex_doc(1) # doesn't raise
         self.assertEqual(index.documentCount(), 0)
         self.assertEqual(index.wordCount(), 0)
-        self.failIf(1 in index._rev_index)
-        self.failIf('value' in index._fwd_index)
+        self.assertFalse(1 in index._rev_index)
+        self.assertFalse('value' in index._fwd_index)
 
     def test_unindex_doc_w_residual_fwd_values(self):
         index = self._makeOne()
@@ -133,9 +133,9 @@ class FieldIndexTests(unittest.TestCase):
         index.unindex_doc(1) # doesn't raise
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 1)
-        self.failIf(1 in index._rev_index)
-        self.failUnless(2 in index._rev_index)
-        self.failUnless('value' in index._fwd_index)
+        self.assertFalse(1 in index._rev_index)
+        self.assertTrue(2 in index._rev_index)
+        self.assertTrue('value' in index._fwd_index)
         self.assertEqual(list(index._fwd_index['value']), [2])
 
     def test_apply_non_tuple_raises(self):
