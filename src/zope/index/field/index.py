@@ -55,19 +55,25 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
         """See interface IInjection"""
         rev_index = self._rev_index
         if docid in rev_index:
-            if value is not None and docid in self._fwd_index.get(value, ()):
-                # no need to index the doc, its already up to date
+            try:
+                if docid in self._fwd_index.get(value, ()):
+                    # no need to index the doc, its already up to date
+                    return
+            except TypeError:
                 return
             # unindex doc if present
             self.unindex_doc(docid)
 
-        if value is not None:
+        try:
             # Insert into forward index.
             set = self._fwd_index.get(value)
             if set is None:
                 set = self.family.IF.TreeSet()
                 self._fwd_index[value] = set
             set.insert(docid)
+        except TypeError:
+            # TypeError is caused by improper keys on the latest version of BTree
+            pass
 
         # increment doc count
         self._num_docs.change(1)
