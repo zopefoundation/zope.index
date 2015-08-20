@@ -311,6 +311,21 @@ class FieldIndexTests(unittest.TestCase):
         result = index.sort(c1, limit=0)
         self.assertRaises(ValueError, list, result)
 
+    def test_insert_none_value_does_not_raise_typeerror(self):
+        index = self._makeOne()
+        index.index_doc(1, None)
+
+    def test_insert_none_value_to_update_does_not_raise_typeerror(self):
+        index = self._makeOne()
+        index.index_doc(1, 5)
+        index.index_doc(1, None)
+
+    def test_insert_none_value_does_not_insert_into_forward_index(self):
+        index = self._makeOne()
+        index.index_doc(1, None)
+        self.assertEquals(len(index._fwd_index), 0)
+        self.assertEquals(len(index._rev_index), 1)
+
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt', optionflags=doctest.ELLIPSIS),
