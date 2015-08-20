@@ -61,12 +61,13 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
             # unindex doc if present
             self.unindex_doc(docid)
 
-        # Insert into forward index.
-        set = self._fwd_index.get(value)
-        if set is None:
-            set = self.family.IF.TreeSet()
-            self._fwd_index[value] = set
-        set.insert(docid)
+        if value is not None:
+                # Insert into forward index.
+                set = self._fwd_index.get(value)
+                if set is None:
+                    set = self.family.IF.TreeSet()
+                    self._fwd_index[value] = set
+                set.insert(docid)
 
         # increment doc count
         self._num_docs.change(1)
