@@ -4,7 +4,7 @@ Changes
 4.1.1 (unreleased)
 ------------------
 
-- TBD
+- Claim support for Python 3.5.
 
 
 4.1.0 (2014-12-27)
