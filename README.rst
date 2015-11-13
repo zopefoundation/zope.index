@@ -1,6 +1,10 @@
 ``zope.index``
 ==============
 
+.. image:: https://img.shields.io/pypi/v/zope.index.svg
+    :target: https://pypi.python.org/pypi/zope.index/
+    :alt: Latest Version
+
 .. image:: https://travis-ci.org/zopefoundation/zope.index.png?branch=master
         :target: https://travis-ci.org/zopefoundation/zope.index
 
