@@ -105,7 +105,7 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
         self._num_docs.change(-1)
 
     def apply(self, query):
-        if len(query) != 2 or not isinstance(query, tuple):
+        if not isinstance(query, tuple) or len(query) != 2:
             raise TypeError("two-length tuple expected", query)
         return self.family.IF.multiunion(
             self._fwd_index.values(*query))
