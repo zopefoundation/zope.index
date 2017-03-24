@@ -115,7 +115,7 @@ setup(name='zope.index',
         'tools': ['ZODB', 'transaction']},
       install_requires=[
         'persistent',
-        'BTrees',
+        'BTrees < 4.4.0',
         'setuptools',
         'six',
         'zope.interface'],
