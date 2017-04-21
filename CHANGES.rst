@@ -4,7 +4,7 @@ Changes
 4.2.1 (unreleased)
 ------------------
 
-- TBD
+- None are now valid values in a field index. This requires BTrees >= 4.4.1
 
 4.2.0 (2016-06-10)
 ------------------

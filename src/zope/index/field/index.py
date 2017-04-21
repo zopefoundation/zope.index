@@ -21,6 +21,8 @@ from BTrees.Length import Length
 from zope.index import interfaces
 from zope.index.field.sorting import SortingIndexMixin
 
+_MARKER = object()
+
 @zope.interface.implementer(
         interfaces.IInjection,
         interfaces.IStatistics,
@@ -55,25 +57,16 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
         """See interface IInjection"""
         rev_index = self._rev_index
         if docid in rev_index:
-            try:
-                if docid in self._fwd_index.get(value, ()):
-                    # no need to index the doc, its already up to date
-                    return
-            except TypeError:
+            if docid in self._fwd_index.get(value, ()):
+                # no need to index the doc, its already up to date
                 return
-            # unindex doc if present
             self.unindex_doc(docid)
-
-        try:
-            # Insert into forward index.
-            set = self._fwd_index.get(value)
-            if set is None:
-                set = self.family.IF.TreeSet()
-                self._fwd_index[value] = set
-            set.insert(docid)
-        except TypeError:
-            # TypeError is caused by improper keys on the latest version of BTree
-            pass
+        # Insert into forward index.
+        set = self._fwd_index.get(value)
+        if set is None:
+            set = self.family.IF.TreeSet()
+            self._fwd_index[value] = set
+        set.insert(docid)
 
         # increment doc count
         self._num_docs.change(1)
@@ -84,8 +77,8 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
     def unindex_doc(self, docid):
         """See interface IInjection"""
         rev_index = self._rev_index
-        value = rev_index.get(docid)
-        if value is None:
+        value = rev_index.get(docid, _MARKER)
+        if value is _MARKER:
             return # not in index
 
         del rev_index[docid]
