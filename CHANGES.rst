@@ -4,7 +4,13 @@ Changes
 4.2.1 (unreleased)
 ------------------
 
-- None are now valid values in a field index. This requires BTrees >= 4.4.1
+- ``None`` are now valid values in a field index. This requires BTrees
+  >= 4.4.1.
+- Allow ``TypeError`` to propagate from a field index when the value
+  cannot be stored in a BTree. Previously it was silently ignored
+  because it was expected that these were usually ``None``.
+- Add support for Python 3.6. See `issue 8
+  <https://github.com/zopefoundation/zope.index/issues/8>`_.
 
 4.2.0 (2016-06-10)
 ------------------
@@ -132,13 +138,13 @@ Changes
   This makes it more compatible with other indexes (for example, when
   using in catalog). This change can lead to problems, if your code somehow
   depends on the II nature of sets, as it was before.
-  
+
   Also, FilteredSets used to use IFSets as well, if you have any
   FilteredSets pickled in the database, you need to migrate them to
   IFSets yourself. You can do it like that:
-  
+
       filter._ids = filter.family.IF.Set(filter._ids)
-  
+
   Where ``filter`` is an instance of FilteredSet.
 
 - IMPORTANT: KeywordIndex are now non-normalizing. Because
@@ -146,7 +152,7 @@ Changes
   doesn't make any sense. Instead, it provides the ``normalize``
   method that can be overriden by subclasses to provide some
   normalization.
-  
+
   The CaseInsensitiveKeywordIndex class is now provided that
   do case-normalization for string-based keywords. The old
   CaseSensitiveKeywordIndex is gone, applications should use
