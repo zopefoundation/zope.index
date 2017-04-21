@@ -35,6 +35,10 @@
 
 #include "Python.h"
 
+#if PY_MAJOR_VERSION >= 3
+#define PY3K
+#endif
+
 #define K1 1.2
 #define B  0.75
 
@@ -128,11 +132,32 @@ static PyMethodDef okascore_functions[] = {
 	{NULL}
 };
 
-void
-initokascore(void)
+#ifdef PY3K
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "okascore",                           /* m_name */
+        "inner scoring loop for Okapi rank",  /* m_doc */
+        -1,                                   /* m_size */
+        okascore_functions,                   /* m_methods */
+        NULL,                                 /* m_reload */
+        NULL,                                 /* m_traverse */
+        NULL,                                 /* m_clear */
+        NULL,                                 /* m_free */
+    };
+
+PyMODINIT_FUNC
+PyInit_okascore(void)
 {
 	PyObject *m;
-
-	m = Py_InitModule3("okascore", okascore_functions,
-			    "inner scoring loop for Okapi rank");
+    m = PyModule_Create(&moduledef);
+    return m;
 }
+#else
+PyMODINIT_FUNC
+initokascore(void)
+{
+	/* XXX: Error checking */
+	Py_InitModule3("okascore", okascore_functions,
+				   "inner scoring loop for Okapi rank");
+}
+#endif

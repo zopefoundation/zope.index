@@ -189,6 +189,9 @@ to always be 1, and then that quotient is
 regardless of k3's value.  So, in a trivial sense, we are incorporating
 this measure (and optimizing it by not bothering to multiply by 1 <wink>).
 """
+import os
+import platform
+
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
 try:
@@ -196,6 +199,15 @@ try:
 except ImportError: #pragma NO COVERAGE
     score = None
 from BTrees.Length import Length
+
+
+_py_impl = getattr(platform, 'python_implementation', lambda: None)
+_is_pypy = _py_impl() == 'PyPy'
+PURE_PYTHON = os.environ.get('PURE_PYTHON') or _is_pypy
+if PURE_PYTHON:
+    score = None
+
+PY2 = str is bytes
 
 class OkapiIndex(BaseIndex):
 
@@ -253,7 +265,7 @@ class OkapiIndex(BaseIndex):
     # D to TF(D,t)*IDF(t) directly, where the product is computed as a float.
     # NOTE:  This may be overridden below, by a function that computes the
     # same thing but with the inner scoring loop in C.
-    if score is None: #pragma NO COVERAGE
+    if score is None:
         def _search_wids(self, wids):
             if not wids:
                 return []
@@ -330,7 +342,8 @@ class OkapiIndex(BaseIndex):
                 d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
                 idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
                 result = self.family.IF.Bucket()
-                score(result, d2f.items(), docid2len, idf, meandoclen)
+                items = d2f.items() if PY2 else list(d2f.items())
+                score(result, items, docid2len, idf, meandoclen)
                 L.append((result, 1))
             return L
 
@@ -358,4 +371,3 @@ class OkapiIndex(BaseIndex):
         for wid in wids:
             d[wid] = dget(wid, 0) + 1
         return d, len(wids)
-
