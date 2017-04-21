@@ -11,6 +11,8 @@ matrix:
         - os: linux
           python: 3.5
         - os: linux
+          python: 3.6
+        - os: linux
           python: pypy
         - os: linux
           python: pypy3
@@ -23,6 +25,9 @@ matrix:
         - os: osx
           language: generic
           env: TERRYFY_PYTHON='macpython 3.5'
+        - os: osx
+          language: generic
+          env: TERRYFY_PYTHON='macpython 3.6.1'
         - services:
             - docker
           env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
@@ -43,9 +48,9 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then get_python_environment $TERRYFY_PYTHON venv; fi
     - pip install --upgrade pip
 install:
-    - pip install -e .
+    - pip install -e .[test]
 script:
-    - python setup.py -q test -q
+    - zope-testrunner --test-path=src
 notifications:
     email: false
 after_success:

@@ -20,8 +20,18 @@ from zope.interface import implementer
 from zope.index.text.interfaces import ISplitter
 
 MARKUP = re.compile(r"(<[^<>]*>|&[A-Za-z]+;)")
-WORDS = re.compile(r"(?L)\w+")
-GLOBS = re.compile(r"(?L)\w+[\w*?]*")
+
+_flags = 0
+if bytes is str:
+    # On python 2, we want locale aware splitting. This is the default
+    # on Python 3 when the pattern is text/unicode and in fact is
+    # forbidden unless the pattern is bytes (starting) in 3.6
+    _flags = re.LOCALE
+
+WORDS = re.compile(r"\w+", _flags)
+GLOBS = re.compile(r"\w+[\w*?]*", _flags)
+
+del _flags
 
 @implementer(ISplitter)
 class HTMLWordSplitter(object):
