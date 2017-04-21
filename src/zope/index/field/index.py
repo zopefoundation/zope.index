@@ -62,11 +62,7 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
                 return
             self.unindex_doc(docid)
         # Insert into forward index.
-        try:
-            set = self._fwd_index.get(value)
-        except:
-            import pdb
-            pdb.set_trace()
+        set = self._fwd_index.get(value)
         if set is None:
             set = self.family.IF.TreeSet()
             self._fwd_index[value] = set
