@@ -66,11 +66,12 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
 
         try:
             # Insert into forward index.
-            set = self._fwd_index.get(value)
-            if set is None:
-                set = self.family.IF.TreeSet()
-                self._fwd_index[value] = set
-            set.insert(docid)
+            if value is not None:
+                set = self._fwd_index.get(value)
+                if set is None:
+                    set = self.family.IF.TreeSet()
+                    self._fwd_index[value] = set
+                set.insert(docid)
         except TypeError:
             # TypeError is caused by improper keys on the latest version of BTree
             pass
