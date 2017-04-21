@@ -11,6 +11,10 @@ Changes
   because it was expected that these were usually ``None``.
 - Add support for Python 3.6. See `issue 8
   <https://github.com/zopefoundation/zope.index/issues/8>`_.
+- Make the C implementation of the text index's score function
+  (``zope.text.index.okascore``) importable under Python 3. Previously
+  we would fall back to a pure-Python implementation. See `issue 14
+  <https://github.com/zopefoundation/zope.index/issues/14>`_.
 
 4.2.0 (2016-06-10)
 ------------------

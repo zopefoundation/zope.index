@@ -5,6 +5,9 @@ matrix:
         - os: linux
           python: 2.7
         - os: linux
+          python: 2.7
+          env: PURE_PYTHON=1
+        - os: linux
           python: 3.3
         - os: linux
           python: 3.4

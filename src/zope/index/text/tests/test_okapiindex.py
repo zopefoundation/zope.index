@@ -150,8 +150,14 @@ class OkapiIndexTest64(OkapiIndexTestBase, unittest.TestCase):
         import BTrees
         return BTrees.family64
 
+class TestScore(unittest.TestCase):
+
+    def test_score_extension(self):
+        from zope.index.text.okapiindex import PURE_PYTHON, score
+        if PURE_PYTHON:
+            self.assertIsNone(score)
+        else:
+            self.assertIsNotNone(score)
+
 def test_suite():
-    return unittest.TestSuite((
-                      unittest.makeSuite(OkapiIndexTest32),
-                      unittest.makeSuite(OkapiIndexTest64),
-                    ))
+    return unittest.defaultTestLoader.loadTestsFromName(__name__)
