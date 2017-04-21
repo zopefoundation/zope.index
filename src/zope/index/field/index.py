@@ -21,6 +21,8 @@ from BTrees.Length import Length
 from zope.index import interfaces
 from zope.index.field.sorting import SortingIndexMixin
 
+_MARKER = object()
+
 @zope.interface.implementer(
         interfaces.IInjection,
         interfaces.IStatistics,
@@ -59,9 +61,12 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
                 # no need to index the doc, its already up to date
                 return
             self.unindex_doc(docid)
-
         # Insert into forward index.
-        set = self._fwd_index.get(value)
+        try:
+            set = self._fwd_index.get(value)
+        except:
+            import pdb
+            pdb.set_trace()
         if set is None:
             set = self.family.IF.TreeSet()
             self._fwd_index[value] = set
@@ -76,9 +81,8 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
     def unindex_doc(self, docid):
         """See interface IInjection"""
         rev_index = self._rev_index
-        if docid in rev_index:
-            value = rev_index[docid]
-        else:
+        value = rev_index.get(docid, _MARKER)
+        if value is _MARKER:
             return # not in index
 
         del rev_index[docid]
