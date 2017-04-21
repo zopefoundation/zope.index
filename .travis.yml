@@ -23,7 +23,7 @@ matrix:
         - os: osx
           language: generic
           env: TERRYFY_PYTHON='macpython 3.4'
-       - os: osx
+        - os: osx
           language: generic
           env: TERRYFY_PYTHON='macpython 3.5'
 before_install:
