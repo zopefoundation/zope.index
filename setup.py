@@ -83,7 +83,7 @@ def alltests():
 
 setup(name='zope.index',
       version='4.2.1.dev0',
-      url='http://pypi.python.org/pypi/zope.index',
+      url='http://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',

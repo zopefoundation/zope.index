@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.2.1 (unreleased)
+4.3.0 (unreleased)
 ------------------
 
 - ``None`` are now valid values in a field index. This requires BTrees
@@ -15,6 +15,7 @@ Changes
   (``zope.text.index.okascore``) importable under Python 3. Previously
   we would fall back to a pure-Python implementation. See `issue 14
   <https://github.com/zopefoundation/zope.index/issues/14>`_.
+- Packaging: Distribute ``manylinux`` wheels and Windows wheels.
 
 4.2.0 (2016-06-10)
 ------------------
