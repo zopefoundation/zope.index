@@ -1,7 +1,7 @@
 Changes
 =======
 
-4.3.0 (unreleased)
+4.3.0 (2017-04-24)
 ------------------
 
 - ``None`` are now valid values in a field index. This requires BTrees

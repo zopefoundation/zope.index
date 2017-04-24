@@ -82,7 +82,7 @@ def alltests():
     return unittest.TestSuite(suites)
 
 setup(name='zope.index',
-      version='4.2.1.dev0',
+      version='4.3.0',
       url='http://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
