@@ -35,6 +35,10 @@ del _flags
 
 @implementer(ISplitter)
 class HTMLWordSplitter(object):
+    """
+    Implementation of :class:`zope.index.text.interfaces.ISplitter`
+    that removes HTML tags.
+    """
 
     def process(self, text):
         return self._apply(text, WORDS)

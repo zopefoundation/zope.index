@@ -63,10 +63,9 @@ assert 0x80**4 == 0x10000000
 
 import re
 from six.moves import map
-from six.moves import zip
 
 def encode(wids):
-    # Encode a list of wids as a string.
+    """Encode a list of wids as a string."""
     wid2enc = _encoding
     n = len(wid2enc)
     return "".join([w < n and wid2enc[w] or _encode(w) for w in wids])
@@ -87,7 +86,7 @@ def _encode(w):
 _prog = re.compile(r"[\x80-\xFF][\x00-\x7F]*")
 
 def decode(code):
-    # Decode a string into a list of wids.
+    """Decode a string into a list of wids."""
     get = _decoding.get
     # Obscure:  while _decoding does have the key '\x80', its value is 0,
     # so the "or" here calls _decode('\x80') anyway.

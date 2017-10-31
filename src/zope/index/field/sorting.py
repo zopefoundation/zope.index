@@ -22,6 +22,9 @@ from zope.index.interfaces import IIndexSort
 
 @implementer(IIndexSort)
 class SortingIndexMixin(object):
+    """
+    Implementation of :class:`zope.index.interfaces.IIndexSort`.
+    """
 
     _sorting_num_docs_attr = '_num_docs'   # Length object
     _sorting_fwd_index_attr = '_fwd_index' # forward BTree index

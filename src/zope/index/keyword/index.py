@@ -25,7 +25,14 @@ from zope.interface import implementer
 
 @implementer(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
 class KeywordIndex(Persistent):
-    """Keyword index"""
+    """
+    Keyword index.
+
+    Implements :class:`zope.index.interfaces.IInjection`,
+    :class:`zope.index.interfaces.IStatistics`,
+    :class:`zope.index.interfaces.IIndexSearch` and
+    :class:`zope.index.keyword.interfaces.IKeywordQuerying`.
+    """
 
     family = BTrees.family32
 
@@ -106,7 +113,7 @@ class KeywordIndex(Persistent):
             self._insert_reverse(docid, new_kw)
 
     def unindex_doc(self, docid):
-        idx  = self._fwd_index
+        idx = self._fwd_index
 
         try:
             for word in self._rev_index[docid]:
@@ -114,13 +121,14 @@ class KeywordIndex(Persistent):
                 if not idx[word]:
                     del idx[word]
         except KeyError:
-            msg = 'WAAA!  Inconsistent'
+            # 'WAAA!  Inconsistent'
             return
 
         try:
             del self._rev_index[docid]
         except KeyError: #pragma NO COVERAGE
-            msg = 'WAAA!  Inconsistent'
+            # 'WAAA!  Inconsistent'
+            pass
 
         self._num_docs.change(-1)
 
@@ -214,4 +222,7 @@ class CaseInsensitiveKeywordIndex(KeywordIndex):
     """A case-normalizing keyword index (for strings as keywords)"""
 
     def normalize(self, seq):
+        """
+        Normalize by calling ``lower`` on every item in *seq*.
+        """
         return [w.lower() for w in seq]

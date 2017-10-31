@@ -1,5 +1,6 @@
-Text Indexes
-============
+==============
+ Text Indexes
+==============
 
 Text indexes combine an inverted index and a lexicon to support text
 indexing and searching.  A text index can be created without passing
@@ -20,12 +21,12 @@ We index text using the `index_doc` method:
     >>> index.index_doc(3, u"""
     ... The Conservation Pledge
     ... =======================
-    ... 
+    ...
     ... I give my pledge, as an American, to save, and faithfully
-    ... to defend from waste, the natural resources of my Country; 
+    ... to defend from waste, the natural resources of my Country;
     ... it's soils, minerals, forests, waters and wildlife.
     ... """)
-    >>> index.index_doc(4, u"Fran\xe7ois") 
+    >>> index.index_doc(4, u"Fran\xe7ois")
     >>> word = (
     ...     u"\N{GREEK SMALL LETTER DELTA}"
     ...     u"\N{GREEK SMALL LETTER EPSILON}"
@@ -42,7 +43,7 @@ We index text using the `index_doc` method:
     ... """)
     >>> index.index_doc(8, u"""
     ... The Zen of Python, by Tim Peters
-    ... 
+    ...
     ... Beautiful is better than ugly.
     ... Explicit is better than implicit.
     ... Simple is better than complex.
@@ -116,6 +117,7 @@ with a normal value, it should still work:
     >>> index2.index_doc(1, ["Zorro"])
     >>> [(k, "%.4f" % v) for (k, v) in index2.apply("Zorro").items()]
     [(1, '0.4545')]
+
 
 
 Tracking Changes

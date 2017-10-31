@@ -32,6 +32,13 @@ from zope.index.text.setops import mass_weightedUnion
 
 @implementer(IInjection, IStatistics, ILexiconBasedIndex, IExtendedQuerying)
 class BaseIndex(Persistent):
+    """
+    Implements :class:`zope.index.interfaces.IInjection`,
+    :class:`zope.index.interfaces.IStatistics`,
+    :class:`zope.index.text.interfaces.IExtendedQuerying`
+    and :class:`zope.index.text.interfaces.ILexiconBasedIndex`.
+
+    """
 
     family = BTrees.family32
 

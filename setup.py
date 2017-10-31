@@ -48,11 +48,10 @@ class optional_build_ext(build_ext):
             self._unavailable(e)
 
     def build_extension(self, ext):
-       try:
-           build_ext.build_extension(self, ext)
-
-       except (CCompilerError, DistutilsExecError) as e:
-           self._unavailable(e)
+        try:
+            build_ext.build_extension(self, ext)
+        except (CCompilerError, DistutilsExecError) as e:
+            self._unavailable(e)
 
     def _unavailable(self, e):
         print('*' * 80, file=sys.stderr)
@@ -67,8 +66,6 @@ class optional_build_ext(build_ext):
         print('*' * 80, file=sys.stderr)
 
 def alltests():
-    import os
-    import sys
     import unittest
     # use the zope.testrunner machinery to find all the
     # test suites we've put under ourselves
@@ -82,8 +79,8 @@ def alltests():
     return unittest.TestSuite(suites)
 
 setup(name='zope.index',
-      version='4.3.1.dev0',
-      url='http://github.com/zopefoundation/zope.index',
+      version='4.4.0.dev0',
+      url='https://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
@@ -97,7 +94,6 @@ setup(name='zope.index',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
@@ -109,31 +105,35 @@ setup(name='zope.index',
           'Topic :: Software Development',
       ],
       packages=find_packages('src'),
-      package_dir = {'': 'src'},
+      package_dir={'': 'src'},
       namespace_packages=['zope',],
       extras_require={
-        'test': [
-            'zope.testrunner',
-        ],
-        'tools': [
-            'ZODB',
-            'transaction'
-        ]
+          'test': [
+              'zope.testrunner',
+          ],
+          'tools': [
+              'ZODB',
+              'transaction'
+          ],
+          'docs': [
+              'Sphinx',
+              'repoze.sphinx.autointerface',
+          ],
       },
       install_requires=[
-        'persistent',
-        'BTrees>=4.4.1',
-        'setuptools',
-        'six',
-        'zope.interface'
+          'persistent',
+          'BTrees>=4.4.1',
+          'setuptools',
+          'six',
+          'zope.interface'
       ],
-      tests_require = ['zope.testrunner'],
-      test_suite = '__main__.alltests',
+      tests_require=['zope.testrunner'],
+      test_suite='__main__.alltests',
       ext_modules=[
           Extension('zope.index.text.okascore',
-              [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
+                    [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
       ],
-      cmdclass = {'build_ext':optional_build_ext},
-      include_package_data = True,
+      cmdclass={'build_ext': optional_build_ext},
+      include_package_data=True,
       zip_safe=False,
-      )
+)

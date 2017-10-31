@@ -1,14 +1,17 @@
-Changes
-=======
+=========
+ Changes
+=========
 
-4.3.1 (unreleased)
-------------------
+4.4.0 (unreleased)
+==================
 
-- Nothing changed yet.
+- Drop support for Python 3.3.
+
+- Docs are now hosted at https://zopeindex.readthedocs.io/
 
 
 4.3.0 (2017-04-24)
-------------------
+==================
 
 - ``None`` are now valid values in a field index. This requires BTrees
   >= 4.4.1.
@@ -24,7 +27,7 @@ Changes
 - Packaging: Distribute ``manylinux`` wheels and Windows wheels.
 
 4.2.0 (2016-06-10)
-------------------
+==================
 
 - Drop support for Python 2.6.
 
@@ -32,7 +35,7 @@ Changes
 
 
 4.1.0 (2014-12-27)
-------------------
+==================
 
 - Add support for PyPy.  (PyPy3 is pending release of a fix for:
   https://bitbucket.org/pypy/pypy/issue/1946)
@@ -43,14 +46,14 @@ Changes
 
 
 4.0.1 (2013-02-28)
-------------------
+==================
 
 - Add the forgotten dependency on ``six``.
   Fixes https://github.com/zopefoundation/zope.index/issues/1.
 
 
 4.0.0 (2013-02-25)
-------------------
+==================
 
 - Add support for Python 3.3.
 
@@ -60,20 +63,20 @@ Changes
 - Drop support for Python 2.4 and 2.5.
 
 3.6.4 (2012-03-12)
-------------------
+==================
 
 - Insure proper unindex behavior if index_doc is called with a empty sequence.
 
 - Use the standard Python doctest module instead of zope.testing.doctest
 
 3.6.3 (2011-12-03)
-------------------
+==================
 
 - KeywordIndex: Minor optimization; use __nonzero__ instead of __len__
   to avoid loading the full TreeSet.
 
 3.6.2 (2011-12-03)
-------------------
+==================
 
 - KeywordIndex: Store docids in TreeSet rather than a Set when the
   number of documents matching a word reaches a configurable
@@ -82,7 +85,7 @@ Changes
   all the words in an index at once. Designed to fix LP #881950.
 
 3.6.1 (2010-07-08)
-------------------
+==================
 
 - TextIndex:  reuse the lexicon from the underlying Okapi / Cosine
   index, if passed.  (LP #232516)
@@ -90,7 +93,7 @@ Changes
 - Lexicon:  avoid raising an exception when indexing None. (LP #598776)
 
 3.6.0 (2009-08-03)
-------------------
+==================
 
 - Improve test readability and reached 100% test coverage.
 
@@ -103,7 +106,7 @@ Changes
   equivalent, reducing the brittleness of the text index tests.
 
 3.5.2 (2009-06-09)
-------------------
+==================
 
 - Port okascore.c optimization used in okapiiindex from Zope2 catalog
   implementation.  This module is compiled conditionally, based on
@@ -114,7 +117,7 @@ Changes
   Instead use self.documentCount().  Also a Zope2 port.
 
 3.5.1 (2009-02-27)
-------------------
+==================
 
 - The baseindex, okapiindex, and lexicon used plain counters for various
   lengths, which is unsuitable for production applications.
@@ -131,7 +134,7 @@ Changes
   be reused by zc.catalog's ValueIndex.
 
 3.5.0 (2008-12-30)
-------------------
+==================
 
 - Remove zope.testing from dependencies, as it's not really needed.
 
@@ -183,17 +186,17 @@ with migration.
 Thanks Chris McDonough of repoze for supporting and useful code.
 
 3.4.1 (2007-09-28)
-------------------
+==================
 
 - Fix bug in package metadata (wrong homepage URL).
 
 3.4.0 (2007-09-28)
-------------------
+==================
 
 No further changes since 3.4.0a1.
 
 3.4.0a1 (2007-04-22)
---------------------
+====================
 
 Initial release as a separate project, corresponds to zope.index from
 Zope 3.4.0a1

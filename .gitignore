@@ -10,3 +10,5 @@ bin
 build
 develop-eggs
 parts
+docs/_build/
+.coverage

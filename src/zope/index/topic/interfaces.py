@@ -19,16 +19,18 @@ class ITopicQuerying(Interface):
     """Query over topics, seperated by white space."""
 
     def search(query, operator='and'):
-        """Execute a search given by 'query' as a list/tuple of filter ids.
-          'operator' can be 'and' or 'or' to search for matches in all
-           or any filter.
+        """
+        Execute a search given by *query* as a list/tuple of filter ids.
 
-           Return an IFSet of docids
+        *operator* can be ``'and'`` or ``'or'`` to search for matches in all
+        or any filter.
+
+        Return an IFSet of docids
         """
 
 class ITopicFilteredSet(Interface):
     """Interface for filtered sets used by topic indexes."""
-    
+
     def clear():
         """Remove all entries from the index."""
 
@@ -43,7 +45,7 @@ class ITopicFilteredSet(Interface):
 
     def setExpression(expr):
         """Set the filter expression, e.g. 'context.meta_type=='...'"""
-        
+
     def getExpression():
         """Return the filter expression."""
 

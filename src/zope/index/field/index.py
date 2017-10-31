@@ -24,11 +24,18 @@ from zope.index.field.sorting import SortingIndexMixin
 _MARKER = object()
 
 @zope.interface.implementer(
-        interfaces.IInjection,
-        interfaces.IStatistics,
-        interfaces.IIndexSearch,
-        )
+    interfaces.IInjection,
+    interfaces.IStatistics,
+    interfaces.IIndexSearch,
+)
 class FieldIndex(SortingIndexMixin, persistent.Persistent):
+    """
+    A field index.
+
+    Implements :class:`zope.index.interfaces.IInjection`,
+    :class:`zope.index.interfaces.IStatistics` and
+    :class:`zope.index.interfaces.IIndexSearch`.
+    """
 
     family = BTrees.family32
 

@@ -21,11 +21,11 @@ from zope.interface import implementer
 
 @implementer(ITopicFilteredSet)
 class FilteredSetBase(object):
-    """ Base class for all filtered sets.
-    
-        A filtered set is a collection of documents represented
-        by their document ids that match a common criteria given
-        by a condition.
+    """
+    Base class for all filtered sets.
+
+    A filtered set is a collection of documents represented by their
+    document ids that match a common criteria given by a condition.
     """
 
     family = BTrees.family32
@@ -49,13 +49,13 @@ class FilteredSetBase(object):
         except KeyError:
             pass
 
-    def getId(self):            
+    def getId(self):
         return self.id
 
-    def getExpression(self):    
+    def getExpression(self):
         return self.expr
 
-    def setExpression(self, expr): 
+    def setExpression(self, expr):
         self.expr = expr
 
     def getIds(self):
@@ -75,4 +75,4 @@ class PythonFilteredSet(FilteredSetBase):
             if eval(self.expr):
                 self._ids.insert(docid)
         except:
-            pass  # ignore errors 
+            pass  # ignore errors

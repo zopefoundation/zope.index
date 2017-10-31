@@ -8,8 +8,6 @@ matrix:
           python: 2.7
           env: PURE_PYTHON=1
         - os: linux
-          python: 3.3
-        - os: linux
           python: 3.4
         - os: linux
           python: 3.5
@@ -51,12 +49,14 @@ before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then get_python_environment $TERRYFY_PYTHON venv; fi
     - pip install --upgrade pip
 install:
-    - pip install -e .[test]
+    - pip install -U coverage coveralls
+    - pip install -U -e .[test]
 script:
-    - zope-testrunner --test-path=src
+    - coverage run -m zope.testrunner --test-path=src
 notifications:
     email: false
 after_success:
+    - coveralls
     - echo [distutils]                                  > ~/.pypirc
     - echo index-servers = pypi                        >> ~/.pypirc
     - echo [pypi]                                      >> ~/.pypirc
@@ -66,7 +66,7 @@ after_success:
     - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then pip install twine; fi
     - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py bdist_wheel; fi
     - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then twine upload dist/*; fi
-
+cache: pip
 env:
     global:
         secure: "lpk5DUV5COeJvqqEo43MIfGhI4rlqR5fo2epjTGzNsI24jWvUiA6ix6ZctRPrlPPnKZSHrni5qdLwi5gZw/JHzRbhSnTlkfuSSji7Xmh+xg73U4uoRa1X9LoKCSW+JnFTrK4Dv+FL5pIGkcxsbwvT5X9jqGouS9dVnf5cUNKYW4="
