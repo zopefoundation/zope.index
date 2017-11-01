@@ -328,9 +328,9 @@ class FieldIndexTests(unittest.TestCase):
 
 def test_suite():
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt', optionflags=doctest.ELLIPSIS),
+        doctest.DocFileSuite('README.rst', optionflags=doctest.ELLIPSIS),
         unittest.makeSuite(FieldIndexTests),
         ))
 
-if __name__=='__main__':
+if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

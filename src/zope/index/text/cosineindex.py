@@ -19,6 +19,9 @@ from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
 
 class CosineIndex(BaseIndex):
+    """
+    Full text index with relevance ranking, using a cosine measure.
+    """
 
     def __init__(self, lexicon, family=None):
         BaseIndex.__init__(self, lexicon, family=family)

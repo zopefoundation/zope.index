@@ -1,5 +1,6 @@
-Field Indexes
-=============
+===============
+ Field Indexes
+===============
 
 Field indexes index orderable values.  Note that they don't check for
 orderability. That is, all of the values added to the index must be
@@ -21,8 +22,8 @@ orderable values.
     >>> index.index_doc(9, 15)
 
 Field indexes are searched with ``apply``, which returns an instance of
-``IFSet`.  Let's write a function to display those sets portably
-(across CPython and PyPy):
+``IFSet``.  Let's write a function to display those sets portably
+(across CPython and PyPy).
 
 The argument to ``apply`` is a tuple with a minimum and maximum value.
 
@@ -33,7 +34,7 @@ The argument to ``apply`` is a tuple with a minimum and maximum value.
     >>> show_ifset(index.apply((30, 70)))
     IFSet([3, 4, 5, 7, 8])
 
-A common mistake is to pass a single value.  If anything other than a 
+A common mistake is to pass a single value.  If anything other than a
 two-tuple is passed, a type error is raised:
 
     >>> index.apply('hi')
@@ -78,7 +79,7 @@ Documents can be reindexed:
     IFSet([])
     >>> show_ifset(index.apply((14, 14)))
     IFSet([9])
-    
+
 Documents can be unindexed:
 
     >>> index.unindex_doc(7)
@@ -116,7 +117,7 @@ We can also clear the index entirely:
     IFSet([])
 
 Sorting
--------
+=======
 
 Field indexes also implement IIndexSort interface that
 provides a method for sorting document ids by their indexed
@@ -143,7 +144,7 @@ We can also specify the ``reverse`` argument to reverse results:
 And as per IIndexSort, we can limit results by specifying the ``limit``
 argument:
 
-    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], limit=3)) 
+    >>> list(index.sort([4, 2, 9, 7, 3, 1, 5], limit=3))
     [9, 7, 5]
 
 If we pass an id that is not indexed by this index, it won't be included
@@ -154,8 +155,8 @@ in the result.
 
     >>> index.clear()
 
-Bugfix testing:
----------------
+Bugfix testing
+==============
 Happened at least once that the value dropped out of the forward index,
 but the index still contains the object, the unindex broke
 
@@ -169,25 +170,25 @@ but the index still contains the object, the unindex broke
     >>> index.index_doc(7, 30)
     >>> index.index_doc(8, 43)
     >>> index.index_doc(9, 15)
-    
+
     >>> show_ifset(index.apply((None, None)))
     IFSet([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
 Here is the damage:
 
     >>> del index._fwd_index[68]
-    
+
 Unindex should succeed:
-    
+
     >>> index.unindex_doc(5)
     >>> index.unindex_doc(3)
-    
+
     >>> show_ifset(index.apply((None, None)))
     IFSet([0, 1, 2, 4, 6, 7, 8, 9])
 
 
 Optimizations
--------------
+=============
 
 There is an optimization which makes sure that nothing is changed in the
 internal data structures if the value of the ducument was not changed.
@@ -211,4 +212,3 @@ Leaving the value unchange doesn't call unindex_doc.
     >>> index.index_doc(9, 15)
     >>> show_ifset(index.apply((15, 15)))
     IFSet([9])
-

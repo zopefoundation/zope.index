@@ -24,6 +24,13 @@ from zope.index.topic.interfaces import ITopicQuerying
 
 @implementer(IInjection, ITopicQuerying, IIndexSearch)
 class TopicIndex(Persistent):
+    """
+    Topic index.
+
+    Implements :class:`zope.index.interfaces.IInjection`,
+    :class:`zope.index.interfaces.IIndexSearch` and
+    :class:`zope.index.topic.interfaces.ITopicQuerying`.
+    """
 
     family = BTrees.family32
 
@@ -90,7 +97,7 @@ class TopicIndex(Persistent):
         else:
             raise TypeError('Topic index only supports `and` and `or` '
                             'operators, not `%s`.' % operator)
-            
+
         if rs:
             return rs
         else:

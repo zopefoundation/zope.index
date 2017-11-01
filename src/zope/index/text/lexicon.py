@@ -32,6 +32,9 @@ from zope.index.text.parsetree import QueryError
 
 @implementer(ILexicon)
 class Lexicon(Persistent):
+    """
+    Implementation of :class:`zope.index.text.interfaces.ILexicon`.
+    """
 
     def __init__(self, *pipeline):
         self._wids = OIBTree()  # word -> wid
@@ -166,6 +169,9 @@ def _text2list(text):
 
 @implementer(ISplitter)
 class Splitter(object):
+    """
+    A simple :class:`zope.index.text.interfaces.ISplitter`.
+    """
 
     rx = re.compile(r"(?u)\w+")
     rxGlob = re.compile(r"(?u)\w+[\w*?]*") # See globToWordIds() above
@@ -184,12 +190,21 @@ class Splitter(object):
 
 @implementer(IPipelineElement)
 class CaseNormalizer(object):
-
+    """
+    A simple :class:`zope.index.text.interfaces.IPipelineElement`
+    to normalize to lower case.
+    """
     def process(self, lst):
         return [w.lower() for w in lst]
 
 @implementer(IPipelineElement)
 class StopWordRemover(object):
+    """
+    A simple :class:`zope.index.text.interfaces.IPipelineElement`
+    to remove stop words.
+
+    .. seealso:: :func:`.get_stopdict`
+    """
 
     dict = get_stopdict().copy()
 
@@ -197,7 +212,10 @@ class StopWordRemover(object):
         return [w for w in lst if not w in self.dict]
 
 class StopWordAndSingleCharRemover(StopWordRemover):
-
+    """
+    A simple :class:`zope.index.text.interfaces.IPipelineElement`
+    to remove stop words and words of a single character.
+    """
     dict = get_stopdict().copy()
     for c in range(255):
         dict[chr(c)] = None

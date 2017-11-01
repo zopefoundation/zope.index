@@ -23,7 +23,7 @@ principal inventors gives an excellent overview of how it was derived:
     http://citeseer.nj.nec.com/jones98probabilistic.html
 
 Spellings that ignore relevance information (which we don't have) are of this
-high-level form:
+high-level form::
 
     score(D, Q) = sum(for t in D&Q: TF(D, t) * IDF(Q, t))
 
@@ -45,7 +45,7 @@ where
               weight
 
 The IDF(Q, t) here is identical to the one used for our cosine measure.
-Since queries are expected to be short, it ignores Q entirely:
+Since queries are expected to be short, it ignores Q entirely::
 
    IDF(Q, t) = log(1.0 + N / f(t))
 
@@ -62,7 +62,7 @@ pages that use the word a lot (which is TF's job to find, not IDF's -- we
 just want to stop IDF from considering this t to be irrelevant).
 
 The TF(D, t) spellings are more interesting.  With lots of variations, the
-most basic spelling is of the form
+most basic spelling is of the form::
 
                    f(D, t)
     TF(D, t) = ---------------
@@ -91,7 +91,7 @@ large doc, and the ratio will be close to 1.
 We use a variation on that simple theme, a simplification of what's called
 BM25 in the literature (it was the 25th stab at a Best Match function from
 the Okapi group; "a simplification" means we're setting some of BM25's more
-esoteric free parameters to 0):
+esoteric free parameters to 0)::
 
                 f(D, t) * (k1 + 1)
     TF(D, t) = --------------------
@@ -106,7 +106,7 @@ where
 Note that as f(D, t) increases, TF(D, t) increases monotonically, approaching
 an asymptote of k1+1 from below.
 
-Finally, we use
+Finally, we use::
 
     K(D) = (1-b) + b * len(D)/E(len(D))
 
@@ -122,7 +122,7 @@ where
 b is a free parameter between 0.0 and 1.0, and adjusts for the expected effect
 of the "Verbosity Hypothesis".  Suppose b is 1, and some word t appears
 10 times as often in document d2 than in document d1.  If document d2 is
-also 10 times as long as d1, TF(d1, t) and TF(d2, t) are identical:
+also 10 times as long as d1, TF(d1, t) and TF(d2, t) are identical::
 
                      f(d2, t) * (k1 + 1)
    TF(d2, t) = --------------------------------- =
@@ -147,7 +147,7 @@ Reality is between these extremes, and probably varies by document and word
 too.  Reports in the literature suggest that b=0.75 is a good compromise "in
 general", favoring the "verbosity hypothesis" end of the scale.
 
-Putting it all together, the final TF function is
+Putting it all together, the final TF function is::
 
                            f(D, t) * (k1 + 1)
     TF(D, t) = --------------------------------------------
@@ -162,7 +162,7 @@ Query Term Weighting
 I'm ignoring the query adjustment part of Okapi BM25 because I expect our
 queries are very short.  Full BM25 takes them into account by adding the
 following to every score(D, Q); it depends on the lengths of D and Q, but
-not on the specific words in Q, or even on whether they appear in D(!):
+not on the specific words in Q, or even on whether they appear in D(!)::
 
                    E(len(D)) - len(D)
     k2 * len(Q) * -------------------
@@ -172,7 +172,7 @@ Here k2 is another "tuning constant", len(Q) is the number of words in Q, and
 len(D) & E(len(D)) were defined above. The Okapi group set k2 to 0 in TREC-9,
 so it apparently doesn't do much good (or may even hurt).
 
-Full BM25 *also* multiplies the following factor into IDF(Q, t):
+Full BM25 *also* multiplies the following factor into IDF(Q, t)::
 
     f(Q, t) * (k3 + 1)
     ------------------
@@ -180,7 +180,7 @@ Full BM25 *also* multiplies the following factor into IDF(Q, t):
 
 where k3 is yet another free parameter, and f(Q,t) is the number of times t
 appears in Q.  Since we're using short "web style" queries, I expect f(Q,t)
-to always be 1, and then that quotient is
+to always be 1, and then that quotient is::
 
      1 * (k3 + 1)
      ------------ = 1
@@ -210,6 +210,9 @@ if PURE_PYTHON:
 PY2 = str is bytes
 
 class OkapiIndex(BaseIndex):
+    """
+    Full text index with relevance ranking, using an Okapi BM25 rank.
+    """
 
     # BM25 free parameters.
     K1 = 1.2

@@ -13,8 +13,6 @@
 ##############################################################################
 """Text index.
 """
-import sys
-
 from persistent import Persistent
 from zope.interface import implementer
 
@@ -31,6 +29,12 @@ import six
 
 @implementer(IInjection, IIndexSearch, IStatistics)
 class TextIndex(Persistent):
+    """
+    Text index.
+
+    Implements :class:`zope.index.interfaces.IInjection` and
+    :class:`zope.index.interfaces.IIndexSearch`.
+    """
 
     def __init__(self, lexicon=None, index=None):
         """Provisional constructor.

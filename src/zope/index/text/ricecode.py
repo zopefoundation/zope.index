@@ -14,7 +14,7 @@
 """Rice coding (a variation of Golomb coding)
 
 Based on a Java implementation by Glen McCluskey described in a Usenix
- ;login: article at
+article at
 http://www.usenix.org/publications/login/2000-4/features/java.html
 
 McCluskey's article explains the approach as follows.  The encoding
@@ -27,17 +27,13 @@ bits to store in the binary part.  If most of the values are smaller
 than 2**m then they can be stored in only m+1 bits.
 
 Compute the length of the unary part, q, where
+
    q = math.floor((x-1)/ 2 ** m)
 
    Emit q 1 bits followed by a 0 bit.
 
 Emit the lower m bits of x-1, treating x-1 as a binary value.
 """
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
-from __future__ import print_function
 from __future__ import print_function
 
 import array
@@ -88,6 +84,9 @@ class BitArray(object):
         self.bitsleft = bitsleft
 
 class RiceCode(object):
+    """
+    Rice coding.
+    """
     def __init__(self, m):
         """Constructor a RiceCode for m-bit values."""
         if not (0 <= m <= 16):
@@ -157,6 +156,9 @@ class RiceCode(object):
         self.bits = bits
 
 def encode(m, l):
+    """
+    Encode elements in list *l*  using a :class:`RiceCode` of size *m*.
+    """
     c = RiceCode(m)
     for elt in l:
         c.append(elt)
@@ -164,6 +166,7 @@ def encode(m, l):
     return c
 
 def encode_deltas(l):
+    """Encode deltas in list *l* using a :class:`RiceCode` of size 6."""
     if len(l) == 1:
         return l[0], []
     deltas = RiceCode(6)

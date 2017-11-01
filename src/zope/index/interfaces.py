@@ -47,11 +47,14 @@ class IInjection(Interface):
         """
 
 class IIndexSearch(Interface):
+    """
+    Interface for searching indexes.
+    """
 
     def apply(query):
         """Apply an index to the given query
 
-        The type if the query is index specific.
+        The type of the query is index specific.
 
         TODO
             This is somewhat problemetic. It means that application
@@ -61,7 +64,7 @@ class IIndexSearch(Interface):
             any sort of automatic query-form generation.
 
             It would be nice to have a system later for having
-            query-form generation or, perhaps, sme sort of query
+            query-form generation or, perhaps, some sort of query
             language. At that point, we'll need some sort of way to
             determine query types, presumably through introspection of
             the index objects.
@@ -81,13 +84,16 @@ class IIndexSearch(Interface):
         """
 
 class IIndexSort(Interface):
+    """
+    Interface for sorting documents.
+    """
 
     def sort(docids, reverse=False, limit=None):
         """Sort document ids sequence using indexed values
-        
+
         If some of docids are not indexed they are skipped
         from resulting iterable.
-        
+
         Return a sorted iterable of document ids. Limited by
         value of the "limit" argument and optionally
         reversed, using the "reverse" argument.

@@ -5,8 +5,15 @@ include *.sh
 include *.yml
 include buildout.cfg
 include tox.ini
+include .coveragerc
+include .travis.yml
 
 recursive-include src *
+
+recursive-include docs *.bat
+recursive-include docs *.py
+recursive-include docs *.rst
+recursive-include docs Makefile
 
 global-exclude *.pyc
 global-exclude *.so

@@ -13,13 +13,13 @@
 ##############################################################################
 """Query Parser.
 
-This particular parser recognizes the following syntax:
+This particular parser recognizes the following syntax::
 
-Start = OrExpr
-OrExpr = AndExpr ('OR' AndExpr)*
-AndExpr = Term ('AND' NotExpr | 'NOT' AndExpr)*
-NotExpr = ['NOT'] Term
-Term = '(' OrExpr ')' | ATOM+
+    Start = OrExpr
+    OrExpr = AndExpr ('OR' AndExpr)*
+    AndExpr = Term ('AND' NotExpr | 'NOT' AndExpr)*
+    NotExpr = ['NOT'] Term
+    Term = '(' OrExpr ')' | ATOM+
 
 The key words (AND, OR, NOT) are recognized in any mixture of case.
 
@@ -46,16 +46,15 @@ is interpreted as a NOT operator.
 
 Summarizing the default operator rules:
 
-- a sequence of words without operators implies AND, e.g. ``foo bar''
-- double-quoted text implies phrase search, e.g. ``"foo bar"''
-- words connected by punctuation implies phrase search, e.g. ``foo-bar''
-- a leading hyphen implies NOT, e.g. ``foo -bar''
-- these can be combined, e.g. ``foo -"foo bar"'' or ``foo -foo-bar''
-- * and ? are used for globbing (i.e. prefix search), e.g. ``foo*''
+- a sequence of words without operators implies AND, e.g. ``foo bar``
+- double-quoted text implies phrase search, e.g. ``"foo bar"``
+- words connected by punctuation implies phrase search, e.g. ``foo-bar``
+- a leading hyphen implies NOT, e.g. ``foo -bar``
+- these can be combined, e.g. ``foo -"foo bar"`` or ``foo -foo-bar``
+- ? and * are used for globbing (i.e. prefix search), e.g. ``foo*``
 """
 
 import re
-import sys
 from zope.interface import implementer
 
 from zope.index.text.interfaces import IQueryParser
@@ -102,9 +101,13 @@ _tokenizer_regex = re.compile(r"""
 
 @implementer(IQueryParser)
 class QueryParser(object):
+    """
+    Implementation of
+    :class:`zope.index.text.interfaces.IQueryParser`.
 
-    # This class is not thread-safe;
-    # each thread should have its own instance
+    This class is not thread-safe; each thread should have its own
+    instance.
+    """
 
     def __init__(self, lexicon):
         self._lexicon = lexicon
