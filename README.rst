@@ -17,7 +17,7 @@
         :target: https://coveralls.io/github/zopefoundation/zope.index?branch=master
 
 .. image:: https://readthedocs.org/projects/zopeindex/badge/?version=latest
-        :target: http://zopeindex.readthedocs.org/en/latest/
+        :target: https://zopeindex.readthedocs.org/en/latest/
         :alt: Documentation Status
 
 The ``zope.index`` package provides several indices for the Zope
