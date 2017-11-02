@@ -15,8 +15,13 @@
 """
 import unittest
 
-class BaseIndexTestBase:
-    # Subclasses must define '_getBTreesFamily'
+# pylint:disable=protected-access,abstract-method
+
+class BaseIndexTestMixin:
+
+    def _getBTreesFamily(self):
+        raise NotImplementedError()
+
     def _getTargetClass(self):
         from zope.index.text.baseindex import BaseIndex
         return BaseIndex
@@ -87,14 +92,14 @@ class BaseIndexTestBase:
     def test_wordCount_method_raises_NotImplementedError(self):
         class DerviedDoesntSet_wordCount(self._getTargetClass()):
             def __init__(self):
-                pass
+                """Intentionally not calling super"""
         index = DerviedDoesntSet_wordCount()
         self.assertRaises(NotImplementedError, index.wordCount)
 
     def test_documentCount_method_raises_NotImplementedError(self):
         class DerviedDoesntSet_documentCount(self._getTargetClass()):
             def __init__(self):
-                pass
+                """Intentionally not calling super"""
         index = DerviedDoesntSet_documentCount()
         self.assertRaises(NotImplementedError, index.documentCount)
 
@@ -177,7 +182,7 @@ class BaseIndexTestBase:
 
         # Don't mutate _wordinfo if no changes
         def _dont_go_here(*args, **kw):
-            assert 0
+            raise AssertionError("Should not be called")
         index._add_wordinfo = index._del_wordinfo = _dont_go_here
 
         count = index._reindex_doc(1, 'one two three')
@@ -318,7 +323,7 @@ class BaseIndexTestBase:
     def test_search_w_oov_term(self):
         index = self._makeOne()
         def _faux_search_wids(wids):
-            assert len(wids) == 0
+            assert not wids
             return []
         index._search_wids = _faux_search_wids
         self.assertEqual(dict(index.search('nonesuch')), {})
@@ -341,7 +346,7 @@ class BaseIndexTestBase:
     def test_search_glob_w_empty_term(self):
         index = self._makeOne()
         def _faux_search_wids(wids):
-            assert len(wids) == 0
+            assert not wids
             return []
         index._search_wids = _faux_search_wids
         self.assertEqual(dict(index.search_glob('')), {})
@@ -349,7 +354,7 @@ class BaseIndexTestBase:
     def test_search_glob_w_oov_term(self):
         index = self._makeOne()
         def _faux_search_wids(wids):
-            assert len(wids) == 0
+            assert not wids
             return []
         index._search_wids = _faux_search_wids
         self.assertEqual(dict(index.search_glob('nonesuch*')), {})
@@ -372,7 +377,7 @@ class BaseIndexTestBase:
     def test_search_phrase_w_empty_term(self):
         index = self._makeOne()
         def _faux_search_wids(wids):
-            assert len(wids) == 0
+            assert not wids
             return []
         index._search_wids = _faux_search_wids
         self.assertEqual(dict(index.search_phrase('')), {})
@@ -466,20 +471,14 @@ class BaseIndexTestBase:
         index._del_wordinfo(123, 1)
         self.assertEqual(index.wordCount(), 0)
 
-class BaseIndexTest32(BaseIndexTestBase, unittest.TestCase):
+class BaseIndexTest32(BaseIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family32
 
-class BaseIndexTest64(BaseIndexTestBase, unittest.TestCase):
+class BaseIndexTest64(BaseIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
-
-def test_suite():
-    return unittest.TestSuite((
-                      unittest.makeSuite(BaseIndexTest32),
-                      unittest.makeSuite(BaseIndexTest64),
-                    ))
