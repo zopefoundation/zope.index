@@ -17,6 +17,8 @@ import unittest
 
 # pylint:disable=protected-access
 
+from zope.index.text.okapiindex import PURE_PYTHON
+
 class OkapiIndexTestMixin(object):
 
     def _getBTreesFamily(self):
@@ -127,6 +129,10 @@ class OkapiIndexTestMixin(object):
         index.index_doc(1, 'one two three')
         self.assertEqual(index.query_weight(()), 0.0)
 
+    def test__search_wids_empty_wids(self):
+        index = self._makeOne()
+        self.assertEqual([], index._search_wids(()))
+
     def test_query_weight_oov_wids(self):
         index = self._makeOne()
         index.index_doc(1, 'one two three')
@@ -142,6 +148,12 @@ class OkapiIndexTestMixin(object):
         index.index_doc(1, 'one one two three one')
         self.assertGreater(index.query_weight(['one']), 0.0)
 
+class OkapiIndexPurePythonTestMixin(OkapiIndexTestMixin):
+
+    def _makeOne(self):
+        index = super(OkapiIndexPurePythonTestMixin, self)._makeOne()
+        index._search_wids = index._python_search_wids
+        return index
 
 class OkapiIndexTest32(OkapiIndexTestMixin, unittest.TestCase):
 
@@ -155,9 +167,18 @@ class OkapiIndexTest64(OkapiIndexTestMixin, unittest.TestCase):
         import BTrees
         return BTrees.family64
 
+@unittest.skipIf(PURE_PYTHON, "Already tested")
+class OkapiIndexPurePythonTest32(OkapiIndexPurePythonTestMixin, OkapiIndexTest32):
+    pass
+
+@unittest.skipIf(PURE_PYTHON, "Already tested")
+class OkapiIndexPurePythonTest64(OkapiIndexPurePythonTestMixin, OkapiIndexTest64):
+    pass
+
+
 class TestScore(unittest.TestCase):
 
     def test_score_extension(self):
-        from zope.index.text.okapiindex import PURE_PYTHON, score
+        from zope.index.text.okapiindex import score
         assert_score = self.assertIsNone if PURE_PYTHON else self.assertIsNotNone
         assert_score(score)
