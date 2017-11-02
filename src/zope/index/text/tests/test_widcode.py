@@ -58,24 +58,16 @@ class Test_widcode(unittest.TestCase):
     def test__decode_other_one_byte_asserts(self):
         from zope.index.text.widcode import _decode
         for wid in range(1, 128):
-            try:
+            with self.assertRaises(AssertionError):
                 _decode(chr(128 + wid))
-            except AssertionError:
-                pass
-            else:
-                self.fail("Didn't assert: %d" % wid)
 
     def test__decode_two_bytes_asserts(self):
         from zope.index.text.widcode import _decode
         for wid in range(128, 2**14):
-            try:
-                hi, lo = divmod(wid, 128)
-                code = chr(hi + 128) + chr(lo)
+            hi, lo = divmod(wid, 128)
+            code = chr(hi + 128) + chr(lo)
+            with self.assertRaises(AssertionError):
                 _decode(code)
-            except AssertionError:
-                pass
-            else:
-                self.fail("Didn't assert: %d" % wid)
 
     def test__decode_three_bytes(self):
         from zope.index.text.widcode import _decode
@@ -98,13 +90,7 @@ class Test_widcode(unittest.TestCase):
     def test_symmetric(self):
         from zope.index.text.widcode import decode
         from zope.index.text.widcode import encode
-        for wid in range(2**28, 1117):
+        for wid in range(0, 2**26, 1117):
             wids = [wid]
             code = encode(wids)
             self.assertEqual(decode(code), wids)
-
-def test_suite():
-    return unittest.TestSuite((
-                      unittest.makeSuite(Test_widcode),
-                    ))
-
