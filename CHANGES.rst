@@ -13,6 +13,9 @@
 
 - Remove some internal test scripts that were never ported to Python 3.
 
+- Reach and maintain 100% test coverage.
+
+
 4.3.0 (2017-04-24)
 ==================
 
