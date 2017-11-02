@@ -14,7 +14,13 @@
 
 import unittest
 
-class ConformsToIQueryParseTree:
+class ConformsToIQueryParseTree(object):
+
+    def _makeOne(self, value=None):
+        raise NotImplementedError()
+
+    def _getTargetClass(self):
+        raise NotImplementedError()
 
     def test_class_conforms_to_IQueryParseTree(self):
         from zope.interface.verify import verifyClass
@@ -88,7 +94,7 @@ class NotNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertRaises(QueryError, node.executeQuery, FauxIndex())
 
-class BucketMaker:
+class BucketMaker(object):
 
     def _makeBucket(self, index, count, start=0):
         bucket = index.family.IF.Bucket()
@@ -119,18 +125,18 @@ class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
     def test_executeQuery_w_positive_results(self):
         index = FauxIndex()
         node = self._makeOne(
-                    [FauxSubnode('FOO', self._makeBucket(index, 5)),
-                     FauxSubnode('FOO', self._makeBucket(index, 6)),
-                    ])
+            [FauxSubnode('FOO', self._makeBucket(index, 5)),
+             FauxSubnode('FOO', self._makeBucket(index, 6)),
+            ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
 
     def test_executeQuery_w_negative_results(self): # TODO
         index = FauxIndex()
         node = self._makeOne(
-                    [FauxSubnode('NOT', self._makeBucket(index, 5)),
-                     FauxSubnode('FOO', self._makeBucket(index, 6)),
-                    ])
+            [FauxSubnode('NOT', self._makeBucket(index, 5)),
+             FauxSubnode('FOO', self._makeBucket(index, 6)),
+            ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [5])
 
@@ -157,9 +163,9 @@ class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
     def test_executeQuery_w_results(self):
         index = FauxIndex()
         node = self._makeOne(
-                    [FauxSubnode('FOO', self._makeBucket(index, 5)),
-                     FauxSubnode('FOO', self._makeBucket(index, 6)),
-                    ])
+            [FauxSubnode('FOO', self._makeBucket(index, 5)),
+             FauxSubnode('FOO', self._makeBucket(index, 6)),
+            ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4, 5])
 
@@ -185,7 +191,7 @@ class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
     def test_executeQuery(self):
         node = self._makeOne()
         index = FauxIndex()
-        index.search = lambda term:  self._makeBucket(index, 5)
+        index.search = lambda term: self._makeBucket(index, 5)
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
 
@@ -243,44 +249,37 @@ class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
 class FauxIndex(object):
 
+    search = None
+    search_phrase = None
+    search_glob = None
+
     def _get_family(self):
         import BTrees
         return BTrees.family32
 
     family = property(_get_family,)
 
-class FauxValue:
+class FauxValue(object):
     def __init__(self, *terms):
         self._terms = terms[:]
+
     def terms(self):
         return self._terms
-    def __eq__(self, other):
-        return self._terms == other._terms
+
     def __repr__(self):
         return 'FV:%s' % ' '.join(self._terms)
 
 
-class FauxSubnode:
-    def __init__(self, node_type, query_results, value=None):
+class FauxSubnode(object):
+    def __init__(self, node_type, query_results):
         self._nodeType = node_type
         self._query_results = query_results
-        self._value = value
+
     def nodeType(self):
         return self._nodeType
+
     def executeQuery(self, index):
         return self._query_results
-    def getValue(self):
-        if self._value is not None:
-            return self._value
-        return self
 
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(ParseTreeNodeTests),
-        unittest.makeSuite(NotNodeTests),
-        unittest.makeSuite(AndNodeTests),
-        unittest.makeSuite(OrNodeTests),
-        unittest.makeSuite(AtomNodeTests),
-        unittest.makeSuite(PhraseNodeTests),
-        unittest.makeSuite(GlobNodeTests),
-    ))
+    def getValue(self):
+        return self

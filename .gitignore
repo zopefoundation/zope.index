@@ -12,3 +12,4 @@ develop-eggs
 parts
 docs/_build/
 .coverage
+htmlcov/
