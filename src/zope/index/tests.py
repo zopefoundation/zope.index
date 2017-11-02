@@ -13,11 +13,11 @@
 ##############################################################################
 """N-Best index tests
 """
-from unittest import TestCase, main, makeSuite
+import unittest
 
 from zope.index.nbest import NBest
 
-class NBestTest(TestCase):
+class NBestTest(unittest.TestCase):
 
     def testConstructor(self):
         self.assertRaises(ValueError, NBest, 0)
@@ -90,9 +90,3 @@ class NBestTest(TestCase):
             nb.addmany(inputs)
             outputs = nb.getbest()
             self.assertEqual(outputs, inputs[:len(outputs)])
-
-def test_suite():
-    return makeSuite(NBestTest)
-
-if __name__=='__main__':
-    main(defaultTest='test_suite')
