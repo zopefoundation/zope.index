@@ -22,11 +22,12 @@ from __future__ import print_function
 import sys
 import os
 
-from setuptools import setup, find_packages, Extension
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError
 from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
+
+from setuptools import setup, find_packages, Extension
 
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
@@ -64,19 +65,6 @@ class optional_build_ext(build_ext):
         print('', file=sys.stderr)
         print(e, file=sys.stderr)
         print('*' * 80, file=sys.stderr)
-
-def alltests():
-    import unittest
-    # use the zope.testrunner machinery to find all the
-    # test suites we've put under ourselves
-    import zope.testrunner.find
-    import zope.testrunner.options
-    here = os.path.abspath(os.path.join(os.path.dirname(__file__), 'src'))
-    args = sys.argv[:]
-    defaults = ["--test-path", here]
-    options = zope.testrunner.options.get_options(args, defaults)
-    suites = list(zope.testrunner.find.find_suites(options))
-    return unittest.TestSuite(suites)
 
 setup(name='zope.index',
       version='4.4.0.dev0',
@@ -128,7 +116,6 @@ setup(name='zope.index',
           'zope.interface'
       ],
       tests_require=['zope.testrunner'],
-      test_suite='__main__.alltests',
       ext_modules=[
           Extension('zope.index.text.okascore',
                     [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),

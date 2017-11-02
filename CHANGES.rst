@@ -9,6 +9,7 @@
 
 - Docs are now hosted at https://zopeindex.readthedocs.io/
 
+- Drop support for ``setup.py test``.
 
 4.3.0 (2017-04-24)
 ==================
