@@ -11,6 +11,8 @@
 
 - Drop support for ``setup.py test``.
 
+- Remove some internal test scripts that were never ported to Python 3.
+
 4.3.0 (2017-04-24)
 ==================
 
