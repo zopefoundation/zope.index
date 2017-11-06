@@ -44,7 +44,9 @@ class BitArray(object):
         self.bytes = array.array('B')
         self.nbits = 0
         self.bitsleft = 0
-        self.tostring = self.bytes.tostring
+
+    def tostring(self):
+        return self.bytes.tostring()
 
     def __getitem__(self, i):
         byte, offset = divmod(i, 8)
@@ -87,13 +89,14 @@ class RiceCode(object):
     """
     Rice coding.
     """
+    len = 0
+
     def __init__(self, m):
         """Constructor a RiceCode for m-bit values."""
-        if not (0 <= m <= 16):
+        if m < 0 or m > 16:
             raise ValueError("m must be between 0 and 16")
         self.init(m)
         self.bits = BitArray()
-        self.len = 0
 
     def init(self, m):
         self.m = m
@@ -183,36 +186,20 @@ def decode_deltas(start, enc_deltas):
     l.append(l[-1] + deltas[-1])
     return l
 
-def test():
-    import random
-    for size in [10, 20, 50, 100, 200]:
-        l = [random.randint(1, size) for i in range(50)]
-        c = encode(random.randint(1, 16), l)
-        assert c.tolist() == l
-    for size in [10, 20, 50, 100, 200]:
-        l = list(range(random.randint(1, size), size + random.randint(1, size)))
-        t = encode_deltas(l)
-        l2 = decode_deltas(*t)
-        assert l == l2
-        if l != l2:
-            print(l)
-            print(l2)
 
-def pickle_efficiency():
+def pickle_efficiency(bits=(4, 8, 12),
+                      sizes=(10, 20, 50, 100, 200, 500, 1000, 2000, 5000),
+                      elt_ranges=(10, 20, 50, 100, 200, 500, 1000)):
     import pickle
     import random
-    for m in [4, 8, 12]:
-        for size in [10, 20, 50, 100, 200, 500, 1000, 2000, 5000]:
-            for elt_range in [10, 20, 50, 100, 200, 500, 1000]:
+    import collections
+    all_results = {}
+    for m in bits:
+        all_results[m] = collections.defaultdict(dict)
+        for size in sizes:
+            for elt_range in elt_ranges:
                 l = [random.randint(1, elt_range) for i in range(size)]
                 raw = pickle.dumps(l, 1)
                 enc = pickle.dumps(encode(m, l), 1)
-                print("m=%2d size=%4d range=%4d" % (m, size, elt_range), end=' ')
-                print("%5d %5d" % (len(raw), len(enc)), end=' ')
-                if len(raw) > len(enc):
-                    print("win")
-                else:
-                    print("lose")
-
-if __name__ == "__main__":
-    test()
+                all_results[m][size][elt_range] = "win" if len(raw) > len(enc) else "lose"
+    return all_results

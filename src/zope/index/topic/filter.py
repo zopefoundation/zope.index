@@ -61,7 +61,7 @@ class FilteredSetBase(object):
     def getIds(self):
         return self._ids
 
-    def __repr__(self): #pragma NO COVERAGE
+    def __repr__(self): # pragma: no cover
         return '%s: (%s) %s' % (self.id, self.expr, list(self._ids))
 
     __str__ = __repr__

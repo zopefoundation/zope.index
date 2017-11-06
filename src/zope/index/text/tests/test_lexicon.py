@@ -209,12 +209,6 @@ class LexiconTests(unittest.TestCase):
         self.assertEqual(lexicon.wordCount(), 4)
 
 class SplitterTests(unittest.TestCase):
-    _old_locale = None
-
-    def tearDown(self):
-        if self._old_locale is not None:
-            import locale
-            locale.setlocale(locale.LC_ALL, self._old_locale)
 
     def _getTargetClass(self):
         from zope.index.text.lexicon import Splitter
@@ -244,15 +238,15 @@ class SplitterTests(unittest.TestCase):
     def test_process_w_locale_awareness(self):
         import locale
         import sys
-        self._old_locale = locale.setlocale(locale.LC_ALL)
+        old_locale = locale.setlocale(locale.LC_ALL)
         # set German locale
         try:
-            if sys.platform == 'win32':
-                locale.setlocale(locale.LC_ALL, 'German_Germany.1252')
-            else:
-                locale.setlocale(locale.LC_ALL, 'de_DE.ISO8859-1')
-        except locale.Error:
-            return # This test doesn't work here :-(
+            locale_string = 'de_DE.ISO8859-1' if sys.platform != 'win32' else 'German_Germany.1252'
+            locale.setlocale(locale.LC_ALL, locale_string)
+        except locale.Error: # pragma: no cover
+            self.skipTest("d._DE.ISO8859-1 locale is not available")
+        self.addCleanup(locale.setlocale, locale.LC_ALL, old_locale)
+
         expected = ['m\xfclltonne', 'waschb\xe4r',
                     'beh\xf6rde', '\xfcberflieger']
         splitter = self._makeOne()
@@ -392,7 +386,8 @@ class WackyReversePipelineElement(object):
         return res
 
 class StopWordPipelineElement(object):
-    def __init__(self, stopdict={}):
+
+    def __init__(self, stopdict):
         self.__stopdict = stopdict
 
     def process(self, seq):
@@ -403,12 +398,3 @@ class StopWordPipelineElement(object):
             else:
                 res.append(term)
         return res
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(LexiconTests),
-        unittest.makeSuite(SplitterTests),
-        unittest.makeSuite(CaseNormalizerTests),
-        unittest.makeSuite(StopWordRemoverTests),
-        unittest.makeSuite(StopWordAndSingleCharRemoverTests),
-    ))

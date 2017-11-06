@@ -21,12 +21,10 @@ from zope.index.text.interfaces import ISplitter
 
 MARKUP = re.compile(r"(<[^<>]*>|&[A-Za-z]+;)")
 
-_flags = 0
-if bytes is str:
-    # On python 2, we want locale aware splitting. This is the default
-    # on Python 3 when the pattern is text/unicode and in fact is
-    # forbidden unless the pattern is bytes (starting) in 3.6
-    _flags = re.LOCALE
+# On python 2, we want locale aware splitting. This is the default
+# on Python 3 when the pattern is text/unicode and in fact is
+# forbidden unless the pattern is bytes (starting) in 3.6
+_flags = re.LOCALE if bytes is str else 0
 
 WORDS = re.compile(r"\w+", _flags)
 GLOBS = re.compile(r"\w+[\w*?]*", _flags)

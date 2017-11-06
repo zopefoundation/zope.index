@@ -15,8 +15,15 @@
 """
 import unittest
 
-class OkapiIndexTestBase:
-    # Subclasses must define '_getBTreesFamily'
+# pylint:disable=protected-access
+
+from zope.index.text.okapiindex import PURE_PYTHON
+
+class OkapiIndexTestMixin(object):
+
+    def _getBTreesFamily(self):
+        raise NotImplementedError()
+
     def _getTargetClass(self):
         from zope.index.text.okapiindex import OkapiIndex
         return OkapiIndex
@@ -96,7 +103,7 @@ class OkapiIndexTestBase:
     def test__search_wids_non_empty_wids(self):
         TEXT = 'one two three'
         index = self._makeOne()
-        index.index_doc(1, TEXT )
+        index.index_doc(1, TEXT)
         wids = [index._lexicon._wids[x] for x in TEXT.split()]
         relevances = index._search_wids(wids)
         self.assertEqual(len(relevances), len(wids))
@@ -113,14 +120,18 @@ class OkapiIndexTestBase:
         # Simulate old instances which didn't have Length attributes
         index._totaldoclen = 3
 
-        relevances = index._search_wids([1])
+        index._search_wids([1])
 
-        self.assertTrue(isinstance(index._totaldoclen, int))
+        self.assertIsInstance(index._totaldoclen, int)
 
     def test_query_weight_empty_wids(self):
         index = self._makeOne()
         index.index_doc(1, 'one two three')
         self.assertEqual(index.query_weight(()), 0.0)
+
+    def test__search_wids_empty_wids(self):
+        index = self._makeOne()
+        self.assertEqual([], index._search_wids(()))
 
     def test_query_weight_oov_wids(self):
         index = self._makeOne()
@@ -130,34 +141,44 @@ class OkapiIndexTestBase:
     def test_query_weight_hit_single_occurence(self):
         index = self._makeOne()
         index.index_doc(1, 'one two three')
-        self.assertTrue(0.0 < index.query_weight(['one']))
+        self.assertGreater(index.query_weight(['one']), 0.0)
 
     def test_query_weight_hit_multiple_occurences(self):
         index = self._makeOne()
         index.index_doc(1, 'one one two three one')
-        self.assertTrue(0.0 < index.query_weight(['one']))
+        self.assertGreater(index.query_weight(['one']), 0.0)
 
+class OkapiIndexPurePythonTestMixin(OkapiIndexTestMixin):
 
-class OkapiIndexTest32(OkapiIndexTestBase, unittest.TestCase):
+    def _makeOne(self):
+        index = super(OkapiIndexPurePythonTestMixin, self)._makeOne()
+        index._search_wids = index._python_search_wids
+        return index
+
+class OkapiIndexTest32(OkapiIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family32
 
-class OkapiIndexTest64(OkapiIndexTestBase, unittest.TestCase):
+class OkapiIndexTest64(OkapiIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
 
+@unittest.skipIf(PURE_PYTHON, "Already tested")
+class OkapiIndexPurePythonTest32(OkapiIndexPurePythonTestMixin, OkapiIndexTest32):
+    pass
+
+@unittest.skipIf(PURE_PYTHON, "Already tested")
+class OkapiIndexPurePythonTest64(OkapiIndexPurePythonTestMixin, OkapiIndexTest64):
+    pass
+
+
 class TestScore(unittest.TestCase):
 
     def test_score_extension(self):
-        from zope.index.text.okapiindex import PURE_PYTHON, score
-        if PURE_PYTHON:
-            self.assertIsNone(score)
-        else:
-            self.assertIsNotNone(score)
-
-def test_suite():
-    return unittest.defaultTestLoader.loadTestsFromName(__name__)
+        from zope.index.text.okapiindex import score
+        assert_score = self.assertIsNone if PURE_PYTHON else self.assertIsNotNone
+        assert_score(score)

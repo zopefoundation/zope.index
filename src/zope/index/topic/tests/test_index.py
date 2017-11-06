@@ -15,6 +15,8 @@
 """
 import unittest
 
+# pylint:disable=protected-access,blacklisted-name
+
 _marker = object()
 
 class TopicIndexTest(unittest.TestCase):
@@ -27,21 +29,24 @@ class TopicIndexTest(unittest.TestCase):
         import BTrees
         return BTrees.family32
 
-    def _makeOne(self, family=_marker):
+    def _makeOne(self, family=_marker, populate=False):
         if family is _marker:
             family = self._get_family()
         if family is None:
-            return self._getTargetClass()()
-        return self._getTargetClass()(family)
+            index = self._getTargetClass()()
+        index = self._getTargetClass()(family)
+        if populate:
+            self._addFilters(index)
+            self._populate(index)
+        return index
 
     def _search(self, index, query, expected, operator='and'):
-        
         result = index.search(query, operator)
         self.assertEqual(result.keys(), expected)
 
     def _search_or(self, index, query, expected):
         return self._search(index, query, expected, 'or')
-         
+
     def _search_and(self, index, query, expected):
         return self._search(index, query, expected, 'and')
 
@@ -52,7 +57,7 @@ class TopicIndexTest(unittest.TestCase):
     def _apply_or(self, index, query, expected):
         result = index.apply({'query': query, 'operator': 'or'})
         self.assertEqual(result.keys(), expected)
-         
+
     def _apply_and(self, index, query, expected):
         result = index.apply({'query': query, 'operator': 'and'})
         self.assertEqual(result.keys(), expected)
@@ -273,9 +278,6 @@ class TopicIndexTest(unittest.TestCase):
         result = index.apply({'query': ['foo', 'bar'], 'operator': 'or'})
         self.assertEqual(set(result), set([1, 2, 3, 4]))
 
-
-class _NotYet:
-
     def _addFilters(self, index):
         from zope.index.topic.filter import PythonFilteredSet
         index.addFilter(
@@ -296,64 +298,64 @@ class _NotYet:
             def __init__(self, meta_type):
                 self.meta_type = meta_type
 
-        index.index_doc(0 , O('doc0'))
-        index.index_doc(1 , O('doc1'))
-        index.index_doc(2 , O('doc1'))
-        index.index_doc(3 , O('doc2'))
-        index.index_doc(4 , O('doc2'))
-        index.index_doc(5 , O('doc3'))
-        index.index_doc(6 , O('doc3'))
+        index.index_doc(0, O('doc0'))
+        index.index_doc(1, O('doc1'))
+        index.index_doc(2, O('doc1'))
+        index.index_doc(3, O('doc2'))
+        index.index_doc(4, O('doc2'))
+        index.index_doc(5, O('doc3'))
+        index.index_doc(6, O('doc3'))
 
     def test_unindex(self):
-        index = self._makeOne()
-        index.unindex_doc(-99)         # should not raise 
-        index.unindex_doc(3)  
-        index.unindex_doc(4)  
-        index.unindex_doc(5)  
-        self._search_or(index, 'doc1',  [1,2])
-        self._search_or(index, 'doc2',  [])
-        self._search_or(index, 'doc3',  [6])
-        self._search_or(index, 'doc4',  [])
+        index = self._makeOne(populate=True)
+        index.unindex_doc(-99)         # should not raise
+        index.unindex_doc(3)
+        index.unindex_doc(4)
+        index.unindex_doc(5)
+        self._search_or(index, 'doc1', [1, 2])
+        self._search_or(index, 'doc2', [])
+        self._search_or(index, 'doc3', [6])
+        self._search_or(index, 'doc4', [])
 
     def test_or(self):
-        index = self._makeOne()
-        self._search_or(index, 'doc1',  [1,2])
-        self._search_or(index, ['doc1'],[1,2])
-        self._search_or(index, 'doc2',  [3,4]),
-        self._search_or(index, ['doc2'],[3,4])
-        self._search_or(index, ['doc1','doc2'], [1,2,3,4])
+        index = self._makeOne(populate=True)
+        self._search_or(index, 'doc1', [1, 2])
+        self._search_or(index, ['doc1'], [1, 2])
+        self._search_or(index, 'doc2', [3, 4])
+        self._search_or(index, ['doc2'], [3, 4])
+        self._search_or(index, ['doc1', 'doc2'], [1, 2, 3, 4])
 
     def test_and(self):
-        index = self._makeOne()
-        self._search_and(index, 'doc1',   [1,2])
-        self._search_and(index, ['doc1'], [1,2])
-        self._search_and(index, 'doc2',   [3,4])
-        self._search_and(index, ['doc2'], [3,4])
-        self._search_and(index, ['doc1','doc2'], [])
+        index = self._makeOne(populate=True)
+        self._search_and(index, 'doc1', [1, 2])
+        self._search_and(index, ['doc1'], [1, 2])
+        self._search_and(index, 'doc2', [3, 4])
+        self._search_and(index, ['doc2'], [3, 4])
+        self._search_and(index, ['doc1', 'doc2'], [])
 
     def test_apply_or(self):
-        index = self._makeOne()
-        self._apply_or(index, 'doc1',  [1,2])
-        self._apply_or(index, ['doc1'],[1,2])
-        self._apply_or(index, 'doc2',  [3,4]),
-        self._apply_or(index, ['doc2'],[3,4])
-        self._apply_or(index, ['doc1','doc2'], [1,2,3,4])
+        index = self._makeOne(populate=True)
+        self._apply_or(index, 'doc1', [1, 2])
+        self._apply_or(index, ['doc1'], [1, 2])
+        self._apply_or(index, 'doc2', [3, 4])
+        self._apply_or(index, ['doc2'], [3, 4])
+        self._apply_or(index, ['doc1', 'doc2'], [1, 2, 3, 4])
 
     def test_apply_and(self):
-        index = self._makeOne()
-        self._apply_and(index, 'doc1',   [1,2])
-        self._apply_and(index, ['doc1'], [1,2])
-        self._apply_and(index, 'doc2',   [3,4])
-        self._apply_and(index, ['doc2'], [3,4])
-        self._apply_and(index, ['doc1','doc2'], [])
+        index = self._makeOne(populate=True)
+        self._apply_and(index, 'doc1', [1, 2])
+        self._apply_and(index, ['doc1'], [1, 2])
+        self._apply_and(index, 'doc2', [3, 4])
+        self._apply_and(index, ['doc2'], [3, 4])
+        self._apply_and(index, ['doc1', 'doc2'], [])
 
     def test_apply(self):
-        index = self._makeOne()
-        self._apply(index, 'doc1',   [1,2])
-        self._apply(index, ['doc1'], [1,2])
-        self._apply(index, 'doc2',   [3,4])
-        self._apply(index, ['doc2'], [3,4])
-        self._apply(index, ['doc1','doc2'], [])
+        index = self._makeOne(populate=True)
+        self._apply(index, 'doc1', [1, 2])
+        self._apply(index, ['doc1'], [1, 2])
+        self._apply(index, 'doc2', [3, 4])
+        self._apply(index, ['doc2'], [3, 4])
+        self._apply(index, ['doc1', 'doc2'], [])
 
 class TopicIndexTest64(TopicIndexTest):
 
@@ -362,7 +364,7 @@ class TopicIndexTest64(TopicIndexTest):
         return BTrees.family64
 
 
-class DummyFilter:
+class DummyFilter(object):
 
     _cleared = False
 
@@ -386,12 +388,5 @@ class DummyFilter:
         self._unindexed.append(docid)
 
     def getIds(self):
-        if self._family is not None:
-            return self._family.IF.TreeSet(self._ids)
-        return set(self._ids)
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(TopicIndexTest),
-        unittest.makeSuite(TopicIndexTest64),
-    ))
+        assert self._family is not None
+        return self._family.IF.TreeSet(self._ids)

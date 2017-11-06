@@ -9,6 +9,12 @@
 
 - Docs are now hosted at https://zopeindex.readthedocs.io/
 
+- Drop support for ``setup.py test``.
+
+- Remove some internal test scripts that were never ported to Python 3.
+
+- Reach and maintain 100% test coverage.
+
 
 4.3.0 (2017-04-24)
 ==================

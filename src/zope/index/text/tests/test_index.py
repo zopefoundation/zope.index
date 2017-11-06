@@ -15,8 +15,15 @@
 """
 import unittest
 
-class IndexTestBase:
-    # Subclasses must define '_getTargetClass' and '_getBTreesFamily'
+# pylint:disable=protected-access
+
+class IndexTestMixin(object):
+    def _getTargetClass(self):
+        raise NotImplementedError()
+
+    def _getBTreesFamily(self):
+        raise NotImplementedError()
+
     def _makeOne(self):
         from zope.index.text.lexicon import Lexicon
         from zope.index.text.lexicon import Splitter
@@ -133,8 +140,8 @@ class IndexTestBase:
                          index.wordCount())
         wids = index._lexicon.termToWordIds("repeat")
         self.assertEqual(len(wids), 1)
-        repititive_wid = wids[0]
-        for wid, map in index._wordinfo.items():
+
+        for _wid, map in index._wordinfo.items():
             self.assertEqual(len(map), 1)
             self.assertTrue(1 in map)
 
@@ -174,7 +181,7 @@ class IndexTestBase:
         results = index.search_glob("b*")
         self.assertEqual(list(results.keys()), [1, 2, 3])
 
-class CosineIndexTest32(IndexTestBase, unittest.TestCase):
+class CosineIndexTest32(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
         from zope.index.text.cosineindex import CosineIndex
@@ -184,7 +191,7 @@ class CosineIndexTest32(IndexTestBase, unittest.TestCase):
         import BTrees
         return BTrees.family32
 
-class OkapiIndexTest32(IndexTestBase, unittest.TestCase):
+class OkapiIndexTest32(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
         from zope.index.text.okapiindex import OkapiIndex
@@ -194,7 +201,7 @@ class OkapiIndexTest32(IndexTestBase, unittest.TestCase):
         import BTrees
         return BTrees.family32
 
-class CosineIndexTest64(IndexTestBase, unittest.TestCase):
+class CosineIndexTest64(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
         from zope.index.text.cosineindex import CosineIndex
@@ -204,7 +211,7 @@ class CosineIndexTest64(IndexTestBase, unittest.TestCase):
         import BTrees
         return BTrees.family64
 
-class OkapiIndexTest64(IndexTestBase, unittest.TestCase):
+class OkapiIndexTest64(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
         from zope.index.text.okapiindex import OkapiIndex
@@ -213,11 +220,3 @@ class OkapiIndexTest64(IndexTestBase, unittest.TestCase):
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
-
-def test_suite():
-    return unittest.TestSuite((
-                      unittest.makeSuite(CosineIndexTest32),
-                      unittest.makeSuite(OkapiIndexTest32),
-                      unittest.makeSuite(CosineIndexTest64),
-                      unittest.makeSuite(OkapiIndexTest64),
-                    ))

@@ -15,6 +15,8 @@
 """
 import unittest
 
+# pylint:disable=protected-access
+
 _marker = object()
 
 class TextIndexTests(unittest.TestCase):
@@ -27,29 +29,11 @@ class TextIndexTests(unittest.TestCase):
         if lexicon is _marker:
             if index is _marker: # defaults
                 return self._getTargetClass()()
-            else:
-                return self._getTargetClass()(index=index)
+            return self._getTargetClass()(index=index)
         else:
             if index is _marker:
                 return self._getTargetClass()(lexicon)
-            else:
-                return self._getTargetClass()(lexicon, index)
-
-    def _makeLexicon(self, *pipeline):
-        from zope.index.text.lexicon import Lexicon
-        from zope.index.text.lexicon import Splitter
-        if not pipeline:
-            pipeline = (Splitter(),)
-        return Lexicon(*pipeline)
-
-    def _makeOkapi(self, lexicon=None, family=None):
-        import BTrees
-        from zope.index.text.okapiindex import OkapiIndex
-        if lexicon is None:
-            lexicon = self._makeLexicon()
-        if family is None:
-            family = BTrees.family64
-        return OkapiIndex(lexicon, family=family)
+            return self._getTargetClass()(lexicon, index)
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
@@ -185,7 +169,6 @@ class TextIndexTests(unittest.TestCase):
         self.assertEqual(okapi._searched, ['anything'])
 
     def test_apply_w_results_bogus_query_weight(self):
-        import sys
         DIVISOR = 2**64 // 10
         lexicon = DummyLexicon()
         # cause TypeError in division
@@ -198,7 +181,7 @@ class TextIndexTests(unittest.TestCase):
         self.assertEqual(okapi._query_weighted[0], ['anything'])
         self.assertEqual(okapi._searched, ['anything'])
 
-class DummyOkapi:
+class DummyOkapi(object):
 
     _cleared = False
     _document_count = 4
@@ -240,12 +223,6 @@ class DummyOkapi:
 
     search_phrase = search_glob = search
 
-class DummyLexicon:
+class DummyLexicon(object):
     def parseTerms(self, term):
         return term
-
-def test_suite():
-    return unittest.TestSuite((
-                      unittest.makeSuite(TextIndexTests),
-                    ))
-

@@ -13,10 +13,11 @@
 ##############################################################################
 """Keyword index
 """
-import BTrees
 import six
-from persistent import Persistent
+import BTrees
 from BTrees.Length import Length
+from persistent import Persistent
+
 
 from zope.index.interfaces import IInjection, IStatistics, IIndexSearch
 from zope.index.keyword.interfaces import IKeywordQuerying
@@ -126,7 +127,7 @@ class KeywordIndex(Persistent):
 
         try:
             del self._rev_index[docid]
-        except KeyError: #pragma NO COVERAGE
+        except KeyError: # pragma: no cover
             # 'WAAA!  Inconsistent'
             pass
 
@@ -185,8 +186,7 @@ class KeywordIndex(Persistent):
 
         if rs:
             return rs
-        else:
-            return self.family.IF.Set()
+        return self.family.IF.Set()
 
     def apply(self, query):
         operator = 'and'
