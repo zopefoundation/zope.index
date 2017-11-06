@@ -244,7 +244,7 @@ class SplitterTests(unittest.TestCase):
             locale_string = 'de_DE.ISO8859-1' if sys.platform != 'win32' else 'German_Germany.1252'
             locale.setlocale(locale.LC_ALL, locale_string)
         except locale.Error: # pragma: no cover
-            return # This test doesn't work here :-(
+            self.skipTest("d._DE.ISO8859-1 locale is not available")
         self.addCleanup(locale.setlocale, locale.LC_ALL, old_locale)
 
         expected = ['m\xfclltonne', 'waschb\xe4r',
