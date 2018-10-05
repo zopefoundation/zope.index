@@ -69,7 +69,7 @@ class optional_build_ext(build_ext):
         print('*' * 80, file=sys.stderr)
 
 setup(name='zope.index',
-      version='4.4.0.dev0',
+      version='4.4.0',
       url='https://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
