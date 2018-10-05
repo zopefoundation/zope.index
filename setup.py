@@ -33,9 +33,11 @@ def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
 
-long_description = (open('README.rst').read() +
-                    '\n\n' +
-                    open('CHANGES.rst').read())
+long_description = (
+    read('README.rst')
+    + '\n\n'
+    + read('CHANGES.rst')
+)
 
 class optional_build_ext(build_ext):
     """This class subclasses build_ext and allows
@@ -85,6 +87,7 @@ setup(name='zope.index',
           'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Programming Language :: Python :: Implementation :: CPython',
           'Programming Language :: Python :: Implementation :: PyPy',
           'Natural Language :: English',
