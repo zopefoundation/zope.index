@@ -323,8 +323,8 @@ class FieldIndexTests(unittest.TestCase):
     def test_insert_none_value_does_insert_into_forward_index(self):
         index = self._makeOne()
         index.index_doc(1, None)
-        self.assertEquals(len(index._fwd_index), 1)
-        self.assertEquals(len(index._rev_index), 1)
+        self.assertEqual(len(index._fwd_index), 1)
+        self.assertEqual(len(index._rev_index), 1)
 
 def test_suite():
     return unittest.TestSuite((

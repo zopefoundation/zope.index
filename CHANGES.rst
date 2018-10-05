@@ -7,6 +7,10 @@
 
 - Drop support for Python 3.3.
 
+- Add support for Python 3.7. ``SortingIndexMixin.sort`` now just
+  returns instead of raising ``StopIteration`` as required by
+  :pep:`479`. See `issue 20 <https://github.com/zopefoundation/zope.index/pull/20>`_.
+
 - Docs are now hosted at https://zopeindex.readthedocs.io/
 
 - Drop support for ``setup.py test``.

@@ -46,7 +46,10 @@ class BitArray(object):
         self.bitsleft = 0
 
     def tostring(self):
-        return self.bytes.tostring()
+        # tostring is deprecated on Python 3, but tobytes isn't available
+        # on Python 2
+        tobytes = getattr(self.bytes, 'tobytes', None) or self.bytes.tostring
+        return tobytes()
 
     def __getitem__(self, i):
         byte, offset = divmod(i, 8)

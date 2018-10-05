@@ -36,13 +36,13 @@ class SortingIndexMixin(object):
 
         numdocs = getattr(self, self._sorting_num_docs_attr).value
         if not numdocs:
-            raise StopIteration
+            return
 
         if not isinstance(docids,
                           (self.family.IF.Set, self.family.IF.TreeSet)):
             docids = self.family.IF.Set(docids)
         if not docids:
-            raise StopIteration
+            return
 
         rlen = len(docids)
 
@@ -88,7 +88,7 @@ class SortingIndexMixin(object):
                 it = iter(iterable)
                 result = sorted(islice(it, 0, limit))
                 if not result:
-                    raise StopIteration
+                    return
                 insort = bisect.insort
                 pop = result.pop
                 los = result[-1]    # los --> Largest of the nsmallest
@@ -118,7 +118,7 @@ class SortingIndexMixin(object):
                         n += 1
                         yield docid
                         if limit and n >= limit:
-                            raise StopIteration
+                            return
             else:
                 # If the result set is not much larger than the number
                 # of documents in this index, or if we need to sort in
@@ -129,4 +129,4 @@ class SortingIndexMixin(object):
                         n += 1
                         yield docid
                         if limit and n >= limit:
-                            raise StopIteration
+                            return
