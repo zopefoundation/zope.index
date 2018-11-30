@@ -182,8 +182,10 @@ def encode_deltas(l):
     return l[0], deltas
 
 def decode_deltas(start, enc_deltas):
-    deltas = enc_deltas.tolist()
     l = [start]
+    if not enc_deltas:
+        return l
+    deltas = enc_deltas.tolist()
     for i in range(1, len(deltas)):
         l.append(l[i-1] + deltas[i])
     l.append(l[-1] + deltas[-1])
