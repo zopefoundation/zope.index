@@ -5,7 +5,8 @@
 4.4.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Fix ``zope.index.text.ricecode.decode_deltas(..., [])``.  See
+  `issue 22 <https://github.com/zopefoundation/zope.index/issues/22>`_.
 
 
 4.4.0 (2018-10-05)

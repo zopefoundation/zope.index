@@ -15,11 +15,11 @@ class TestRiceCode(unittest.TestCase):
 
     def test_random(self):
         import random
-        for size in [10, 20, 50, 100, 200]:
+        for size in [1, 10, 20, 50, 100, 200]:
             l = [random.randint(1, size) for i in range(50)]
             c = encode(random.randint(1, 16), l)
             self.assertEqual(c.tolist(), l)
-        for size in [10, 20, 50, 100, 200]:
+        for size in [1, 10, 20, 50, 100, 200]:
             l = list(range(random.randint(1, size), size + random.randint(1, size)))
             l_0, deltas = encode_deltas(l)
             l2 = decode_deltas(l_0, deltas)
@@ -28,6 +28,10 @@ class TestRiceCode(unittest.TestCase):
     def test_encode_deltas_one_element(self):
         self.assertEqual(('foo', []),
                          encode_deltas(['foo']))
+
+    def test_decode_deltas_one_element(self):
+        self.assertEqual(['foo'],
+                         decode_deltas('foo', []))
 
     def test_pickle_efficiency(self):
         # This is random data so it's hard to say what wins
