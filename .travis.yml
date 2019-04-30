@@ -1,71 +1,71 @@
 language: python
 dist: xenial
 matrix:
-    include:
-        - os: linux
-          python: 2.7
-        - os: linux
-          python: 2.7
-          env: PURE_PYTHON=1
-        - os: linux
-          python: 3.5
-        - os: linux
-          python: 3.6
-        - os: linux
-          python: 3.7
-        - os: linux
-          python: pypy2.7-6.0.0
-        - os: linux
-          python: pypy3.5-6.0.0
-        - os: osx
-          language: generic
-          env: TERRYFY_PYTHON='macpython 2.7'
-        - os: osx
-          language: generic
-          env: TERRYFY_PYTHON='macpython 3.5'
-        - os: osx
-          language: generic
-          env: TERRYFY_PYTHON='macpython 3.6.1'
-        - os: osx
-          language: generic
-          env: TERRYFY_PYTHON='macpython 3.7.0'
-        - services:
-            - docker
-          env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
-          before_install:
-            - if [[ $TRAVIS_TAG ]]; then bash .manylinux.sh; fi
-            - exit 0
-        - services:
-            - docker
-          env:
-            - DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
-            - PRE_CMD=linux32
-          before_install:
-            - if [[ $TRAVIS_TAG ]]; then bash .manylinux.sh; fi
-            - exit 0
+  include:
+    - os: linux
+      python: 2.7
+    - os: linux
+      python: 2.7
+      env: PURE_PYTHON=1
+    - os: linux
+      python: 3.5
+    - os: linux
+      python: 3.6
+    - os: linux
+      python: 3.7
+    - os: linux
+      python: pypy2.7-6.0.0
+    - os: linux
+      python: pypy3.5-6.0.0
+    - os: osx
+      language: generic
+      env: TERRYFY_PYTHON='macpython 2.7'
+    - os: osx
+      language: generic
+      env: TERRYFY_PYTHON='macpython 3.5'
+    - os: osx
+      language: generic
+      env: TERRYFY_PYTHON='macpython 3.6.1'
+    - os: osx
+      language: generic
+      env: TERRYFY_PYTHON='macpython 3.7.0'
+    - services:
+        - docker
+      env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64
+      before_install:
+        - if [[ $TRAVIS_TAG ]]; then bash .manylinux.sh; fi
+        - exit 0
+    - services:
+        - docker
+      env:
+        - DOCKER_IMAGE=quay.io/pypa/manylinux1_i686
+        - PRE_CMD=linux32
+      before_install:
+        - if [[ $TRAVIS_TAG ]]; then bash .manylinux.sh; fi
+        - exit 0
 before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then git clone https://github.com/MacPython/terryfy; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source terryfy/travis_tools.sh; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then get_python_environment $TERRYFY_PYTHON venv; fi
-    - pip install --upgrade pip
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then git clone https://github.com/MacPython/terryfy; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source terryfy/travis_tools.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then get_python_environment $TERRYFY_PYTHON venv; fi
+  - pip install --upgrade pip
 install:
-    - pip install -U coverage coveralls
-    - pip install -U -e .[test]
+  - pip install -U coverage coveralls
+  - pip install -U -e .[test]
 script:
-    - coverage run -m zope.testrunner --test-path=src
+  - coverage run -m zope.testrunner --test-path=src
 notifications:
-    email: false
+  email: false
 after_success:
-    - coveralls
-    - echo [distutils]                                  > ~/.pypirc
-    - echo index-servers = pypi                        >> ~/.pypirc
-    - echo [pypi]                                      >> ~/.pypirc
-    - echo username=zope.wheelbuilder                  >> ~/.pypirc
-    - echo password=$PYPIPASSWORD                      >> ~/.pypirc
-    - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then pip install twine; fi
-    - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py bdist_wheel; fi
-    - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then twine upload dist/*; fi
+  - coveralls
+  - echo [distutils]                                  > ~/.pypirc
+  - echo index-servers = pypi                        >> ~/.pypirc
+  - echo [pypi]                                      >> ~/.pypirc
+  - echo username=zope.wheelbuilder                  >> ~/.pypirc
+  - echo password=$PYPIPASSWORD                      >> ~/.pypirc
+  - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then pip install twine; fi
+  - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then python setup.py bdist_wheel; fi
+  - if [[ $TRAVIS_TAG && "$TRAVIS_OS_NAME" == "osx" ]]; then twine upload dist/*; fi
 cache: pip
 env:
-    global:
-        secure: "lpk5DUV5COeJvqqEo43MIfGhI4rlqR5fo2epjTGzNsI24jWvUiA6ix6ZctRPrlPPnKZSHrni5qdLwi5gZw/JHzRbhSnTlkfuSSji7Xmh+xg73U4uoRa1X9LoKCSW+JnFTrK4Dv+FL5pIGkcxsbwvT5X9jqGouS9dVnf5cUNKYW4="
+  global:
+    secure: "lpk5DUV5COeJvqqEo43MIfGhI4rlqR5fo2epjTGzNsI24jWvUiA6ix6ZctRPrlPPnKZSHrni5qdLwi5gZw/JHzRbhSnTlkfuSSji7Xmh+xg73U4uoRa1X9LoKCSW+JnFTrK4Dv+FL5pIGkcxsbwvT5X9jqGouS9dVnf5cUNKYW4="
