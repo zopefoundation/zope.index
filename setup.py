@@ -29,15 +29,18 @@ from distutils.errors import DistutilsPlatformError
 
 from setuptools import setup, find_packages, Extension
 
+
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
+
 
 long_description = (
     read('README.rst')
     + '\n\n'
     + read('CHANGES.rst')
 )
+
 
 class optional_build_ext(build_ext):
     """This class subclasses build_ext and allows
@@ -68,8 +71,9 @@ class optional_build_ext(build_ext):
         print(e, file=sys.stderr)
         print('*' * 80, file=sys.stderr)
 
+
 setup(name='zope.index',
-      version='4.4.1.dev0',
+      version='5.0.0.dev0',
       url='https://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
@@ -84,7 +88,6 @@ setup(name='zope.index',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.4',
           'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
@@ -97,7 +100,7 @@ setup(name='zope.index',
       ],
       packages=find_packages('src'),
       package_dir={'': 'src'},
-      namespace_packages=['zope',],
+      namespace_packages=['zope'],
       extras_require={
           'test': [
               'zope.testrunner',
