@@ -8,6 +8,8 @@
 - Fix ``zope.index.text.ricecode.decode_deltas(..., [])``.  See
   `issue 22 <https://github.com/zopefoundation/zope.index/issues/22>`_.
 
+- Drop support for Python 3.4.
+
 
 4.4.0 (2018-10-05)
 ==================
