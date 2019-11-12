@@ -2,7 +2,7 @@
  Changes
 =========
 
-5.0.0 (unreleased)
+5.0.0 (2019-11-12)
 ==================
 
 - Fix ``zope.index.text.ricecode.decode_deltas(..., [])``.  See
