@@ -1,7 +1,6 @@
 # Generated from:
 # https://github.com/zopefoundation/meta/tree/master/config/c-code
 environment:
-
   # Currently the builds use @mgedmin's Appveyor account.  The PyPI token
   # belongs to zope.wheelbuilder, which is managed by @mgedmin and @dataflake.
   

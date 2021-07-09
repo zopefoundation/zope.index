@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/c-code
 [meta]
 template = "c-code"
-commit-id = "17719b8b55c2f7f9bf278e62fc1ae263a70bd9b4"
+commit-id = "4a880af151662e1e39b3dc9b4cb924f2af019e1f"
 
 [python]
 with-appveyor = true
@@ -11,6 +11,7 @@ with-pypy = true
 with-legacy-python = true
 with-docs = true
 with-sphinx-doctests = false
+with-future-python = false
 
 [tox]
 use-flake8 = false
@@ -34,7 +35,4 @@ global-env-vars = [
     "  TWINE_USERNAME: __token__",
     "  TWINE_PASSWORD:",
     "    secure: aoZC/+rvJKg8B5GMGIxd1VTV3PcyYlv24IVlfMnG7u6WiuD8XHkwbNCE9e6o7me9uvONYgQBwedB0w3pEOjSYCZnGLHD8wPpSyvU6mJ/sm5zefc/k4/MwNE1QHlT4+e+W7YnjXZCZYCTihoGVxCaCOpttBrqt2ccNpXlfm9rJM1/AXL5e5TvahSnRtV4HfEt3BEtbO3GGrqXVa6wk+T4f2ywIKMmZ+xmav9eslRCnI6pX8dWs6Ulw8fr5QUycZY+ARTXyPYz4iOrNSVzs4uIQg==",
-    ]
-build-script = [
-    "- python -W ignore setup.py -q bdist_wheel",
     ]
