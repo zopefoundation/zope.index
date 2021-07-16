@@ -5,7 +5,9 @@
 5.0.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Add support for Python 3.9.
+
+- Build aarch64 wheels.
 
 
 5.0.0 (2019-11-12)
