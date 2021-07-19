@@ -73,7 +73,7 @@ class optional_build_ext(build_ext):
 
 
 setup(name='zope.index',
-      version='5.1.0',
+      version='5.1.1.dev0',
       url='https://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
