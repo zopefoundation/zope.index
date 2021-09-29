@@ -101,7 +101,7 @@ score(PyObject *self, PyObject *args)
 			return NULL;
 		}
 #ifdef PY3K
-		lenweight = B_FROM1 + B * PyLong_AsLong(doclen) / meandoclen;
+		lenweight = B_FROM1 + B * PyFloat_AsDouble(doclen) / meandoclen;
 #else
 		lenweight = B_FROM1 + B * PyInt_AsLong(doclen) / meandoclen;
 #endif
