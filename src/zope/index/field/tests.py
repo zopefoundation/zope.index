@@ -13,10 +13,12 @@
 ##############################################################################
 """Test field index
 """
-import unittest
 import doctest
+import unittest
+
 
 _marker = object()
+
 
 class FieldIndexTests(unittest.TestCase):
 
@@ -30,7 +32,7 @@ class FieldIndexTests(unittest.TestCase):
         return self._getTargetClass()(family)
 
     def _populateIndex(self, index):
-        index.index_doc(5, 1) # docid, obj
+        index.index_doc(5, 1)  # docid, obj
         index.index_doc(2, 2)
         index.index_doc(1, 3)
         index.index_doc(3, 4)
@@ -44,31 +46,37 @@ class FieldIndexTests(unittest.TestCase):
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IIndexSearch
         verifyClass(IIndexSearch, self._getTargetClass())
 
     def test_instance_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IIndexSearch
         verifyObject(IIndexSearch, self._makeOne())
 
     def test_class_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IStatistics
         verifyClass(IStatistics, self._getTargetClass())
 
     def test_instance_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
@@ -115,12 +123,12 @@ class FieldIndexTests(unittest.TestCase):
 
     def test_unindex_doc_nonesuch(self):
         index = self._makeOne()
-        index.unindex_doc(1) # doesn't raise
+        index.unindex_doc(1)  # doesn't raise
 
     def test_unindex_doc_no_residual_fwd_values(self):
         index = self._makeOne()
         index.index_doc(1, 'value')
-        index.unindex_doc(1) # doesn't raise
+        index.unindex_doc(1)  # doesn't raise
         self.assertEqual(index.documentCount(), 0)
         self.assertEqual(index.wordCount(), 0)
         self.assertFalse(1 in index._rev_index)
@@ -130,7 +138,7 @@ class FieldIndexTests(unittest.TestCase):
         index = self._makeOne()
         index.index_doc(1, 'value')
         index.index_doc(2, 'value')
-        index.unindex_doc(1) # doesn't raise
+        index.unindex_doc(1)  # doesn't raise
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 1)
         self.assertFalse(1 in index._rev_index)
@@ -226,7 +234,7 @@ class FieldIndexTests(unittest.TestCase):
         self._populateIndex(index)
         c1 = IFSet([1, 2, 3, 4, 5, 99])
         result = index.sort(c1)
-        self.assertEqual(list(result), [5, 2, 1, 3, 4]) # 99 not present
+        self.assertEqual(list(result), [5, 2, 1, 3, 4])  # 99 not present
 
     def test_sort_nonlazy_withlimit(self):
         from BTrees.IFBTree import IFSet
@@ -326,11 +334,13 @@ class FieldIndexTests(unittest.TestCase):
         self.assertEqual(len(index._fwd_index), 1)
         self.assertEqual(len(index._rev_index), 1)
 
+
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.rst', optionflags=doctest.ELLIPSIS),
-        unittest.makeSuite(FieldIndexTests),
-        ))
+        unittest.defaultTestLoader.loadTestsFromTestCase(FieldIndexTests),
+    ))
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

@@ -88,11 +88,13 @@ class TestQueryParser(TestQueryParserBase):
 
     def test_class_conforms_to_IQueryParser(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IQueryParser
         verifyClass(IQueryParser, self._getTargetClass())
 
     def test_instance_conforms_to_IQueryParser(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IQueryParser
         verifyObject(IQueryParser, self._makeOne())
 
@@ -111,14 +113,14 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import AtomNode
         parser = self._makeOne()
         self._expect(parser, "aa and bb AND cc",
-                    AndNode([AtomNode("aa"), AtomNode("bb"), AtomNode("cc")]))
+                     AndNode([AtomNode("aa"), AtomNode("bb"), AtomNode("cc")]))
 
     def test004(self):
-        from zope.index.text.parsetree import OrNode
         from zope.index.text.parsetree import AtomNode
+        from zope.index.text.parsetree import OrNode
         parser = self._makeOne()
         self._expect(parser, "aa OR bb or cc",
-                    OrNode([AtomNode("aa"), AtomNode("bb"), AtomNode("cc")]))
+                     OrNode([AtomNode("aa"), AtomNode("bb"), AtomNode("cc")]))
 
     def test005(self):
         from zope.index.text.parsetree import AndNode
@@ -126,7 +128,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import OrNode
         parser = self._makeOne()
         self._expect(parser, "aa AND bb OR cc AnD dd",
-                    OrNode([AndNode([AtomNode("aa"), AtomNode("bb")]),
+                     OrNode([AndNode([AtomNode("aa"), AtomNode("bb")]),
                             AndNode([AtomNode("cc"), AtomNode("dd")])]))
 
     def test006(self):
@@ -135,7 +137,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import OrNode
         parser = self._makeOne()
         self._expect(parser, "(aa OR bb) AND (cc OR dd)",
-                    AndNode([OrNode([AtomNode("aa"), AtomNode("bb")]),
+                     AndNode([OrNode([AtomNode("aa"), AtomNode("bb")]),
                              OrNode([AtomNode("cc"), AtomNode("dd")])]))
 
     def test007(self):
@@ -144,7 +146,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import NotNode
         parser = self._makeOne()
         self._expect(parser, "aa AND NOT bb",
-                    AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
+                     AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
 
     def test008(self):
         from zope.index.text.parsetree import AndNode
@@ -152,7 +154,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import NotNode
         parser = self._makeOne()
         self._expect(parser, "aa NOT bb",
-                    AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
+                     AndNode([AtomNode("aa"), NotNode(AtomNode("bb"))]))
 
     def test010(self):
         from zope.index.text.parsetree import PhraseNode
@@ -189,7 +191,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import NotNode
         parser = self._makeOne()
         self._expect(parser, "foo -bar", AndNode([AtomNode("foo"),
-                                         NotNode(AtomNode("bar"))]))
+                                                  NotNode(AtomNode("bar"))]))
 
     def test016(self):
         from zope.index.text.parsetree import AndNode
@@ -197,7 +199,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import NotNode
         parser = self._makeOne()
         self._expect(parser, "-foo bar", AndNode([AtomNode("bar"),
-                                         NotNode(AtomNode("foo"))]))
+                                                  NotNode(AtomNode("foo"))]))
 
     def test017(self):
         from zope.index.text.parsetree import AndNode
@@ -206,7 +208,7 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import PhraseNode
         parser = self._makeOne()
         self._expect(parser, "booh -foo-bar",
-                    AndNode([AtomNode("booh"),
+                     AndNode([AtomNode("booh"),
                              NotNode(PhraseNode(["foo", "bar"]))]))
 
     def test018(self):
@@ -231,14 +233,14 @@ class TestQueryParser(TestQueryParserBase):
         from zope.index.text.parsetree import AtomNode
         parser = self._makeOne()
         self._expect(parser, '"foo"bar',
-                    AndNode([AtomNode("foo"), AtomNode("bar")]))
+                     AndNode([AtomNode("foo"), AtomNode("bar")]))
 
     def test021(self):
         from zope.index.text.parsetree import AndNode
         from zope.index.text.parsetree import AtomNode
         parser = self._makeOne()
         self._expect(parser, 'foo"bar"blech',
-                    AndNode([AtomNode("foo"), AtomNode("bar"),
+                     AndNode([AtomNode("foo"), AtomNode("bar"),
                              AtomNode("blech")]))
 
     def test022(self):
@@ -411,14 +413,7 @@ class StopWordTestQueryParser(TestQueryParserBase):
         self._failure(parser, 'stop AND NOT foo')
 
 
-class FakeStopWordRemover(object):
+class FakeStopWordRemover:
 
     def process(self, list):
         return [word for word in list if word != "stop"]
-
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(TestQueryParser),
-        unittest.makeSuite(StopWordTestQueryParser),
-    ))

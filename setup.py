@@ -18,16 +18,16 @@
 ##############################################################################
 """Setup for zope.index package
 """
-from __future__ import print_function
-import sys
 import os
-
+import sys
 from distutils.command.build_ext import build_ext
 from distutils.errors import CCompilerError
 from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 
-from setuptools import setup, find_packages, Extension
+from setuptools import Extension
+from setuptools import find_packages
+from setuptools import setup
 
 
 def read(*rnames):
@@ -46,6 +46,7 @@ class optional_build_ext(build_ext):
     """This class subclasses build_ext and allows
        the building of C extensions to fail.
     """
+
     def run(self):
         try:
             build_ext.run(self)
@@ -118,15 +119,15 @@ setup(name='zope.index',
           'persistent',
           'BTrees>=4.4.1',
           'setuptools',
-          'six',
           'zope.interface'
       ],
       tests_require=['zope.testrunner'],
       ext_modules=[
-          Extension('zope.index.text.okascore',
-                    [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
+          Extension(
+              'zope.index.text.okascore',
+              [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
       ],
       cmdclass={'build_ext': optional_build_ext},
       include_package_data=True,
       zip_safe=False,
-)
+      )

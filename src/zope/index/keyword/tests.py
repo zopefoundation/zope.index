@@ -14,6 +14,7 @@
 
 import unittest
 
+
 class _KeywordIndexTestsBase:
 
     def _getTargetClass(self):
@@ -38,18 +39,18 @@ class _KeywordIndexTestsBase:
     def test_simplesearch(self):
         index = self._makeOne()
         self._populate(index)
-        self._search(index, [''],      self.IFSet())
-        self._search(index, 'cmf',     self.IFSet([5]))
-        self._search(index, ['cmf'],   self.IFSet([5]))
-        self._search(index, ['Zope'],  self.IFSet([3]))
+        self._search(index, [''], self.IFSet())
+        self._search(index, 'cmf', self.IFSet([5]))
+        self._search(index, ['cmf'], self.IFSet([5]))
+        self._search(index, ['Zope'], self.IFSet([3]))
         self._search(index, ['Zope3'], self.IFSet([1]))
-        self._search(index, ['foo'],   self.IFSet())
+        self._search(index, ['foo'], self.IFSet())
 
     def test_search_and(self):
         index = self._makeOne()
         self._populate(index)
         self._search_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
-        self._search_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._search_and(index, ('CMF', 'zope'), self.IFSet([1]))
         self._search_and(index, ('cmf', 'zope4'), self.IFSet())
         self._search_and(index, ('quick', 'FOX'), self.IFSet([2]))
 
@@ -57,15 +58,15 @@ class _KeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._search_or(index, ('cmf', 'Zope3'), self.IFSet([1, 5]))
-        self._search_or(index, ('cmf', 'zope'),  self.IFSet([1, 5]))
+        self._search_or(index, ('cmf', 'zope'), self.IFSet([1, 5]))
         self._search_or(index, ('cmf', 'zope4'), self.IFSet([5]))
-        self._search_or(index, ('zope', 'Zope'), self.IFSet([1,3]))
+        self._search_or(index, ('zope', 'Zope'), self.IFSet([1, 3]))
 
     def test_apply(self):
         index = self._makeOne()
         self._populate(index)
         self._apply(index, ('CMF', 'Zope3'), self.IFSet([1]))
-        self._apply(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply(index, ('CMF', 'zope'), self.IFSet([1]))
         self._apply(index, ('cmf', 'zope4'), self.IFSet())
         self._apply(index, ('quick', 'FOX'), self.IFSet([2]))
 
@@ -73,7 +74,7 @@ class _KeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._apply_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
-        self._apply_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('CMF', 'zope'), self.IFSet([1]))
         self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
         self._apply_and(index, ('quick', 'FOX'), self.IFSet([2]))
 
@@ -81,18 +82,18 @@ class _KeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._apply_or(index, ('cmf', 'Zope3'), self.IFSet([1, 5]))
-        self._apply_or(index, ('cmf', 'zope'),  self.IFSet([1, 5]))
+        self._apply_or(index, ('cmf', 'zope'), self.IFSet([1, 5]))
         self._apply_or(index, ('cmf', 'zope4'), self.IFSet([5]))
-        self._apply_or(index, ('zope', 'Zope'), self.IFSet([1,3]))
+        self._apply_or(index, ('zope', 'Zope'), self.IFSet([1, 3]))
 
     def test_apply_with_only_tree_set(self):
         index = self._makeOne()
         index.tree_threshold = 0
         self._populate(index)
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFTreeSet()))
+                         type(self.IFTreeSet()))
         self._apply_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
-        self._apply_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('CMF', 'zope'), self.IFSet([1]))
         self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
         self._apply_and(index, ('quick', 'FOX'), self.IFSet([2]))
 
@@ -101,9 +102,9 @@ class _KeywordIndexTestsBase:
         index.tree_threshold = 2
         self._populate(index)
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFSet()))
+                         type(self.IFSet()))
         self._apply_and(index, ('CMF', 'Zope3'), self.IFSet([1]))
-        self._apply_and(index, ('CMF', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('CMF', 'zope'), self.IFSet([1]))
         self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
         self._apply_and(index, ('quick', 'FOX'), self.IFSet([2]))
 
@@ -111,32 +112,32 @@ class _KeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFSet()))
+                         type(self.IFSet()))
         index.tree_threshold = 0
         index.optimize()
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFTreeSet()))
+                         type(self.IFTreeSet()))
 
     def test_optimize_converts_to_simple_set(self):
         index = self._makeOne()
         index.tree_threshold = 0
         self._populate(index)
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFTreeSet()))
+                         type(self.IFTreeSet()))
         index.tree_threshold = 99
         index.optimize()
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFSet()))
+                         type(self.IFSet()))
 
     def test_optimize_leaves_words_alone(self):
         index = self._makeOne()
         self._populate(index)
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFSet()))
+                         type(self.IFSet()))
         index.tree_threshold = 99
         index.optimize()
         self.assertEqual(type(index._fwd_index['zope']),
-            type(self.IFSet()))
+                         type(self.IFSet()))
 
     def test_index_with_empty_sequence_unindexes(self):
         index = self._makeOne()
@@ -170,18 +171,18 @@ class CaseInsensitiveKeywordIndexTestsBase:
     def test_simplesearch(self):
         index = self._makeOne()
         self._populate(index)
-        self._search(index, [''],      self.IFSet())
-        self._search(index, 'cmf',     self.IFSet([1, 5]))
-        self._search(index, ['cmf'],   self.IFSet([1, 5]))
-        self._search(index, ['zope'],  self.IFSet([1, 3]))
+        self._search(index, [''], self.IFSet())
+        self._search(index, 'cmf', self.IFSet([1, 5]))
+        self._search(index, ['cmf'], self.IFSet([1, 5]))
+        self._search(index, ['zope'], self.IFSet([1, 3]))
         self._search(index, ['zope3'], self.IFSet([1]))
-        self._search(index, ['foo'],   self.IFSet())
+        self._search(index, ['foo'], self.IFSet())
 
     def test_search_and(self):
         index = self._makeOne()
         self._populate(index)
         self._search_and(index, ('cmf', 'zope3'), self.IFSet([1]))
-        self._search_and(index, ('cmf', 'zope'),  self.IFSet([1]))
+        self._search_and(index, ('cmf', 'zope'), self.IFSet([1]))
         self._search_and(index, ('cmf', 'zope4'), self.IFSet())
         self._search_and(index, ('zope', 'ZOPE'), self.IFSet([1, 3]))
 
@@ -189,15 +190,15 @@ class CaseInsensitiveKeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._search_or(index, ('cmf', 'zope3'), self.IFSet([1, 5]))
-        self._search_or(index, ('cmf', 'zope'),  self.IFSet([1, 3, 5]))
+        self._search_or(index, ('cmf', 'zope'), self.IFSet([1, 3, 5]))
         self._search_or(index, ('cmf', 'zope4'), self.IFSet([1, 5]))
-        self._search_or(index, ('zope', 'ZOPE'), self.IFSet([1,3]))
+        self._search_or(index, ('zope', 'ZOPE'), self.IFSet([1, 3]))
 
     def test_apply(self):
         index = self._makeOne()
         self._populate(index)
         self._apply(index, ('cmf', 'zope3'), self.IFSet([1]))
-        self._apply(index, ('cmf', 'zope'),  self.IFSet([1]))
+        self._apply(index, ('cmf', 'zope'), self.IFSet([1]))
         self._apply(index, ('cmf', 'zope4'), self.IFSet())
         self._apply(index, ('zope', 'ZOPE'), self.IFSet([1, 3]))
 
@@ -205,7 +206,7 @@ class CaseInsensitiveKeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._apply_and(index, ('cmf', 'zope3'), self.IFSet([1]))
-        self._apply_and(index, ('cmf', 'zope'),  self.IFSet([1]))
+        self._apply_and(index, ('cmf', 'zope'), self.IFSet([1]))
         self._apply_and(index, ('cmf', 'zope4'), self.IFSet())
         self._apply_and(index, ('zope', 'ZOPE'), self.IFSet([1, 3]))
 
@@ -213,9 +214,10 @@ class CaseInsensitiveKeywordIndexTestsBase:
         index = self._makeOne()
         self._populate(index)
         self._apply_or(index, ('cmf', 'zope3'), self.IFSet([1, 5]))
-        self._apply_or(index, ('cmf', 'zope'),  self.IFSet([1, 3, 5]))
+        self._apply_or(index, ('cmf', 'zope'), self.IFSet([1, 3, 5]))
         self._apply_or(index, ('cmf', 'zope4'), self.IFSet([1, 5]))
-        self._apply_or(index, ('zope', 'ZOPE'), self.IFSet([1,3]))
+        self._apply_or(index, ('zope', 'ZOPE'), self.IFSet([1, 3]))
+
 
 class _ThirtyTwoBitBase:
 
@@ -231,6 +233,7 @@ class _ThirtyTwoBitBase:
         from BTrees.IFBTree import IFTreeSet
         return IFTreeSet(*args, **kw)
 
+
 class _SixtyFourBitBase:
 
     def _get_family(self):
@@ -245,7 +248,9 @@ class _SixtyFourBitBase:
         from BTrees.LFBTree import LFTreeSet
         return LFTreeSet(*args, **kw)
 
+
 _marker = object()
+
 
 class _TestCaseBase:
 
@@ -282,41 +287,49 @@ class _TestCaseBase:
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IIndexSearch
         verifyClass(IIndexSearch, self._getTargetClass())
 
     def test_instance_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IIndexSearch
         verifyObject(IIndexSearch, self._makeOne())
 
     def test_class_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IStatistics
         verifyClass(IStatistics, self._getTargetClass())
 
     def test_instance_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
     def test_class_conforms_to_IKeywordQuerying(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.keyword.interfaces import IKeywordQuerying
         verifyClass(IKeywordQuerying, self._getTargetClass())
 
     def test_instance_conforms_to_IKeywordQuerying(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.keyword.interfaces import IKeywordQuerying
         verifyObject(IKeywordQuerying, self._makeOne())
 
@@ -381,7 +394,7 @@ class _TestCaseBase:
 
     def test_unindex_doc_missing(self):
         index = self._makeOne()
-        index.unindex_doc(1) # doesn't raise
+        index.unindex_doc(1)  # doesn't raise
 
     def test_unindex_no_residue(self):
         index = self._makeOne()
@@ -421,11 +434,13 @@ class KeywordIndexTests32(_KeywordIndexTestsBase,
                           unittest.TestCase):
     pass
 
+
 class CaseInsensitiveKeywordIndexTests32(CaseInsensitiveKeywordIndexTestsBase,
                                          _ThirtyTwoBitBase,
                                          _TestCaseBase,
                                          unittest.TestCase):
     pass
+
 
 class KeywordIndexTests64(_KeywordIndexTestsBase,
                           _SixtyFourBitBase,
@@ -433,18 +448,9 @@ class KeywordIndexTests64(_KeywordIndexTestsBase,
                           unittest.TestCase):
     pass
 
+
 class CaseInsensitiveKeywordIndexTests64(CaseInsensitiveKeywordIndexTestsBase,
                                          _SixtyFourBitBase,
                                          _TestCaseBase,
                                          unittest.TestCase):
     pass
-
-
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(KeywordIndexTests32),
-        unittest.makeSuite(KeywordIndexTests64),
-        unittest.makeSuite(CaseInsensitiveKeywordIndexTests32),
-        unittest.makeSuite(CaseInsensitiveKeywordIndexTests64),
-    ))

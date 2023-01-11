@@ -20,11 +20,13 @@ number of comparisons performed overall is M * log2(N).
 
 from bisect import bisect_left as bisect
 
-from zope.index.interfaces import INBest
 from zope.interface import implementer
 
+from zope.index.interfaces import INBest
+
+
 @implementer(INBest)
-class NBest(object):
+class NBest:
 
     def __init__(self, N):
         "Build an NBest object to remember the N best-scoring objects."

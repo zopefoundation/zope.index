@@ -29,11 +29,13 @@ class LexiconTests(unittest.TestCase):
 
     def test_class_conforms_to_ILexicon(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import ILexicon
         verifyClass(ILexicon, self._getTargetClass())
 
     def test_instance_conforms_to_ILexicon(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import ILexicon
         verifyObject(ILexicon, self._makeOne())
 
@@ -115,16 +117,16 @@ class LexiconTests(unittest.TestCase):
     def test_termToWordIds_w_two_extra_pipeline_elements(self):
         lexicon = self._makeOne(StupidPipelineElement('cats', 'fish'),
                                 WackyReversePipelineElement('fish'),
-                               )
+                                )
         lexicon.sourceToWordIds('cats and dogs')
         wids = lexicon.termToWordIds('hsif')
         self.assertEqual(wids, [1])
 
     def test_termToWordIds_w_three_extra_pipeline_elements(self):
-        lexicon = self._makeOne(StopWordPipelineElement({'and':1}),
+        lexicon = self._makeOne(StopWordPipelineElement({'and': 1}),
                                 StupidPipelineElement('dogs', 'fish'),
                                 WackyReversePipelineElement('fish'),
-                               )
+                                )
         wids = lexicon.sourceToWordIds('cats and dogs')
         wids = lexicon.termToWordIds('hsif')
         self.assertEqual(wids, [2])
@@ -208,6 +210,7 @@ class LexiconTests(unittest.TestCase):
         self.assertEqual(wid, 4)
         self.assertEqual(lexicon.wordCount(), 4)
 
+
 class SplitterTests(unittest.TestCase):
 
     def _getTargetClass(self):
@@ -219,11 +222,13 @@ class SplitterTests(unittest.TestCase):
 
     def test_class_conforms_to_ISplitter(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import ISplitter
         verifyClass(ISplitter, self._getTargetClass())
 
     def test_instance_conforms_to_ISplitter(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import ISplitter
         verifyObject(ISplitter, self._makeOne())
 
@@ -241,10 +246,12 @@ class SplitterTests(unittest.TestCase):
         old_locale = locale.setlocale(locale.LC_ALL)
         # set German locale
         try:
-            locale_string = 'de_DE.ISO8859-1' if sys.platform != 'win32' else 'German_Germany.1252'
+            locale_string = (
+                'German_Germany.1252' if sys.platform == 'win32'
+                else 'de_DE.ISO8859-1')
             locale.setlocale(locale.LC_ALL, locale_string)
-        except locale.Error: # pragma: no cover
-            self.skipTest("d._DE.ISO8859-1 locale is not available")
+        except locale.Error:  # pragma: no cover
+            self.skipTest("de._DE.ISO8859-1 locale is not available")
         self.addCleanup(locale.setlocale, locale.LC_ALL, old_locale)
 
         expected = ['m\xfclltonne', 'waschb\xe4r',
@@ -270,6 +277,7 @@ class SplitterTests(unittest.TestCase):
         self.assertEqual(splitter.processGlob(['abc?def hij*klm nop* qrs?']),
                          ['abc?def', 'hij*klm', 'nop*', 'qrs?'])
 
+
 class CaseNormalizerTests(unittest.TestCase):
 
     def _getTargetClass(self):
@@ -281,11 +289,13 @@ class CaseNormalizerTests(unittest.TestCase):
 
     def test_class_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IPipelineElement
         verifyClass(IPipelineElement, self._getTargetClass())
 
     def test_instance_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IPipelineElement
         verifyObject(IPipelineElement, self._makeOne())
 
@@ -296,6 +306,7 @@ class CaseNormalizerTests(unittest.TestCase):
     def test_process_nonempty(self):
         cn = self._makeOne()
         self.assertEqual(cn.process(['ABC Def']), ['abc def'])
+
 
 class StopWordRemoverTests(unittest.TestCase):
 
@@ -308,11 +319,13 @@ class StopWordRemoverTests(unittest.TestCase):
 
     def test_class_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IPipelineElement
         verifyClass(IPipelineElement, self._getTargetClass())
 
     def test_instance_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IPipelineElement
         verifyObject(IPipelineElement, self._makeOne())
 
@@ -326,6 +339,7 @@ class StopWordRemoverTests(unittest.TestCase):
         self.assertEqual(cn.process(QUOTE.lower().split()),
                          ['end', 'government', 'justice'])
 
+
 class StopWordAndSingleCharRemoverTests(unittest.TestCase):
 
     def _getTargetClass(self):
@@ -337,11 +351,13 @@ class StopWordAndSingleCharRemoverTests(unittest.TestCase):
 
     def test_class_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IPipelineElement
         verifyClass(IPipelineElement, self._getTargetClass())
 
     def test_instance_conforms_to_IPipelineElement(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IPipelineElement
         verifyObject(IPipelineElement, self._makeOne())
 
@@ -356,7 +372,7 @@ class StopWordAndSingleCharRemoverTests(unittest.TestCase):
                          ['end', 'government', 'justice'])
 
 
-class StupidPipelineElement(object):
+class StupidPipelineElement:
     def __init__(self, fromword, toword):
         self.__fromword = fromword
         self.__toword = toword
@@ -370,7 +386,8 @@ class StupidPipelineElement(object):
                 res.append(term)
         return res
 
-class WackyReversePipelineElement(object):
+
+class WackyReversePipelineElement:
     def __init__(self, revword):
         self.__revword = revword
 
@@ -385,7 +402,8 @@ class WackyReversePipelineElement(object):
                 res.append(term)
         return res
 
-class StopWordPipelineElement(object):
+
+class StopWordPipelineElement:
 
     def __init__(self, stopdict):
         self.__stopdict = stopdict

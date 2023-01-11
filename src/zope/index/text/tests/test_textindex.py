@@ -15,9 +15,11 @@
 """
 import unittest
 
+
 # pylint:disable=protected-access
 
 _marker = object()
+
 
 class TextIndexTests(unittest.TestCase):
 
@@ -27,7 +29,7 @@ class TextIndexTests(unittest.TestCase):
 
     def _makeOne(self, lexicon=_marker, index=_marker):
         if lexicon is _marker:
-            if index is _marker: # defaults
+            if index is _marker:  # defaults
                 return self._getTargetClass()()
             return self._getTargetClass()(index=index)
         else:
@@ -37,31 +39,37 @@ class TextIndexTests(unittest.TestCase):
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IIndexSearch
         verifyClass(IIndexSearch, self._getTargetClass())
 
     def test_instance_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IIndexSearch
         verifyObject(IIndexSearch, self._makeOne())
 
     def test_class_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IStatistics
         verifyClass(IStatistics, self._getTargetClass())
 
     def test_instance_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
@@ -181,7 +189,8 @@ class TextIndexTests(unittest.TestCase):
         self.assertEqual(okapi._query_weighted[0], ['anything'])
         self.assertEqual(okapi._searched, ['anything'])
 
-class DummyOkapi(object):
+
+class DummyOkapi:
 
     _cleared = False
     _document_count = 4
@@ -223,6 +232,7 @@ class DummyOkapi(object):
 
     search_phrase = search_glob = search
 
-class DummyLexicon(object):
+
+class DummyLexicon:
     def parseTerms(self, term):
         return term

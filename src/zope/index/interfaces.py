@@ -46,6 +46,7 @@ class IInjection(Interface):
         """Unindex all documents indexed by the index
         """
 
+
 class IIndexSearch(Interface):
     """
     Interface for searching indexes.
@@ -83,6 +84,7 @@ class IIndexSearch(Interface):
 
         """
 
+
 class IIndexSort(Interface):
     """
     Interface for sorting documents.
@@ -98,6 +100,7 @@ class IIndexSort(Interface):
         value of the "limit" argument and optionally
         reversed, using the "reverse" argument.
         """
+
 
 class IStatistics(Interface):
     """An index that provides statistical information about itself."""

@@ -13,22 +13,24 @@
 ##############################################################################
 """A sorting mixin class for FieldIndex-like indexes.
 """
-import heapq
 import bisect
+import heapq
 from itertools import islice
 
 from zope.interface import implementer
+
 from zope.index.interfaces import IIndexSort
 
+
 @implementer(IIndexSort)
-class SortingIndexMixin(object):
+class SortingIndexMixin:
     """
     Implementation of :class:`zope.index.interfaces.IIndexSort`.
     """
 
     _sorting_num_docs_attr = '_num_docs'   # Length object
-    _sorting_fwd_index_attr = '_fwd_index' # forward BTree index
-    _sorting_rev_index_attr = '_rev_index' # reverse BTree index
+    _sorting_fwd_index_attr = '_fwd_index'  # forward BTree index
+    _sorting_rev_index_attr = '_rev_index'  # reverse BTree index
 
     def sort(self, docids, reverse=False, limit=None):
         if (limit is not None) and (limit < 1):
@@ -48,7 +50,7 @@ class SortingIndexMixin(object):
 
         fwd_index = getattr(self, self._sorting_fwd_index_attr)
         rev_index = getattr(self, self._sorting_rev_index_attr)
-        getValue = lambda x, d=-1: rev_index.get(x, d)
+        getValue = lambda x, d=-1: rev_index.get(x, d)  # noqa: E731 use def
         marker = object()
 
         # use_lazy and use_nbest computations lifted wholesale from

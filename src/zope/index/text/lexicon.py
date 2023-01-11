@@ -15,19 +15,17 @@
 """
 import re
 
-from zope.interface import implementer
-
 from BTrees.IOBTree import IOBTree
-from BTrees.OIBTree import OIBTree
 from BTrees.Length import Length
-
+from BTrees.OIBTree import OIBTree
 from persistent import Persistent
+from zope.interface import implementer
 
 from zope.index.text.interfaces import ILexicon
 from zope.index.text.interfaces import IPipelineElement
 from zope.index.text.interfaces import ISplitter
-from zope.index.text.stopdict import get_stopdict
 from zope.index.text.parsetree import QueryError
+from zope.index.text.stopdict import get_stopdict
 
 
 @implementer(ILexicon)
@@ -38,7 +36,7 @@ class Lexicon(Persistent):
 
     def __init__(self, *pipeline):
         self._wids = OIBTree()  # word -> wid
-        self._words = IOBTree() # wid -> word
+        self._words = IOBTree()  # wid -> word
         # wid 0 is reserved for words that aren't in the lexicon (OOV -- out
         # of vocabulary).  This can happen, e.g., if a query contains a word
         # we never saw before, and that isn't a known stopword (or otherwise
@@ -131,7 +129,7 @@ class Lexicon(Persistent):
                 pat += re.escape(c)
         pat += "$"
         prog = re.compile(pat)
-        keys = self._wids.keys(prefix) # Keys starting at prefix
+        keys = self._wids.keys(prefix)  # Keys starting at prefix
         wids = []
         for key in keys:
             if not key.startswith(prefix):
@@ -156,25 +154,27 @@ class Lexicon(Persistent):
             count.change(1)
         return count()
 
+
 def _text2list(text):
     # Helper: splitter input may be a string or a list of strings
     try:
-        text + u""
-    except:
+        text + ""
+    except BaseException:
         return text
     else:
         return [text]
 
 # Sample pipeline elements
 
+
 @implementer(ISplitter)
-class Splitter(object):
+class Splitter:
     """
     A simple :class:`zope.index.text.interfaces.ISplitter`.
     """
 
     rx = re.compile(r"(?u)\w+")
-    rxGlob = re.compile(r"(?u)\w+[\w*?]*") # See globToWordIds() above
+    rxGlob = re.compile(r"(?u)\w+[\w*?]*")  # See globToWordIds() above
 
     def process(self, lst):
         result = []
@@ -188,17 +188,20 @@ class Splitter(object):
             result += self.rxGlob.findall(s)
         return result
 
+
 @implementer(IPipelineElement)
-class CaseNormalizer(object):
+class CaseNormalizer:
     """
     A simple :class:`zope.index.text.interfaces.IPipelineElement`
     to normalize to lower case.
     """
+
     def process(self, lst):
         return [w.lower() for w in lst]
 
+
 @implementer(IPipelineElement)
-class StopWordRemover(object):
+class StopWordRemover:
     """
     A simple :class:`zope.index.text.interfaces.IPipelineElement`
     to remove stop words.
@@ -209,7 +212,8 @@ class StopWordRemover(object):
     dict = get_stopdict().copy()
 
     def process(self, lst):
-        return [w for w in lst if not w in self.dict]
+        return [w for w in lst if w not in self.dict]
+
 
 class StopWordAndSingleCharRemover(StopWordRemover):
     """

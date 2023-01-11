@@ -15,7 +15,9 @@
 """
 import unittest
 
+
 _marker = object()
+
 
 class Test_widcode(unittest.TestCase):
 

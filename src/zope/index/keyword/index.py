@@ -13,15 +13,15 @@
 ##############################################################################
 """Keyword index
 """
-import six
 import BTrees
 from BTrees.Length import Length
 from persistent import Persistent
-
-
-from zope.index.interfaces import IInjection, IStatistics, IIndexSearch
-from zope.index.keyword.interfaces import IKeywordQuerying
 from zope.interface import implementer
+
+from zope.index.interfaces import IIndexSearch
+from zope.index.interfaces import IInjection
+from zope.index.interfaces import IStatistics
+from zope.index.keyword.interfaces import IKeywordQuerying
 
 
 @implementer(IInjection, IStatistics, IIndexSearch, IKeywordQuerying)
@@ -79,7 +79,7 @@ class KeywordIndex(Persistent):
         return seq
 
     def index_doc(self, docid, seq):
-        if isinstance(seq, six.string_types):
+        if isinstance(seq, str):
             raise TypeError('seq argument must be a list/tuple of strings')
 
         old_kw = self._rev_index.get(docid, None)
@@ -127,7 +127,7 @@ class KeywordIndex(Persistent):
 
         try:
             del self._rev_index[docid]
-        except KeyError: # pragma: no cover
+        except KeyError:  # pragma: no cover
             # 'WAAA!  Inconsistent'
             pass
 
@@ -159,7 +159,7 @@ class KeywordIndex(Persistent):
 
     def search(self, query, operator='and'):
         """Execute a search given by 'query'."""
-        if isinstance(query, six.string_types):
+        if isinstance(query, str):
             query = [query]
 
         query = self.normalize(query)

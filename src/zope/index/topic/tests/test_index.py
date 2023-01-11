@@ -15,9 +15,11 @@
 """
 import unittest
 
+
 # pylint:disable=protected-access,blacklisted-name
 
 _marker = object()
+
 
 class TopicIndexTest(unittest.TestCase):
 
@@ -64,31 +66,37 @@ class TopicIndexTest(unittest.TestCase):
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IIndexSearch
         verifyClass(IIndexSearch, self._getTargetClass())
 
     def test_instance_conforms_to_IIndexSearch(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IIndexSearch
         verifyObject(IIndexSearch, self._makeOne())
 
     def test_class_conforms_to_ITopicQuerying(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.topic.interfaces import ITopicQuerying
         verifyClass(ITopicQuerying, self._getTargetClass())
 
     def test_instance_conforms_to_ITopicQuerying(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.topic.interfaces import ITopicQuerying
         verifyObject(ITopicQuerying, self._makeOne())
 
@@ -141,7 +149,7 @@ class TopicIndexTest(unittest.TestCase):
 
     def test_clearFilters_empty(self):
         index = self._makeOne()
-        index.clearFilters() # doesn't raise
+        index.clearFilters()  # doesn't raise
 
     def test_clearFilters_non_empty(self):
         index = self._makeOne()
@@ -204,7 +212,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.search(['foo'])
-        self.assertEqual(set(result), set([1, 2, 3]))
+        self.assertEqual(set(result), {1, 2, 3})
 
     def test_search_query_matches_multiple_implicit_operator(self):
         index = self._makeOne()
@@ -213,7 +221,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.search(['foo', 'bar'])
-        self.assertEqual(set(result), set([2, 3]))
+        self.assertEqual(set(result), {2, 3})
 
     def test_search_query_matches_multiple_implicit_op_no_intersect(self):
         index = self._makeOne()
@@ -231,7 +239,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.search(['foo', 'bar'], operator='and')
-        self.assertEqual(set(result), set([2, 3]))
+        self.assertEqual(set(result), {2, 3})
 
     def test_search_query_matches_multiple_explicit_or(self):
         index = self._makeOne()
@@ -240,7 +248,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.search(['foo', 'bar'], operator='or')
-        self.assertEqual(set(result), set([1, 2, 3, 4]))
+        self.assertEqual(set(result), {1, 2, 3, 4})
 
     def test_apply_query_matches_multiple_non_dict_query(self):
         index = self._makeOne()
@@ -249,7 +257,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.apply(['foo', 'bar'])
-        self.assertEqual(set(result), set([2, 3]))
+        self.assertEqual(set(result), {2, 3})
 
     def test_apply_query_matches_multiple_implicit_op(self):
         index = self._makeOne()
@@ -258,7 +266,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.apply({'query': ['foo', 'bar']})
-        self.assertEqual(set(result), set([2, 3]))
+        self.assertEqual(set(result), {2, 3})
 
     def test_apply_query_matches_multiple_explicit_and(self):
         index = self._makeOne()
@@ -267,7 +275,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.apply({'query': ['foo', 'bar'], 'operator': 'and'})
-        self.assertEqual(set(result), set([2, 3]))
+        self.assertEqual(set(result), {2, 3})
 
     def test_apply_query_matches_multiple_explicit_or(self):
         index = self._makeOne()
@@ -276,7 +284,7 @@ class TopicIndexTest(unittest.TestCase):
         bar = DummyFilter('bar', [2, 3, 4], self._get_family())
         index.addFilter(bar)
         result = index.apply({'query': ['foo', 'bar'], 'operator': 'or'})
-        self.assertEqual(set(result), set([1, 2, 3, 4]))
+        self.assertEqual(set(result), {1, 2, 3, 4})
 
     def _addFilters(self, index):
         from zope.index.topic.filter import PythonFilteredSet
@@ -292,19 +300,19 @@ class TopicIndexTest(unittest.TestCase):
 
     def _populate(self, index):
 
-        class O(object):
+        class Obj:
             """ a dummy class """
 
             def __init__(self, meta_type):
                 self.meta_type = meta_type
 
-        index.index_doc(0, O('doc0'))
-        index.index_doc(1, O('doc1'))
-        index.index_doc(2, O('doc1'))
-        index.index_doc(3, O('doc2'))
-        index.index_doc(4, O('doc2'))
-        index.index_doc(5, O('doc3'))
-        index.index_doc(6, O('doc3'))
+        index.index_doc(0, Obj('doc0'))
+        index.index_doc(1, Obj('doc1'))
+        index.index_doc(2, Obj('doc1'))
+        index.index_doc(3, Obj('doc2'))
+        index.index_doc(4, Obj('doc2'))
+        index.index_doc(5, Obj('doc3'))
+        index.index_doc(6, Obj('doc3'))
 
     def test_unindex(self):
         index = self._makeOne(populate=True)
@@ -357,6 +365,7 @@ class TopicIndexTest(unittest.TestCase):
         self._apply(index, ['doc2'], [3, 4])
         self._apply(index, ['doc1', 'doc2'], [])
 
+
 class TopicIndexTest64(TopicIndexTest):
 
     def _get_family(self):
@@ -364,7 +373,7 @@ class TopicIndexTest64(TopicIndexTest):
         return BTrees.family64
 
 
-class DummyFilter(object):
+class DummyFilter:
 
     _cleared = False
 

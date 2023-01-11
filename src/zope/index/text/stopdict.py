@@ -17,9 +17,11 @@ The specific splitter and lexicon are customizable, but the default
 ZCTextIndex should do something useful.
 """
 
+
 def get_stopdict():
     """Return a dictionary of stopwords."""
     return _dict
+
 
 # This list of English stopwords comes from Lucene
 _words = [

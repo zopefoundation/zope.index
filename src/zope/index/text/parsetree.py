@@ -13,20 +13,23 @@
 ##############################################################################
 """Generic parser support: exception and parse tree nodes.
 """
+from zope.interface import implementer
+
 from zope.index.text.interfaces import IQueryParseTree
 from zope.index.text.setops import mass_weightedIntersection
 from zope.index.text.setops import mass_weightedUnion
 
-from zope.interface import implementer
 
 class QueryError(Exception):
     pass
 
+
 class ParseError(Exception):
     pass
 
+
 @implementer(IQueryParseTree)
-class ParseTreeNode(object):
+class ParseTreeNode:
 
     _nodeType = None
 
@@ -40,7 +43,7 @@ class ParseTreeNode(object):
         return self._value
 
     def __repr__(self):
-        return "%s(%r)" % (self.__class__.__name__, self.getValue())
+        return "{}({!r})".format(self.__class__.__name__, self.getValue())
 
     def terms(self):
         t = []
@@ -51,6 +54,7 @@ class ParseTreeNode(object):
     def executeQuery(self, index):
         raise NotImplementedError
 
+
 class NotNode(ParseTreeNode):
 
     _nodeType = "NOT"
@@ -60,6 +64,7 @@ class NotNode(ParseTreeNode):
 
     def executeQuery(self, index):
         raise QueryError("NOT parse tree node cannot be executed directly")
+
 
 class AndNode(ParseTreeNode):
 
@@ -89,6 +94,7 @@ class AndNode(ParseTreeNode):
             set = index.family.IF.difference(set, notset)
         return set
 
+
 class OrNode(ParseTreeNode):
 
     _nodeType = "OR"
@@ -105,6 +111,7 @@ class OrNode(ParseTreeNode):
                 weighted.append((r, 1))
         return mass_weightedUnion(weighted, index.family)
 
+
 class AtomNode(ParseTreeNode):
 
     _nodeType = "ATOM"
@@ -115,12 +122,14 @@ class AtomNode(ParseTreeNode):
     def executeQuery(self, index):
         return index.search(self.getValue())
 
+
 class PhraseNode(AtomNode):
 
     _nodeType = "PHRASE"
 
     def executeQuery(self, index):
         return index.search_phrase(self.getValue())
+
 
 class GlobNode(AtomNode):
 

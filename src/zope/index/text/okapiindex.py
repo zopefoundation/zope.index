@@ -191,22 +191,23 @@ this measure (and optimizing it by not bothering to multiply by 1 <wink>).
 """
 import os
 import platform
+
 from BTrees.Length import Length
 
 from zope.index.text.baseindex import BaseIndex
 from zope.index.text.baseindex import inverse_doc_frequency
+
+
 _py_impl = getattr(platform, 'python_implementation', lambda: None)
 _is_pypy = _py_impl() == 'PyPy'
 PURE_PYTHON = os.environ.get('PURE_PYTHON') or _is_pypy
 try:
     from zope.index.text.okascore import score
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     score = None
 
 score = None if PURE_PYTHON else score
 
-
-PY2 = str is bytes
 
 class OkapiIndex(BaseIndex):
     """
@@ -289,7 +290,7 @@ class OkapiIndex(BaseIndex):
         L = []
         docid2len = self._docweight
         for t in wids:
-            d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
+            d2f = self._wordinfo[t]  # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
             result = self.family.IF.Bucket()
             for docid, f in d2f.items():
@@ -328,10 +329,10 @@ class OkapiIndex(BaseIndex):
             # _totaldoclen has not yet been upgraded
             doclen = self._totaldoclen
         meandoclen = doclen / N
-        #K1 = self.K1
-        #B = self.B
-        #K1_plus1 = K1 + 1.0
-        #B_from1 = 1.0 - B
+        # K1 = self.K1
+        # B = self.B
+        # K1_plus1 = K1 + 1.0
+        # B_from1 = 1.0 - B
 
         #                           f(D, t) * (k1 + 1)
         #   TF(D, t) =  -------------------------------------------
@@ -340,10 +341,10 @@ class OkapiIndex(BaseIndex):
         L = []
         docid2len = self._docweight
         for t in wids:
-            d2f = self._wordinfo[t] # map {docid -> f(docid, t)}
+            d2f = self._wordinfo[t]  # map {docid -> f(docid, t)}
             idf = inverse_doc_frequency(len(d2f), N)  # an unscaled float
             result = self.family.IF.Bucket()
-            items = d2f.items() if PY2 else list(d2f.items())
+            items = list(d2f.items())
             score(result, items, docid2len, idf, meandoclen)
             L.append((result, 1))
         return L
