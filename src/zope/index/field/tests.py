@@ -340,7 +340,3 @@ def test_suite():
         doctest.DocFileSuite('README.rst', optionflags=doctest.ELLIPSIS),
         unittest.defaultTestLoader.loadTestsFromTestCase(FieldIndexTests),
     ))
-
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

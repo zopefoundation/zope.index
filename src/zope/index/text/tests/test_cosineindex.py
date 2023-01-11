@@ -127,10 +127,3 @@ class CosineIndexTest64(CosineIndexTestBase, unittest.TestCase):
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
-
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.defaultTestLoader.loadTestsFromTestCase(CosineIndexTest32),
-        unittest.defaultTestLoader.loadTestsFromTestCase(CosineIndexTest64),
-    ))
