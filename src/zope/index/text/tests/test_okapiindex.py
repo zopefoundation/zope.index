@@ -15,11 +15,13 @@
 """
 import unittest
 
-# pylint:disable=protected-access
-
 from zope.index.text.okapiindex import PURE_PYTHON
 
-class OkapiIndexTestMixin(object):
+
+# pylint:disable=protected-access
+
+
+class OkapiIndexTestMixin:
 
     def _getBTreesFamily(self):
         raise NotImplementedError()
@@ -36,41 +38,49 @@ class OkapiIndexTestMixin(object):
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IStatistics
         verifyClass(IStatistics, self._getTargetClass())
 
     def test_instance_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
     def test_class_conforms_to_ILexiconBasedIndex(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import ILexiconBasedIndex
         verifyClass(ILexiconBasedIndex, self._getTargetClass())
 
     def test_instance_conforms_to_ILexiconBasedIndex(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import ILexiconBasedIndex
         verifyObject(ILexiconBasedIndex, self._makeOne())
 
     def test_class_conforms_to_IExtendedQuerying(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IExtendedQuerying
         verifyClass(IExtendedQuerying, self._getTargetClass())
 
     def test_instance_conforms_to_IExtendedQuerying(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IExtendedQuerying
         verifyObject(IExtendedQuerying, self._makeOne())
 
@@ -148,12 +158,14 @@ class OkapiIndexTestMixin(object):
         index.index_doc(1, 'one one two three one')
         self.assertGreater(index.query_weight(['one']), 0.0)
 
+
 class OkapiIndexPurePythonTestMixin(OkapiIndexTestMixin):
 
     def _makeOne(self):
-        index = super(OkapiIndexPurePythonTestMixin, self)._makeOne()
+        index = super()._makeOne()
         index._search_wids = index._python_search_wids
         return index
+
 
 class OkapiIndexTest32(OkapiIndexTestMixin, unittest.TestCase):
 
@@ -161,18 +173,25 @@ class OkapiIndexTest32(OkapiIndexTestMixin, unittest.TestCase):
         import BTrees
         return BTrees.family32
 
+
 class OkapiIndexTest64(OkapiIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
 
-@unittest.skipIf(PURE_PYTHON, "Already tested")
-class OkapiIndexPurePythonTest32(OkapiIndexPurePythonTestMixin, OkapiIndexTest32):
-    pass
 
 @unittest.skipIf(PURE_PYTHON, "Already tested")
-class OkapiIndexPurePythonTest64(OkapiIndexPurePythonTestMixin, OkapiIndexTest64):
+class OkapiIndexPurePythonTest32(
+        OkapiIndexPurePythonTestMixin,
+        OkapiIndexTest32):
+    pass
+
+
+@unittest.skipIf(PURE_PYTHON, "Already tested")
+class OkapiIndexPurePythonTest64(
+        OkapiIndexPurePythonTestMixin,
+        OkapiIndexTest64):
     pass
 
 
@@ -180,5 +199,6 @@ class TestScore(unittest.TestCase):
 
     def test_score_extension(self):
         from zope.index.text.okapiindex import score
-        assert_score = self.assertIsNone if PURE_PYTHON else self.assertIsNotNone
+        assert_score = (
+            self.assertIsNone if PURE_PYTHON else self.assertIsNotNone)
         assert_score(score)

@@ -1,29 +1,37 @@
-# -*- coding: utf-8 -*-
 """
 Tests for ricecode.py
 
 """
 import unittest
 
+from zope.index.text.ricecode import RiceCode
+from zope.index.text.ricecode import decode_deltas
 from zope.index.text.ricecode import encode
 from zope.index.text.ricecode import encode_deltas
-from zope.index.text.ricecode import decode_deltas
 from zope.index.text.ricecode import pickle_efficiency
-from zope.index.text.ricecode import RiceCode
+
 
 class TestRiceCode(unittest.TestCase):
 
     def test_random(self):
         import random
         for size in [1, 10, 20, 50, 100, 200]:
-            l = [random.randint(1, size) for i in range(50)]
-            c = encode(random.randint(1, 16), l)
-            self.assertEqual(c.tolist(), l)
+            l_ = [random.randint(1, size) for i in range(50)]
+            c = encode(random.randint(1, 16), l_)
+            self.assertEqual(c.tolist(), l_)
         for size in [1, 10, 20, 50, 100, 200]:
-            l = list(range(random.randint(1, size), size + random.randint(1, size)))
-            l_0, deltas = encode_deltas(l)
+            l_ = list(
+                range(
+                    random.randint(
+                        1,
+                        size),
+                    size +
+                    random.randint(
+                        1,
+                        size)))
+            l_0, deltas = encode_deltas(l_)
             l2 = decode_deltas(l_0, deltas)
-            self.assertEqual(l, l2)
+            self.assertEqual(l_, l2)
 
     def test_encode_deltas_one_element(self):
         self.assertEqual(('foo', []),

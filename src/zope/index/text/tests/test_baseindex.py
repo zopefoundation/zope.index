@@ -15,6 +15,7 @@
 """
 import unittest
 
+
 # pylint:disable=protected-access,abstract-method
 
 class BaseIndexTestMixin:
@@ -36,41 +37,49 @@ class BaseIndexTestMixin:
 
     def test_class_conforms_to_IInjection(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IInjection
         verifyClass(IInjection, self._getTargetClass())
 
     def test_instance_conforms_to_IInjection(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IInjection
         verifyObject(IInjection, self._makeOne())
 
     def test_class_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.interfaces import IStatistics
         verifyClass(IStatistics, self._getTargetClass())
 
     def test_instance_conforms_to_IStatistics(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.interfaces import IStatistics
         verifyObject(IStatistics, self._makeOne())
 
     def test_class_conforms_to_ILexiconBasedIndex(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import ILexiconBasedIndex
         verifyClass(ILexiconBasedIndex, self._getTargetClass())
 
     def test_instance_conforms_to_ILexiconBasedIndex(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import ILexiconBasedIndex
         verifyObject(ILexiconBasedIndex, self._makeOne())
 
     def test_class_conforms_to_IExtendedQuerying(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IExtendedQuerying
         verifyClass(IExtendedQuerying, self._getTargetClass())
 
     def test_instance_conforms_to_IExtendedQuerying(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IExtendedQuerying
         verifyObject(IExtendedQuerying, self._makeOne())
 
@@ -108,7 +117,7 @@ class BaseIndexTestMixin:
 
         # Fake out _get_frequencies, which is supposed to be overridden.
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
 
         count = index.index_doc(1, 'one two three')
@@ -133,7 +142,7 @@ class BaseIndexTestMixin:
 
         # Fake out _get_frequencies, which is supposed to be overridden.
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
 
         index.index_doc(1, 'one two three')
@@ -161,7 +170,7 @@ class BaseIndexTestMixin:
 
         # Fake out _get_frequencies, which is supposed to be overridden.
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
 
         count = index.index_doc(1, 'one two three')
@@ -175,7 +184,7 @@ class BaseIndexTestMixin:
 
         # Fake out _get_frequencies, which is supposed to be overridden.
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
 
         index.index_doc(1, 'one two three')
@@ -200,8 +209,9 @@ class BaseIndexTestMixin:
 
     def test__reindex_doc_disjoint(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         # Fake out _get_frequencies, which is supposed to be overridden.
         index._get_frequencies = _faux_get_frequencies
 
@@ -227,8 +237,9 @@ class BaseIndexTestMixin:
 
     def test__reindex_doc_subset(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         # Fake out _get_frequencies, which is supposed to be overridden.
         index._get_frequencies = _faux_get_frequencies
 
@@ -246,10 +257,11 @@ class BaseIndexTestMixin:
         self.assertTrue(index._lexicon._wids['two'] in wids)
         self.assertTrue(index._lexicon._wids['three'] in wids)
 
-    def test__reindex_doc_superset(self): # TODO
+    def test__reindex_doc_superset(self):  # TODO
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         # Fake out _get_frequencies, which is supposed to be overridden.
         index._get_frequencies = _faux_get_frequencies
 
@@ -279,8 +291,9 @@ class BaseIndexTestMixin:
 
     def test_unindex_doc_simple(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         # Fake out _get_frequencies, which is supposed to be overridden.
         index._get_frequencies = _faux_get_frequencies
         index.index_doc(1, 'one two three')
@@ -297,8 +310,9 @@ class BaseIndexTestMixin:
 
     def test_unindex_doc_upgrades_wordCount_documentCount(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         # Fake out _get_frequencies, which is supposed to be overridden.
         index._get_frequencies = _faux_get_frequencies
         index.index_doc(1, 'one two three')
@@ -322,6 +336,7 @@ class BaseIndexTestMixin:
 
     def test_search_w_oov_term(self):
         index = self._makeOne()
+
         def _faux_search_wids(wids):
             assert not wids
             return []
@@ -330,9 +345,11 @@ class BaseIndexTestMixin:
 
     def test_search_hit(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
+
         def _faux_search_wids(wids):
             assert len(wids) == 1
             assert index._lexicon._wids['hit'] in wids
@@ -345,6 +362,7 @@ class BaseIndexTestMixin:
 
     def test_search_glob_w_empty_term(self):
         index = self._makeOne()
+
         def _faux_search_wids(wids):
             assert not wids
             return []
@@ -353,6 +371,7 @@ class BaseIndexTestMixin:
 
     def test_search_glob_w_oov_term(self):
         index = self._makeOne()
+
         def _faux_search_wids(wids):
             assert not wids
             return []
@@ -361,9 +380,11 @@ class BaseIndexTestMixin:
 
     def test_search_glob_hit(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
+
         def _faux_search_wids(wids):
             assert len(wids) == 1
             assert index._lexicon._wids['hitter'] in wids
@@ -376,6 +397,7 @@ class BaseIndexTestMixin:
 
     def test_search_phrase_w_empty_term(self):
         index = self._makeOne()
+
         def _faux_search_wids(wids):
             assert not wids
             return []
@@ -388,9 +410,11 @@ class BaseIndexTestMixin:
 
     def test_search_phrase_hit(self):
         index = self._makeOne()
+
         def _faux_get_frequencies(wids):
-            return dict([(y, x) for x, y in enumerate(wids)]), 1
+            return {y: x for x, y in enumerate(wids)}, 1
         index._get_frequencies = _faux_get_frequencies
+
         def _faux_search_wids(wids):
             assert len(wids) == 3
             assert index._lexicon._wids['hit'] in wids
@@ -471,11 +495,13 @@ class BaseIndexTestMixin:
         index._del_wordinfo(123, 1)
         self.assertEqual(index.wordCount(), 0)
 
+
 class BaseIndexTest32(BaseIndexTestMixin, unittest.TestCase):
 
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family32
+
 
 class BaseIndexTest64(BaseIndexTestMixin, unittest.TestCase):
 

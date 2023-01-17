@@ -15,7 +15,8 @@
 """
 import unittest
 
-class FauxIndex(object):
+
+class FauxIndex:
 
     def _get_family(self):
         import BTrees
@@ -31,6 +32,7 @@ class FauxIndex(object):
         elif term == "ham":
             b[1] = b[2] = b[3] = b[4] = 1
         return b
+
 
 class TestQueryEngine(unittest.TestCase):
 
@@ -57,7 +59,7 @@ class TestQueryEngine(unittest.TestCase):
 
     def testExecuteQuery(self):
         self._compareQuery("foo AND bar", {1: 2})
-        self._compareQuery("foo OR bar", {1: 2, 2: 1, 3:1})
+        self._compareQuery("foo OR bar", {1: 2, 2: 1, 3: 1})
         self._compareQuery("foo AND NOT bar", {3: 1})
         self._compareQuery("foo AND foo AND foo", {1: 3, 3: 3})
         self._compareQuery("foo OR foo OR foo", {1: 3, 3: 3})
@@ -72,6 +74,3 @@ class TestQueryEngine(unittest.TestCase):
         index, parser = self._makeIndexAndParser()
         tree = NotNode(AtomNode("foo"))
         self.assertRaises(QueryError, tree.executeQuery, index)
-
-def test_suite():
-    return unittest.makeSuite(TestQueryEngine)

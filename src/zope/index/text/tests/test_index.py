@@ -15,9 +15,10 @@
 """
 import unittest
 
+
 # pylint:disable=protected-access
 
-class IndexTestMixin(object):
+class IndexTestMixin:
     def _getTargetClass(self):
         raise NotImplementedError()
 
@@ -181,6 +182,7 @@ class IndexTestMixin(object):
         results = index.search_glob("b*")
         self.assertEqual(list(results.keys()), [1, 2, 3])
 
+
 class CosineIndexTest32(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
@@ -190,6 +192,7 @@ class CosineIndexTest32(IndexTestMixin, unittest.TestCase):
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family32
+
 
 class OkapiIndexTest32(IndexTestMixin, unittest.TestCase):
 
@@ -201,6 +204,7 @@ class OkapiIndexTest32(IndexTestMixin, unittest.TestCase):
         import BTrees
         return BTrees.family32
 
+
 class CosineIndexTest64(IndexTestMixin, unittest.TestCase):
 
     def _getTargetClass(self):
@@ -210,6 +214,7 @@ class CosineIndexTest64(IndexTestMixin, unittest.TestCase):
     def _getBTreesFamily(self):
         import BTrees
         return BTrees.family64
+
 
 class OkapiIndexTest64(IndexTestMixin, unittest.TestCase):
 

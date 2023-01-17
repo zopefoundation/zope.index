@@ -15,12 +15,13 @@
 """
 
 import BTrees
-
-from zope.index.topic.interfaces import ITopicFilteredSet
 from zope.interface import implementer
 
+from zope.index.topic.interfaces import ITopicFilteredSet
+
+
 @implementer(ITopicFilteredSet)
-class FilteredSetBase(object):
+class FilteredSetBase:
     """
     Base class for all filtered sets.
 
@@ -61,8 +62,8 @@ class FilteredSetBase(object):
     def getIds(self):
         return self._ids
 
-    def __repr__(self): # pragma: no cover
-        return '%s: (%s) %s' % (self.id, self.expr, list(self._ids))
+    def __repr__(self):  # pragma: no cover
+        return '{}: ({}) {}'.format(self.id, self.expr, list(self._ids))
 
     __str__ = __repr__
 
@@ -74,5 +75,5 @@ class PythonFilteredSet(FilteredSetBase):
         try:
             if eval(self.expr):
                 self._ids.insert(docid)
-        except:
+        except BaseException:
             pass  # ignore errors

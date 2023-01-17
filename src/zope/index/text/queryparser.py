@@ -55,33 +55,30 @@ Summarizing the default operator rules:
 """
 
 import re
+from sys import intern
+
 from zope.interface import implementer
 
-from zope.index.text.interfaces import IQueryParser
 from zope.index.text import parsetree
+from zope.index.text.interfaces import IQueryParser
 
-try:
-    intern
-except NameError:
-    # Py3 moved into sys
-    from sys import intern
 
 # Create unique symbols for token types.
-_AND    = intern("AND")
-_OR     = intern("OR")
-_NOT    = intern("NOT")
+_AND = intern("AND")
+_OR = intern("OR")
+_NOT = intern("NOT")
 _LPAREN = intern("(")
 _RPAREN = intern(")")
-_ATOM   = intern("ATOM")
-_EOF    = intern("EOF")
+_ATOM = intern("ATOM")
+_EOF = intern("EOF")
 
 # Map keyword string to token type.
 _keywords = {
-    _AND:       _AND,
-    _OR:        _OR,
-    _NOT:       _NOT,
-    _LPAREN:    _LPAREN,
-    _RPAREN:    _RPAREN,
+    _AND: _AND,
+    _OR: _OR,
+    _NOT: _NOT,
+    _LPAREN: _LPAREN,
+    _RPAREN: _RPAREN,
 }
 
 # Regular expression to tokenize.
@@ -99,8 +96,9 @@ _tokenizer_regex = re.compile(r"""
     )
 """, re.VERBOSE)
 
+
 @implementer(IQueryParser)
-class QueryParser(object):
+class QueryParser:
     """
     Implementation of
     :class:`zope.index.text.interfaces.IQueryParser`.
@@ -128,7 +126,7 @@ class QueryParser(object):
         self._index = 0
 
         # Syntactical analysis.
-        self._ignored = [] # Ignored words in the query, for parseQueryEx
+        self._ignored = []  # Ignored words in the query, for parseQueryEx
         tree = self._parseOrExpr()
         self._require(_EOF)
         if tree is None:
@@ -149,7 +147,7 @@ class QueryParser(object):
     def _require(self, tokentype):
         if not self._check(tokentype):
             t = self._tokens[self._index]
-            msg = "Token %r required, %r found" % (tokentype, t)
+            msg = "Token {!r} required, {!r} found".format(tokentype, t)
             raise parsetree.ParseError(msg)
 
     def _check(self, tokentype):
@@ -174,7 +172,7 @@ class QueryParser(object):
             L.append(self._parseAndExpr())
         L = list(filter(None, L))
         if not L:
-            return None # Only stopwords
+            return None  # Only stopwords
         elif len(L) == 1:
             return L[0]
         else:
@@ -186,7 +184,7 @@ class QueryParser(object):
         if t is not None:
             L.append(t)
         Nots = []
-        while 1:
+        while True:
             if self._check(_AND):
                 t = self._parseNotExpr()
                 if t is None:
@@ -198,12 +196,12 @@ class QueryParser(object):
             elif self._check(_NOT):
                 t = self._parseTerm()
                 if t is None:
-                    continue # Only stopwords
+                    continue  # Only stopwords
                 Nots.append(parsetree.NotNode(t))
             else:
                 break
         if not L:
-            return None # Only stopwords
+            return None  # Only stopwords
         L.extend(Nots)
         if len(L) == 1:
             return L[0]
@@ -214,7 +212,7 @@ class QueryParser(object):
         if self._check(_NOT):
             t = self._parseTerm()
             if t is None:
-                return None # Only stopwords
+                return None  # Only stopwords
             return parsetree.NotNode(t)
         else:
             return self._parseTerm()
@@ -230,10 +228,10 @@ class QueryParser(object):
                 nodes.append(self._parseAtom())
             nodes = list(filter(None, nodes))
             if not nodes:
-                return None # Only stopwords
-            structure = [(isinstance(nodes[i], parsetree.NotNode), i, nodes[i])
-                         for i in range(len(nodes))]
-            structure.sort()
+                return None  # Only stopwords
+            structure = sorted(
+                [(isinstance(nodes[i], parsetree.NotNode), i, nodes[i])
+                 for i in range(len(nodes))])
             nodes = [node for (bit, index, node) in structure]
             if isinstance(nodes[0], parsetree.NotNode):
                 raise parsetree.ParseError(

@@ -21,7 +21,9 @@ from BTrees.Length import Length
 from zope.index import interfaces
 from zope.index.field.sorting import SortingIndexMixin
 
+
 _MARKER = object()
+
 
 @zope.interface.implementer(
     interfaces.IInjection,
@@ -86,14 +88,14 @@ class FieldIndex(SortingIndexMixin, persistent.Persistent):
         rev_index = self._rev_index
         value = rev_index.get(docid, _MARKER)
         if value is _MARKER:
-            return # not in index
+            return  # not in index
 
         del rev_index[docid]
 
         try:
             set = self._fwd_index[value]
             set.remove(docid)
-        except KeyError: #pragma NO COVERAGE
+        except KeyError:  # pragma: no cover
             # This is fishy, but we don't want to raise an error.
             # We should probably log something.
             # but keep it from throwing a dirty exception

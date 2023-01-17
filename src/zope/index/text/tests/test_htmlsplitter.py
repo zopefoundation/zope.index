@@ -16,6 +16,7 @@
 
 from zope.index.text.tests.test_lexicon import SplitterTests
 
+
 class HTMLWordSplitterTests(SplitterTests):
 
     def _getTargetClass(self):

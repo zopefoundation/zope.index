@@ -15,6 +15,7 @@
 """
 from zope.interface import Interface
 
+
 class ITopicQuerying(Interface):
     """Query over topics, seperated by white space."""
 
@@ -27,6 +28,7 @@ class ITopicQuerying(Interface):
 
         Return an IFSet of docids
         """
+
 
 class ITopicFilteredSet(Interface):
     """Interface for filtered sets used by topic indexes."""

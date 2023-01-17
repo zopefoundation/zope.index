@@ -15,7 +15,9 @@
 """
 import unittest
 
+
 _marker = object()
+
 
 class FilteredSetBaseTests(unittest.TestCase):
 
@@ -34,11 +36,13 @@ class FilteredSetBaseTests(unittest.TestCase):
 
     def test_class_conforms_to_ITopicFilteredSet(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.topic.interfaces import ITopicFilteredSet
         verifyClass(ITopicFilteredSet, self._getTargetClass())
 
     def test_instance_conforms_to_ITopicFilteredSet(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.topic.interfaces import ITopicFilteredSet
         verifyObject(ITopicFilteredSet, self._makeOne())
 
@@ -61,7 +65,7 @@ class FilteredSetBaseTests(unittest.TestCase):
 
     def test_unindex_doc_missing_docid(self):
         filter = self._makeOne()
-        filter.unindex_doc(1) # doesn't raise
+        filter.unindex_doc(1)  # doesn't raise
         self.assertEqual(len(filter.getIds()), 0)
 
     def test_unindex_doc_existing_docid(self):
@@ -81,6 +85,7 @@ class FilteredSetBaseTests(unittest.TestCase):
         filter = self._makeOne()
         filter.setExpression('False')
         self.assertEqual(filter.getExpression(), 'False')
+
 
 class PythonFilteredSetTests(unittest.TestCase):
 
@@ -107,11 +112,5 @@ class PythonFilteredSetTests(unittest.TestCase):
 
     def test_index_object_expr_w_zero_divide_error(self):
         filter = self._makeOne(expr='1/0')
-        filter.index_doc(1, object()) # doesn't raise
+        filter.index_doc(1, object())  # doesn't raise
         self.assertEqual(len(filter.getIds()), 0)
-
-def test_suite():
-    return unittest.TestSuite((
-        unittest.makeSuite(FilteredSetBaseTests),
-        unittest.makeSuite(PythonFilteredSetTests),
-    ))

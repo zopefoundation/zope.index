@@ -18,6 +18,7 @@ import BTrees
 
 from zope.index.nbest import NBest
 
+
 def mass_weightedIntersection(L, family=BTrees.family32):
     "A list of (mapping, weight) pairs -> their weightedIntersection IFBucket."
     L = [(x, wx) for (x, wx) in L if x is not None]
@@ -32,6 +33,7 @@ def mass_weightedIntersection(L, family=BTrees.family32):
     for x, wx in L[2:]:
         dummy, result = family.IF.weightedIntersection(result, x, 1, wx)
     return result
+
 
 def mass_weightedUnion(L, family=BTrees.family32):
     "A list of (mapping, weight) pairs -> their weightedUnion IFBucket."
@@ -49,6 +51,7 @@ def mass_weightedUnion(L, family=BTrees.family32):
         merge.add((z, 1), len(z))
     (result, weight), dummy = merge.pop_smallest()
     return result
+
 
 def _trivial(L, family):
     # L is empty or has only one (mapping, weight) pair.  If there is a

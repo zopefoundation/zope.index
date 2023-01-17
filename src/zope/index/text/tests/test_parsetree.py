@@ -14,7 +14,8 @@
 
 import unittest
 
-class ConformsToIQueryParseTree(object):
+
+class ConformsToIQueryParseTree:
 
     def _makeOne(self, value=None):
         raise NotImplementedError()
@@ -24,13 +25,16 @@ class ConformsToIQueryParseTree(object):
 
     def test_class_conforms_to_IQueryParseTree(self):
         from zope.interface.verify import verifyClass
+
         from zope.index.text.interfaces import IQueryParseTree
         verifyClass(IQueryParseTree, self._getTargetClass())
 
     def test_instance_conforms_to_IQueryParseTree(self):
         from zope.interface.verify import verifyObject
+
         from zope.index.text.interfaces import IQueryParseTree
         verifyObject(IQueryParseTree, self._makeOne())
+
 
 class ParseTreeNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
@@ -70,6 +74,7 @@ class ParseTreeNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertRaises(NotImplementedError, node.executeQuery, FauxIndex())
 
+
 class NotNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
     def _getTargetClass(self):
@@ -94,13 +99,15 @@ class NotNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertRaises(QueryError, node.executeQuery, FauxIndex())
 
-class BucketMaker(object):
+
+class BucketMaker:
 
     def _makeBucket(self, index, count, start=0):
         bucket = index.family.IF.Bucket()
         for i in range(start, count):
             bucket[i] = count * 3.1415926
         return bucket
+
 
 class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
@@ -127,18 +134,19 @@ class AndNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
         node = self._makeOne(
             [FauxSubnode('FOO', self._makeBucket(index, 5)),
              FauxSubnode('FOO', self._makeBucket(index, 6)),
-            ])
+             ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
 
-    def test_executeQuery_w_negative_results(self): # TODO
+    def test_executeQuery_w_negative_results(self):  # TODO
         index = FauxIndex()
         node = self._makeOne(
             [FauxSubnode('NOT', self._makeBucket(index, 5)),
              FauxSubnode('FOO', self._makeBucket(index, 6)),
-            ])
+             ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [5])
+
 
 class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
@@ -165,9 +173,10 @@ class OrNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
         node = self._makeOne(
             [FauxSubnode('FOO', self._makeBucket(index, 5)),
              FauxSubnode('FOO', self._makeBucket(index, 6)),
-            ])
+             ])
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4, 5])
+
 
 class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
 
@@ -195,6 +204,7 @@ class AtomNodeTests(unittest.TestCase, ConformsToIQueryParseTree, BucketMaker):
         result = node.executeQuery(index)
         self.assertEqual(sorted(result.keys()), [0, 1, 2, 3, 4])
 
+
 class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
     def _getTargetClass(self):
@@ -212,6 +222,7 @@ class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
     def test_executeQuery(self):
         _called_with = []
+
         def _search(*args, **kw):
             _called_with.append((args, kw))
             return []
@@ -220,6 +231,7 @@ class PhraseNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         node = self._makeOne()
         self.assertEqual(node.executeQuery(index), [])
         self.assertEqual(_called_with[0], (('XXX YYY',), {}))
+
 
 class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
@@ -238,6 +250,7 @@ class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
 
     def test_executeQuery(self):
         _called_with = []
+
         def _search(*args, **kw):
             _called_with.append((args, kw))
             return []
@@ -247,7 +260,8 @@ class GlobNodeTests(unittest.TestCase, ConformsToIQueryParseTree):
         self.assertEqual(node.executeQuery(index), [])
         self.assertEqual(_called_with[0], (('XXX*',), {}))
 
-class FauxIndex(object):
+
+class FauxIndex:
 
     search = None
     search_phrase = None
@@ -259,7 +273,8 @@ class FauxIndex(object):
 
     family = property(_get_family,)
 
-class FauxValue(object):
+
+class FauxValue:
     def __init__(self, *terms):
         self._terms = terms[:]
 
@@ -270,7 +285,7 @@ class FauxValue(object):
         return 'FV:%s' % ' '.join(self._terms)
 
 
-class FauxSubnode(object):
+class FauxSubnode:
     def __init__(self, node_type, query_results):
         self._nodeType = node_type
         self._query_results = query_results

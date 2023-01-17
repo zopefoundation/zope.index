@@ -25,7 +25,7 @@ from zope.index.text.lexicon import Splitter
 from zope.index.text.lexicon import StopWordRemover
 from zope.index.text.okapiindex import OkapiIndex
 from zope.index.text.queryparser import QueryParser
-import six
+
 
 @implementer(IInjection, IIndexSearch, IStatistics)
 class TextIndex(Persistent):
@@ -80,9 +80,9 @@ class TextIndex(Persistent):
 
             qw *= 1.0
 
-            for docid, score in six.iteritems(results):
+            for docid, score in results.items():
                 try:
-                    results[docid] = score/qw
+                    results[docid] = score / qw
                 except TypeError:
                     # We overflowed the score, perhaps wildly unlikely.
                     # Who knows.

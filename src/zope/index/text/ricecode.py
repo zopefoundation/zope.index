@@ -34,11 +34,11 @@ Compute the length of the unary part, q, where
 
 Emit the lower m bits of x-1, treating x-1 as a binary value.
 """
-from __future__ import print_function
 
 import array
 
-class BitArray(object):
+
+class BitArray:
 
     def __init__(self, buf=None):
         self.bytes = array.array('B')
@@ -46,10 +46,7 @@ class BitArray(object):
         self.bitsleft = 0
 
     def tostring(self):
-        # tostring is deprecated on Python 3, but tobytes isn't available
-        # on Python 2
-        tobytes = getattr(self.bytes, 'tobytes', None) or self.bytes.tostring
-        return tobytes()
+        return self.bytes.tobytes()
 
     def __getitem__(self, i):
         byte, offset = divmod(i, 8)
@@ -88,7 +85,8 @@ class BitArray(object):
         self.nbits = nbits
         self.bitsleft = bitsleft
 
-class RiceCode(object):
+
+class RiceCode:
     """
     Rice coding.
     """
@@ -129,8 +127,8 @@ class RiceCode(object):
 
     def tolist(self):
         """Return the items as a list."""
-        l = []
-        i = 0 # bit offset
+        l_ = []
+        i = 0  # bit offset
         binary_range = list(range(self.m))
         for j in range(self.len):
             unary = 0
@@ -143,8 +141,8 @@ class RiceCode(object):
             for k in binary_range:
                 binary = (binary << 1) | self.bits[i]
                 i += 1
-            l.append((unary << self.m) + (binary + 1))
-        return l
+            l_.append((unary << self.m) + (binary + 1))
+        return l_
 
     def tostring(self):
         """Return a binary string containing the encoded data.
@@ -161,50 +159,54 @@ class RiceCode(object):
         self.init(m)
         self.bits = bits
 
-def encode(m, l):
+
+def encode(m, l_):
     """
     Encode elements in list *l*  using a :class:`RiceCode` of size *m*.
     """
     c = RiceCode(m)
-    for elt in l:
+    for elt in l_:
         c.append(elt)
-    assert c.tolist() == l
+    assert c.tolist() == l_
     return c
 
-def encode_deltas(l):
+
+def encode_deltas(l_):
     """Encode deltas in list *l* using a :class:`RiceCode` of size 6."""
-    if len(l) == 1:
-        return l[0], []
+    if len(l_) == 1:
+        return l_[0], []
     deltas = RiceCode(6)
-    deltas.append(l[1] - l[0])
-    for i in range(2, len(l)):
-        deltas.append(l[i] - l[i - 1])
-    return l[0], deltas
+    deltas.append(l_[1] - l_[0])
+    for i in range(2, len(l_)):
+        deltas.append(l_[i] - l_[i - 1])
+    return l_[0], deltas
+
 
 def decode_deltas(start, enc_deltas):
-    l = [start]
+    l_ = [start]
     if not enc_deltas:
-        return l
+        return l_
     deltas = enc_deltas.tolist()
     for i in range(1, len(deltas)):
-        l.append(l[i-1] + deltas[i])
-    l.append(l[-1] + deltas[-1])
-    return l
+        l_.append(l_[i - 1] + deltas[i])
+    l_.append(l_[-1] + deltas[-1])
+    return l_
 
 
 def pickle_efficiency(bits=(4, 8, 12),
                       sizes=(10, 20, 50, 100, 200, 500, 1000, 2000, 5000),
                       elt_ranges=(10, 20, 50, 100, 200, 500, 1000)):
+    import collections
     import pickle
     import random
-    import collections
     all_results = {}
     for m in bits:
         all_results[m] = collections.defaultdict(dict)
         for size in sizes:
             for elt_range in elt_ranges:
-                l = [random.randint(1, elt_range) for i in range(size)]
-                raw = pickle.dumps(l, 1)
-                enc = pickle.dumps(encode(m, l), 1)
-                all_results[m][size][elt_range] = "win" if len(raw) > len(enc) else "lose"
+                l_ = [random.randint(1, elt_range) for i in range(size)]
+                raw = pickle.dumps(l_, 1)
+                enc = pickle.dumps(encode(m, l_), 1)
+                all_results[m][size][elt_range] = "win" if len(
+                    raw) > len(enc) else "lose"
     return all_results

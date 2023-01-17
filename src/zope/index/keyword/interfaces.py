@@ -15,6 +15,7 @@
 """
 from zope.interface import Interface
 
+
 class IKeywordQuerying(Interface):
     """Query over a set of keywords, seperated by white space."""
 
