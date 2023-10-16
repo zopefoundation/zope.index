@@ -2,7 +2,7 @@
 # https://github.com/zopefoundation/meta/tree/master/config/c-code
 [meta]
 template = "c-code"
-commit-id = "b99ba750"
+commit-id = "978a8a28"
 
 [python]
 with-appveyor = true
@@ -15,12 +15,16 @@ with-macos = false
 
 [tox]
 use-flake8 = true
+testenv-deps = [
+    "py37: urllib3 < 2",
+    ]
 
 [coverage]
 fail-under = 99
 
 [manifest]
 additional-rules = [
+    "include *.yaml",
     "include *.sh",
     "recursive-include docs *.bat",
     "recursive-include src *.rst",
