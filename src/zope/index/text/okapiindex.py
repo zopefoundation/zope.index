@@ -200,7 +200,7 @@ from zope.index.text.baseindex import inverse_doc_frequency
 
 _py_impl = getattr(platform, 'python_implementation', lambda: None)
 _is_pypy = _py_impl() == 'PyPy'
-PURE_PYTHON = os.environ.get('PURE_PYTHON') or _is_pypy
+PURE_PYTHON = int(os.environ.get('PURE_PYTHON', '0')) or _is_pypy
 try:
     from zope.index.text.okascore import score
 except ImportError:  # pragma: no cover
