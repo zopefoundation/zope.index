@@ -194,6 +194,9 @@ jobs:
         if: matrix.python-version == '3.13.0-alpha - 3.13.0'
         run: |
           # Install to collect dependencies into the (pip) cache.
+          # cffi will probably have no public release until a Python 3.13 beta
+          # or even RC release, see https://github.com/python-cffi/cffi/issues/23
+          pip install -U "cffi @ https://github.com/python-cffi/cffi/archive/refs/heads/main.zip"
           # Use "--pre" here because dependencies with support for this future
           # Python release may only be available as pre-releases
           pip install --pre .[test]
