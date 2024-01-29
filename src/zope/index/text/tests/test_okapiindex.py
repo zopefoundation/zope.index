@@ -16,6 +16,7 @@
 import unittest
 
 from zope.index.text.okapiindex import PURE_PYTHON
+import zope.index.text.baseindex
 
 
 # pylint:disable=protected-access
@@ -120,6 +121,21 @@ class OkapiIndexTestMixin:
         for relevance in relevances:
             self.assertTrue(isinstance(relevance[0], index.family.IF.Bucket))
             self.assertEqual(len(relevance[0]), 1)
+            self.assertTrue(isinstance(relevance[0][1], float))
+            self.assertTrue(isinstance(relevance[1], int))
+
+    def test_okapiindex__OkapiIndex___search_wids__2(self):
+        """Search also succeeds if there are more than DICT_CUTOFF entries."""
+        TEXT = 'one two three'
+        index = self._makeOne()
+        for i in range(zope.index.text.baseindex.BaseIndex.DICT_CUTOFF + 1):
+            index.index_doc(i, f'{TEXT} {i}')
+        wids = [index._lexicon._wids[x] for x in TEXT.split()]
+        relevances = index._search_wids(wids)
+        self.assertEqual(len(relevances), len(wids))
+        for relevance in relevances:
+            self.assertTrue(isinstance(relevance[0], index.family.IF.Bucket))
+            self.assertEqual(len(relevance[0]), 11)
             self.assertTrue(isinstance(relevance[0][1], float))
             self.assertTrue(isinstance(relevance[1], int))
 
