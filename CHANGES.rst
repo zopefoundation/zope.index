@@ -5,7 +5,7 @@
 6.1 (unreleased)
 ================
 
-- Add preliminary support for Python 3.12b4.
+- Add support for Python 3.12.
 
 - Fix error in ``OkapiIndex._search_wids`` for Python 3.10+, occurring when a
   word is contained in more than 10 documents.
