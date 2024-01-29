@@ -85,7 +85,7 @@ score(PyObject *self, PyObject *args)
 			return NULL;
 		}
 		d = PyTuple_GET_ITEM(d_and_f, 0);
-		f = (double)PyLong_AsLong(PyTuple_GET_ITEM(d_and_f, 1));
+		f = PyFloat_AsDouble(PyTuple_GET_ITEM(d_and_f, 1));
 
 		doclen = PyObject_GetItem(d2len, d);
 		if (doclen == NULL) {
