@@ -96,7 +96,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "pypy-3.9"
+          - "pypy-3.10"
           - "3.7"
           - "3.8"
           - "3.9"
@@ -106,13 +106,13 @@ jobs:
         os: [ubuntu-20.04, macos-11]
         exclude:
           - os: macos-11
-            python-version: "pypy-3.9"
+            python-version: "pypy-3.10"
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       ###
@@ -127,7 +127,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -190,7 +190,7 @@ jobs:
       - name: Upload zope.index wheel (macOS x86_64)
         if: >
           startsWith(runner.os, 'Mac')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/*x86_64.whl
@@ -199,7 +199,7 @@ jobs:
           startsWith(runner.os, 'Mac')
           && !(startsWith(matrix.python-version, 'pypy')
                || matrix.python-version == '3.7')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           # The arm64 wheel is uploaded with a different name just so it can be
           # manually downloaded when desired. The wheel itself *cannot* be tested
@@ -209,7 +209,7 @@ jobs:
       - name: Upload zope.index wheel (all other platforms)
         if: >
           !startsWith(runner.os, 'Mac')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/*whl
@@ -234,7 +234,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "pypy-3.9"
+          - "pypy-3.10"
           - "3.7"
           - "3.8"
           - "3.9"
@@ -244,13 +244,13 @@ jobs:
         os: [ubuntu-20.04, macos-11]
         exclude:
           - os: macos-11
-            python-version: "pypy-3.9"
+            python-version: "pypy-3.10"
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       ###
@@ -265,7 +265,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -273,7 +273,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Download zope.index wheel
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/
@@ -325,9 +325,9 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       ###
@@ -342,7 +342,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -350,7 +350,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Download zope.index wheel
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/
@@ -376,9 +376,9 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       ###
@@ -393,7 +393,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -401,7 +401,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Download zope.index wheel
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/
@@ -429,9 +429,9 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       ###
@@ -446,7 +446,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip_manylinux-${{ matrix.image }}-${{ matrix.python-version }}
@@ -481,7 +481,7 @@ jobs:
           bash .manylinux.sh
 
       - name: Upload zope.index wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: wheelhouse/*whl
           name: manylinux_${{ matrix.image }}_wheels.zip
