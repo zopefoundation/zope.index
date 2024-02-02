@@ -9,6 +9,10 @@
 
 - Add preliminary support for Python 3.13 as of 3.13a3.
 
+- Fix error in ``OkapiIndex._search_wids`` for Python 3.10+, occurring when a
+  word is contained in more than 10 documents.
+  `#48 <https://github.com/zopefoundation/zope.index/pull/48>`_
+
 
 6.0 (2023-03-24)
 ================
