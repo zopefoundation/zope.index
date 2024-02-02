@@ -195,9 +195,12 @@ jobs:
         if: matrix.python-version == '3.13.0-alpha - 3.13.0'
         run: |
           # Install to collect dependencies into the (pip) cache.
+          # cffi will probably have no public release until a Python 3.13 beta
+          # or even RC release, see https://github.com/python-cffi/cffi/issues/23
+          echo "cffi @ git+https://github.com/python-cffi/cffi.git@954cab4f889fb019a7f90df153ee1be501495f58" > cffi_constraint.txt
           # Use "--pre" here because dependencies with support for this future
           # Python release may only be available as pre-releases
-          pip install --pre .[test]
+          PIP_CONSTRAINT=cffi_constraint.txt pip install --pre .[test]
       - name: Install zope.index and dependencies
         if: matrix.python-version != '3.13.0-alpha - 3.13.0'
         run: |
