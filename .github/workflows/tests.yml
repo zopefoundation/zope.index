@@ -142,7 +142,8 @@ jobs:
           pip install -U setuptools wheel twine
           # cffi will probably have no public release until a Python 3.13 beta
           # or even RC release, see https://github.com/python-cffi/cffi/issues/23
-          pip install -U "cffi @ https://github.com/python-cffi/cffi/archive/refs/heads/main.zip"
+          echo "cffi @ git+https://github.com/python-cffi/cffi.git@954cab4f889fb019a7f90df153ee1be501495f58" > cffi_constraint.txt
+          PIP_CONSTRAINT=constraint.txt pip install cffi
           # twine has no release for 3.13, yet, see https://github.com/pypa/twine/issues/1030
           pip install -U "git+https://github.com/pypa/twine.git#egg=twine"
       - name: Install Build Dependencies
@@ -196,10 +197,10 @@ jobs:
           # Install to collect dependencies into the (pip) cache.
           # cffi will probably have no public release until a Python 3.13 beta
           # or even RC release, see https://github.com/python-cffi/cffi/issues/23
-          pip install -U "cffi @ https://github.com/python-cffi/cffi/archive/refs/heads/main.zip"
+          echo "cffi @ git+https://github.com/python-cffi/cffi.git@954cab4f889fb019a7f90df153ee1be501495f58" > cffi_constraint.txt
           # Use "--pre" here because dependencies with support for this future
           # Python release may only be available as pre-releases
-          pip install --pre .[test]
+          PIP_CONSTRAINT=constraint.txt pip install --pre .[test]
       - name: Install zope.index and dependencies
         if: matrix.python-version != '3.13.0-alpha - 3.13.0'
         run: |
@@ -308,7 +309,7 @@ jobs:
           pip install -U wheel setuptools
           # cffi will probably have no public release until a beta or even RC
           # version of Python 3.13, see https://github.com/python-cffi/cffi/issues/23
-          pip install -U 'cffi @ https://github.com/python-cffi/cffi/archive/refs/heads/main.zip ; platform_python_implementation == "CPython"'
+          echo 'cffi @ git+https://github.com/python-cffi/cffi.git@954cab4f889fb019a7f90df153ee1be501495f58 ; platform_python_implementation == "CPython"' > cffi_constraint.txt
           # coverage has a wheel on PyPI for a future python version which is
           # not ABI compatible with the current one, so build it from sdist:
           pip install -U --no-binary :all: coverage
@@ -318,7 +319,7 @@ jobs:
           unzip -n dist/zope.index-*whl -d src
           # Use "--pre" here because dependencies with support for this future
           # Python release may only be available as pre-releases
-          pip install --pre -U -e .[test]
+          PIP_CONSTRAINT=constraint.txt pip install --pre -U -e .[test]
       - name: Install zope.index
         if: ${{ !startsWith(matrix.python-version, '3.13.0-alpha - 3.13.0') }}
         run: |
