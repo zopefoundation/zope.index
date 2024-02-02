@@ -128,7 +128,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -291,7 +291,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -386,7 +386,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -437,7 +437,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip-${{ matrix.python-version }}
@@ -490,7 +490,7 @@ jobs:
           echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
 
       - name: pip cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-pip_manylinux-${{ matrix.image }}-${{ matrix.python-version }}
