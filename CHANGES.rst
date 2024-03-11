@@ -5,7 +5,7 @@
 6.2 (unreleased)
 ================
 
-- Remove premature support for Python 3.13.
+- Nothing changed yet.
 
 
 6.1 (2024-02-02)
