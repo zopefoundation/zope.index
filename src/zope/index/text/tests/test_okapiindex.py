@@ -15,8 +15,8 @@
 """
 import unittest
 
-from zope.index.text.okapiindex import PURE_PYTHON
 import zope.index.text.baseindex
+from zope.index.text.okapiindex import PURE_PYTHON
 
 
 # pylint:disable=protected-access
