@@ -19,6 +19,9 @@ testenv-deps = [
     "py37: urllib3 < 2",
     ]
 
+[c-code]
+require-cffi = true
+
 [coverage]
 fail-under = 99
 
