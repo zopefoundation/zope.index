@@ -5,6 +5,8 @@
 6.2 (unreleased)
 ================
 
+- C extension now enables multi-phase module initialization (PEP 489).
+
 - Build Windows wheels on GHA.
 
 
