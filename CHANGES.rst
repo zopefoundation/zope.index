@@ -5,7 +5,9 @@
 6.2 (unreleased)
 ================
 
-- C extension now enables multi-phase module initialization (PEP 489).
+- C extension now enables multi-phase module initialization (PEP 489).See:
+  https://docs.python.org/3.13/howto/isolating-extensions.html
+
 
 - Build Windows wheels on GHA.
 
