@@ -2,12 +2,13 @@
  Changes
 =========
 
-6.2 (unreleased)
+7.0 (unreleased)
 ================
+
+- Drop support for Python 3.7.
 
 - C extension now enables multi-phase module initialization (PEP 489).See:
   https://docs.python.org/3.13/howto/isolating-extensions.html
-
 
 - Build Windows wheels on GHA.
 
