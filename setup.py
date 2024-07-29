@@ -122,7 +122,6 @@ setup(name='zope.index',
           'setuptools',
           'zope.interface'
       ],
-      tests_require=['zope.testrunner'],
       ext_modules=[
           Extension(
               'zope.index.text.okascore',
