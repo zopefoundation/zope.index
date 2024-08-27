@@ -96,7 +96,7 @@ class BaseIndexTestMixin:
         import BTrees
         index = self._makeOne(family=BTrees.family64)
         index.clear()
-        self.assertTrue(index.family is BTrees.family64)
+        self.assertIs(index.family, BTrees.family64)
 
     def test_wordCount_method_raises_NotImplementedError(self):
         class DerviedDoesntSet_wordCount(self._getTargetClass()):
@@ -124,18 +124,18 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 3)
         self.assertEqual(index.wordCount(), 3)
-        self.assertTrue(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['three'] in index._wordinfo)
+        self.assertIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['three'], index._wordinfo)
         self.assertEqual(index.documentCount(), 1)
         self.assertTrue(index.has_doc(1))
-        self.assertTrue(1 in index._docwords)
-        self.assertTrue(1 in index._docweight)
+        self.assertIn(1, index._docwords)
+        self.assertIn(1, index._docweight)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 3)
-        self.assertTrue(index._lexicon._wids['one'] in wids)
-        self.assertTrue(index._lexicon._wids['two'] in wids)
-        self.assertTrue(index._lexicon._wids['three'] in wids)
+        self.assertIn(index._lexicon._wids['one'], wids)
+        self.assertIn(index._lexicon._wids['two'], wids)
+        self.assertIn(index._lexicon._wids['three'], wids)
 
     def test_index_doc_existing_docid(self):
         index = self._makeOne()
@@ -150,16 +150,16 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 3)
         self.assertEqual(index.wordCount(), 3)
-        self.assertFalse(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['three'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['four'] in index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['three'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['four'], index._wordinfo)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 3)
-        self.assertFalse(index._lexicon._wids['one'] in wids)
-        self.assertTrue(index._lexicon._wids['two'] in wids)
-        self.assertTrue(index._lexicon._wids['three'] in wids)
-        self.assertTrue(index._lexicon._wids['four'] in wids)
+        self.assertNotIn(index._lexicon._wids['one'], wids)
+        self.assertIn(index._lexicon._wids['two'], wids)
+        self.assertIn(index._lexicon._wids['three'], wids)
+        self.assertIn(index._lexicon._wids['four'], wids)
 
     def test_index_doc_upgrades_wordCount_documentCount(self):
         index = self._makeOne()
@@ -198,14 +198,14 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 3)
         self.assertEqual(index.wordCount(), 3)
-        self.assertTrue(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['three'] in index._wordinfo)
+        self.assertIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['three'], index._wordinfo)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 3)
-        self.assertTrue(index._lexicon._wids['one'] in wids)
-        self.assertTrue(index._lexicon._wids['two'] in wids)
-        self.assertTrue(index._lexicon._wids['three'] in wids)
+        self.assertIn(index._lexicon._wids['one'], wids)
+        self.assertIn(index._lexicon._wids['two'], wids)
+        self.assertIn(index._lexicon._wids['three'], wids)
 
     def test__reindex_doc_disjoint(self):
         index = self._makeOne()
@@ -220,20 +220,20 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 3)
         self.assertEqual(index.wordCount(), 3)
-        self.assertFalse(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['three'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['four'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['five'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['six'] in index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['three'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['four'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['five'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['six'], index._wordinfo)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 3)
-        self.assertFalse(index._lexicon._wids['one'] in wids)
-        self.assertFalse(index._lexicon._wids['two'] in wids)
-        self.assertFalse(index._lexicon._wids['three'] in wids)
-        self.assertTrue(index._lexicon._wids['four'] in wids)
-        self.assertTrue(index._lexicon._wids['five'] in wids)
-        self.assertTrue(index._lexicon._wids['six'] in wids)
+        self.assertNotIn(index._lexicon._wids['one'], wids)
+        self.assertNotIn(index._lexicon._wids['two'], wids)
+        self.assertNotIn(index._lexicon._wids['three'], wids)
+        self.assertIn(index._lexicon._wids['four'], wids)
+        self.assertIn(index._lexicon._wids['five'], wids)
+        self.assertIn(index._lexicon._wids['six'], wids)
 
     def test__reindex_doc_subset(self):
         index = self._makeOne()
@@ -248,14 +248,14 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 2)
         self.assertEqual(index.wordCount(), 2)
-        self.assertFalse(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['three'] in index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['three'], index._wordinfo)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 2)
-        self.assertFalse(index._lexicon._wids['one'] in wids)
-        self.assertTrue(index._lexicon._wids['two'] in wids)
-        self.assertTrue(index._lexicon._wids['three'] in wids)
+        self.assertNotIn(index._lexicon._wids['one'], wids)
+        self.assertIn(index._lexicon._wids['two'], wids)
+        self.assertIn(index._lexicon._wids['three'], wids)
 
     def test__reindex_doc_superset(self):  # TODO
         index = self._makeOne()
@@ -270,20 +270,20 @@ class BaseIndexTestMixin:
 
         self.assertEqual(count, 6)
         self.assertEqual(index.wordCount(), 6)
-        self.assertTrue(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['three'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['four'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['five'] in index._wordinfo)
-        self.assertTrue(index._lexicon._wids['six'] in index._wordinfo)
+        self.assertIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['three'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['four'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['five'], index._wordinfo)
+        self.assertIn(index._lexicon._wids['six'], index._wordinfo)
         wids = index.get_words(1)
         self.assertEqual(len(wids), 6)
-        self.assertTrue(index._lexicon._wids['one'] in wids)
-        self.assertTrue(index._lexicon._wids['two'] in wids)
-        self.assertTrue(index._lexicon._wids['three'] in wids)
-        self.assertTrue(index._lexicon._wids['four'] in wids)
-        self.assertTrue(index._lexicon._wids['five'] in wids)
-        self.assertTrue(index._lexicon._wids['six'] in wids)
+        self.assertIn(index._lexicon._wids['one'], wids)
+        self.assertIn(index._lexicon._wids['two'], wids)
+        self.assertIn(index._lexicon._wids['three'], wids)
+        self.assertIn(index._lexicon._wids['four'], wids)
+        self.assertIn(index._lexicon._wids['five'], wids)
+        self.assertIn(index._lexicon._wids['six'], wids)
 
     def test__get_frequencies_raises_NotImplementedError(self):
         index = self._makeOne()
@@ -299,13 +299,13 @@ class BaseIndexTestMixin:
         index.index_doc(1, 'one two three')
         index.unindex_doc(1)
         self.assertEqual(index.wordCount(), 0)
-        self.assertFalse(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['three'] in index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['three'], index._wordinfo)
         self.assertEqual(index.documentCount(), 0)
         self.assertFalse(index.has_doc(1))
-        self.assertFalse(1 in index._docwords)
-        self.assertFalse(1 in index._docweight)
+        self.assertNotIn(1, index._docwords)
+        self.assertNotIn(1, index._docweight)
         self.assertRaises(KeyError, index.get_words, 1)
 
     def test_unindex_doc_upgrades_wordCount_documentCount(self):
@@ -321,13 +321,13 @@ class BaseIndexTestMixin:
         del index.documentCount
         index.unindex_doc(1)
         self.assertEqual(index.wordCount(), 0)
-        self.assertFalse(index._lexicon._wids['one'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['two'] in index._wordinfo)
-        self.assertFalse(index._lexicon._wids['three'] in index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['one'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['two'], index._wordinfo)
+        self.assertNotIn(index._lexicon._wids['three'], index._wordinfo)
         self.assertEqual(index.documentCount(), 0)
         self.assertFalse(index.has_doc(1))
-        self.assertFalse(1 in index._docwords)
-        self.assertFalse(1 in index._docweight)
+        self.assertNotIn(1, index._docwords)
+        self.assertNotIn(1, index._docweight)
         self.assertRaises(KeyError, index.get_words, 1)
 
     def test_search_w_empty_term(self):
@@ -454,10 +454,12 @@ class BaseIndexTestMixin:
         index.DICT_CUTOFF = 2
         index._add_wordinfo(123, 4, 1)
         index._add_wordinfo(123, 5, 2)
-        self.assertTrue(isinstance(index._wordinfo[123], dict))
+        self.assertIsInstance(index._wordinfo[123], dict)
         index._add_wordinfo(123, 6, 3)
-        self.assertTrue(isinstance(index._wordinfo[123],
-                                   index.family.IF.BTree))
+        self.assertIsInstance(
+            index._wordinfo[123],
+            index.family.IF.BTree
+        )
         self.assertEqual(dict(index._wordinfo[123]), {1: 4, 2: 5, 3: 6})
 
     def test__mass_add_wordinfo_promotes_dict_to_tree_at_DICT_CUTOFF(self):
@@ -466,8 +468,10 @@ class BaseIndexTestMixin:
         index._add_wordinfo(123, 4, 1)
         index._add_wordinfo(123, 5, 2)
         index._mass_add_wordinfo({123: 6, 124: 1}, 3)
-        self.assertTrue(isinstance(index._wordinfo[123],
-                                   index.family.IF.BTree))
+        self.assertIsInstance(
+            index._wordinfo[123],
+            index.family.IF.BTree
+        )
         self.assertEqual(dict(index._wordinfo[123]), {1: 4, 2: 5, 3: 6})
 
     def test__del_wordinfo_no_residual_docscore(self):

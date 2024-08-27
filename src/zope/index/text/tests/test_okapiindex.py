@@ -119,10 +119,10 @@ class OkapiIndexTestMixin:
         relevances = index._search_wids(wids)
         self.assertEqual(len(relevances), len(wids))
         for relevance in relevances:
-            self.assertTrue(isinstance(relevance[0], index.family.IF.Bucket))
+            self.assertIsInstance(relevance[0], index.family.IF.Bucket)
             self.assertEqual(len(relevance[0]), 1)
-            self.assertTrue(isinstance(relevance[0][1], float))
-            self.assertTrue(isinstance(relevance[1], int))
+            self.assertIsInstance(relevance[0][1], float)
+            self.assertIsInstance(relevance[1], int)
 
     def test_okapiindex__OkapiIndex___search_wids__2(self):
         """Search also succeeds if there are more than DICT_CUTOFF entries."""
@@ -134,10 +134,10 @@ class OkapiIndexTestMixin:
         relevances = index._search_wids(wids)
         self.assertEqual(len(relevances), len(wids))
         for relevance in relevances:
-            self.assertTrue(isinstance(relevance[0], index.family.IF.Bucket))
+            self.assertIsInstance(relevance[0], index.family.IF.Bucket)
             self.assertEqual(len(relevance[0]), 11)
-            self.assertTrue(isinstance(relevance[0][1], float))
-            self.assertTrue(isinstance(relevance[1], int))
+            self.assertIsInstance(relevance[0][1], float)
+            self.assertIsInstance(relevance[1], int)
 
     def test__search_wids_old_totaldoclen_no_write_on_read(self):
         index = self._makeOne()

@@ -63,7 +63,7 @@ class FilteredSetBase:
         return self._ids
 
     def __repr__(self):  # pragma: no cover
-        return '{}: ({}) {}'.format(self.id, self.expr, list(self._ids))
+        return f'{self.id}: ({self.expr}) {list(self._ids)}'
 
     __str__ = __repr__
 

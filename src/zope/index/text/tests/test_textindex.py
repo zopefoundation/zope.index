@@ -80,37 +80,37 @@ class TextIndexTests(unittest.TestCase):
         from zope.index.text.lexicon import Splitter
         from zope.index.text.lexicon import StopWordRemover
         from zope.index.text.okapiindex import OkapiIndex
-        self.assertTrue(isinstance(index.index, OkapiIndex))
-        self.assertTrue(isinstance(index.lexicon, Lexicon))
-        self.assertTrue(index.index._lexicon is index.lexicon)
+        self.assertIsInstance(index.index, OkapiIndex)
+        self.assertIsInstance(index.lexicon, Lexicon)
+        self.assertIs(index.index._lexicon, index.lexicon)
         pipeline = index.lexicon._pipeline
         self.assertEqual(len(pipeline), 3)
-        self.assertTrue(isinstance(pipeline[0], Splitter))
-        self.assertTrue(isinstance(pipeline[1], CaseNormalizer))
-        self.assertTrue(isinstance(pipeline[2], StopWordRemover))
+        self.assertIsInstance(pipeline[0], Splitter)
+        self.assertIsInstance(pipeline[1], CaseNormalizer)
+        self.assertIsInstance(pipeline[2], StopWordRemover)
 
     def test_ctor_explicit_lexicon(self):
         from zope.index.text.okapiindex import OkapiIndex
         lexicon = object()
         index = self._makeOne(lexicon)
-        self.assertTrue(index.lexicon is lexicon)
-        self.assertTrue(isinstance(index.index, OkapiIndex))
-        self.assertTrue(index.index._lexicon is lexicon)
+        self.assertIs(index.lexicon, lexicon)
+        self.assertIsInstance(index.index, OkapiIndex)
+        self.assertIs(index.index._lexicon, lexicon)
 
     def test_ctor_explicit_index(self):
         lexicon = object()
         okapi = DummyOkapi(lexicon)
         index = self._makeOne(index=okapi)
-        self.assertTrue(index.index is okapi)
+        self.assertIs(index.index, okapi)
         # See LP #232516
-        self.assertTrue(index.lexicon is lexicon)
+        self.assertIs(index.lexicon, lexicon)
 
     def test_ctor_explicit_lexicon_and_index(self):
         lexicon = object()
         okapi = object()
         index = self._makeOne(lexicon, okapi)
-        self.assertTrue(index.lexicon is lexicon)
-        self.assertTrue(index.index is okapi)
+        self.assertIs(index.lexicon, lexicon)
+        self.assertIs(index.index, okapi)
 
     def test_index_doc(self):
         lexicon = object()

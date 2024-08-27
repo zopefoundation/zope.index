@@ -103,12 +103,12 @@ class TopicIndexTest(unittest.TestCase):
     def test_ctor_defaults(self):
         import BTrees
         index = self._makeOne(family=None)
-        self.assertTrue(index.family is BTrees.family32)
+        self.assertIs(index.family, BTrees.family32)
 
     def test_ctor_explicit_family(self):
         import BTrees
         index = self._makeOne(family=BTrees.family64)
-        self.assertTrue(index.family is BTrees.family64)
+        self.assertIs(index.family, BTrees.family64)
 
     def test_clear_erases_filters(self):
         index = self._makeOne()
@@ -122,7 +122,7 @@ class TopicIndexTest(unittest.TestCase):
         foo = DummyFilter('foo')
         index.addFilter(foo)
         self.assertEqual(list(index._filters), ['foo'])
-        self.assertTrue(index._filters['foo'] is foo)
+        self.assertIs(index._filters['foo'], foo)
 
     def test_addFilter_duplicate_replaces(self):
         index = self._makeOne()
@@ -131,7 +131,7 @@ class TopicIndexTest(unittest.TestCase):
         foo2 = DummyFilter('foo')
         index.addFilter(foo2)
         self.assertEqual(list(index._filters), ['foo'])
-        self.assertTrue(index._filters['foo'] is foo2)
+        self.assertIs(index._filters['foo'], foo2)
 
     def test_delFilter_nonesuch_raises_KeyError(self):
         index = self._makeOne()
@@ -145,7 +145,7 @@ class TopicIndexTest(unittest.TestCase):
         index.addFilter(bar)
         index.delFilter('foo')
         self.assertEqual(list(index._filters), ['bar'])
-        self.assertTrue(index._filters['bar'] is bar)
+        self.assertIs(index._filters['bar'], bar)
 
     def test_clearFilters_empty(self):
         index = self._makeOne()

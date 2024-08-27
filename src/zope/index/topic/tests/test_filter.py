@@ -49,7 +49,7 @@ class FilteredSetBaseTests(unittest.TestCase):
     def test_ctor_defaults(self):
         import BTrees
         filter = self._makeOne(family=None)
-        self.assertTrue(filter.family is BTrees.family32)
+        self.assertIs(filter.family, BTrees.family32)
         self.assertEqual(filter.getId(), 'test')
         self.assertEqual(filter.getExpression(), 'True')
         self.assertEqual(len(filter.getIds()), 0)
@@ -57,7 +57,7 @@ class FilteredSetBaseTests(unittest.TestCase):
     def test_ctor_explicit_family(self):
         import BTrees
         filter = self._makeOne(family=BTrees.family64)
-        self.assertTrue(filter.family is BTrees.family64)
+        self.assertIs(filter.family, BTrees.family64)
 
     def test_index_doc_raises_NotImplementedError(self):
         filter = self._makeOne()

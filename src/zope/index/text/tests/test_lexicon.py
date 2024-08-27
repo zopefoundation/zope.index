@@ -53,7 +53,7 @@ class LexiconTests(unittest.TestCase):
         del lexicon.wordCount
         self.assertEqual(lexicon.wordCount(), 0)
         # No write-on-read!
-        self.assertFalse(isinstance(lexicon.wordCount, Length))
+        self.assertNotIsInstance(lexicon.wordCount, Length)
 
     def test_sourceToWordIds_empty_string(self):
         lexicon = self._makeOne()
@@ -81,7 +81,7 @@ class LexiconTests(unittest.TestCase):
         wids = lexicon.sourceToWordIds('cats and dogs')
         self.assertEqual(wids, [1, 2, 3])
         self.assertEqual(lexicon.wordCount(), 3)
-        self.assertTrue(isinstance(lexicon.wordCount, Length))
+        self.assertIsInstance(lexicon.wordCount, Length)
 
     def test_termToWordIds_hit(self):
         lexicon = self._makeOne()
