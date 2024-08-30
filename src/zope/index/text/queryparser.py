@@ -147,7 +147,7 @@ class QueryParser:
     def _require(self, tokentype):
         if not self._check(tokentype):
             t = self._tokens[self._index]
-            msg = "Token {!r} required, {!r} found".format(tokentype, t)
+            msg = f"Token {tokentype!r} required, {t!r} found"
             raise parsetree.ParseError(msg)
 
     def _check(self, tokentype):

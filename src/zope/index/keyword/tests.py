@@ -335,12 +335,12 @@ class _TestCaseBase:
 
     def test_ctor_defaults(self):
         index = self._makeOne()
-        self.assertTrue(index.family is self._get_family())
+        self.assertIs(index.family, self._get_family())
 
     def test_ctor_explicit_family(self):
         import BTrees
         index = self._makeOne(family=BTrees.family64)
-        self.assertTrue(index.family is BTrees.family64)
+        self.assertIs(index.family, BTrees.family64)
 
     def test_empty_index(self):
         index = self._makeOne()
@@ -358,8 +358,8 @@ class _TestCaseBase:
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 2)
         self.assertTrue(index.has_doc(1))
-        self.assertTrue('albatross' in index._fwd_index)
-        self.assertTrue('cormorant' in index._fwd_index)
+        self.assertIn('albatross', index._fwd_index)
+        self.assertIn('cormorant', index._fwd_index)
 
     def test_index_doc_existing(self):
         index = self._makeOne()
@@ -368,9 +368,9 @@ class _TestCaseBase:
         self.assertEqual(index.documentCount(), 1)
         self.assertEqual(index.wordCount(), 2)
         self.assertTrue(index.has_doc(1))
-        self.assertFalse('albatross' in index._fwd_index)
-        self.assertTrue('buzzard' in index._fwd_index)
-        self.assertTrue('cormorant' in index._fwd_index)
+        self.assertNotIn('albatross', index._fwd_index)
+        self.assertIn('buzzard', index._fwd_index)
+        self.assertIn('cormorant', index._fwd_index)
 
     def test_index_doc_many(self):
         index = self._makeOne()

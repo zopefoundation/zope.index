@@ -43,7 +43,7 @@ class ParseTreeNode:
         return self._value
 
     def __repr__(self):
-        return "{}({!r})".format(self.__class__.__name__, self.getValue())
+        return f"{self.__class__.__name__}({self.getValue()!r})"
 
     def terms(self):
         t = []

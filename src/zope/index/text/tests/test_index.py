@@ -45,7 +45,7 @@ class IndexTestMixin:
                          index.wordCount())
         for map in index._wordinfo.values():
             self.assertEqual(len(map), 1)
-            self.assertTrue(docid in map)
+            self.assertIn(docid, map)
 
     def _check_index_is_empty(self, index):
         self.assertEqual(len(index._docweight), 0)
@@ -105,8 +105,8 @@ class IndexTestMixin:
         for wid, map in index._wordinfo.items():
             if wid == document_wid:
                 self.assertEqual(len(map), 2)
-                self.assertTrue(1 in map)
-                self.assertTrue(2 in map)
+                self.assertIn(1, map)
+                self.assertIn(2, map)
             else:
                 self.assertEqual(len(map), 1)
 
@@ -127,7 +127,7 @@ class IndexTestMixin:
                          index.wordCount())
         for map in index._wordinfo.values():
             self.assertEqual(len(map), 1)
-            self.assertTrue(2 in map)
+            self.assertIn(2, map)
 
     def test_index_duplicated_words(self):
         doc = "very simple repeat repeat repeat document test"
@@ -144,7 +144,7 @@ class IndexTestMixin:
 
         for _wid, map in index._wordinfo.items():
             self.assertEqual(len(map), 1)
-            self.assertTrue(1 in map)
+            self.assertIn(1, map)
 
     def test_simple_query_oneresult(self):
         index = self._makeOne()

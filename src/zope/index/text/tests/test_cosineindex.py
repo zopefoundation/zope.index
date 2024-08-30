@@ -89,10 +89,10 @@ class CosineIndexTestBase:
         relevances = index._search_wids(wids)
         self.assertEqual(len(relevances), len(wids))
         for relevance in relevances:
-            self.assertTrue(isinstance(relevance[0], index.family.IF.Bucket))
+            self.assertIsInstance(relevance[0], index.family.IF.Bucket)
             self.assertEqual(len(relevance[0]), 1)
-            self.assertTrue(isinstance(relevance[0][1], float))
-            self.assertTrue(isinstance(relevance[1], float))
+            self.assertIsInstance(relevance[0][1], float)
+            self.assertIsInstance(relevance[1], float)
 
     def test_query_weight_empty_wids(self):
         index = self._makeOne()
