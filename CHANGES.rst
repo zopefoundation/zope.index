@@ -5,6 +5,8 @@
 7.0 (unreleased)
 ================
 
+- Add final support for Python 3.13.
+
 - Drop support for Python 3.7.
 
 - C extension now enables multi-phase module initialization (PEP 489).See:
