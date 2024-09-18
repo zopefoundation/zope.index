@@ -30,6 +30,9 @@ from setuptools import find_packages
 from setuptools import setup
 
 
+version = '7.0'
+
+
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
@@ -74,7 +77,7 @@ class optional_build_ext(build_ext):
 
 
 setup(name='zope.index',
-      version='6.2.dev0',
+      version=version,
       url='https://github.com/zopefoundation/zope.index',
       license='ZPL 2.1',
       author='Zope Foundation and Contributors',
