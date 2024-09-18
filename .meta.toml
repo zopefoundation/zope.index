@@ -2,21 +2,18 @@
 # https://github.com/zopefoundation/meta/tree/master/config/c-code
 [meta]
 template = "c-code"
-commit-id = "a1e05e74"
+commit-id = "a7193216"
 
 [python]
 with-windows = true
 with-pypy = true
 with-docs = true
 with-sphinx-doctests = true
-with-future-python = true
+with-future-python = false
 with-macos = false
 
 [tox]
 use-flake8 = true
-testenv-deps = [
-    "py37: urllib3 < 2",
-    ]
 
 [c-code]
 require-cffi = true
