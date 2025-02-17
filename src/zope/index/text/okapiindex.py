@@ -203,7 +203,7 @@ _is_pypy = _py_impl() == 'PyPy'
 PURE_PYTHON = int(os.environ.get('PURE_PYTHON', '0')) or _is_pypy
 try:
     from zope.index.text.okascore import score
-except ImportError:  # pragma: no cover
+except ModuleNotFoundError:  # pragma: no cover
     score = None
 
 score = None if PURE_PYTHON else score
