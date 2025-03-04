@@ -158,14 +158,12 @@ jobs:
         if: matrix.python-version == '3.14'
         run: |
           pip install -U pip
-          pip install -U --pre cffi
           pip install -U "setuptools <= 75.6.0" wheel twine
       - name: Install Build Dependencies
         if: matrix.python-version != '3.14'
         run: |
           pip install -U pip
           pip install -U "setuptools <= 75.6.0" wheel twine
-          pip install cffi
 
       - name: Build zope.index (macOS x86_64)
         if: >
@@ -333,7 +331,6 @@ jobs:
       - name: Install zope.index ${{ matrix.python-version }}
         if: matrix.python-version == '3.14'
         run: |
-          pip install -U --pre cffi
           pip install -U wheel "setuptools <= 75.6.0"
           # coverage might have a wheel on PyPI for a future python version which is
           # not ABI compatible with the current one, so build it from sdist:
@@ -341,7 +338,8 @@ jobs:
           # Unzip into src/ so that testrunner can find the .so files
           # when we ask it to load tests from that directory. This
           # might also save some build time?
-          unzip -n dist/zope.index-*whl -d src
+          ls -l dist/*whl
+          unzip -n dist/*.whl -d src
           # Use "--pre" here because dependencies with support for this future
           # Python release may only be available as pre-releases
           pip install --pre -e .[test]
@@ -354,7 +352,8 @@ jobs:
           # Unzip into src/ so that testrunner can find the .so files
           # when we ask it to load tests from that directory. This
           # might also save some build time?
-          unzip -n dist/zope.index-*whl -d src
+          ls -l dist/*whl
+          unzip -n dist/*.whl -d src
           pip install -e .[test]
       - name: Run tests with C extensions
         if: ${{ !startsWith(matrix.python-version, 'pypy') }}
@@ -449,13 +448,83 @@ jobs:
         run: |
           pip install -U wheel
           pip install -U coverage[toml]
-          pip install -U  "`ls dist/zope.index-*.whl`[docs]"
+          pip install -U  "`ls dist/*.whl`[docs]"
       - name: Build docs
         env:
           ZOPE_INTERFACE_STRICT_IRO: 1
         run: |
           sphinx-build -b html -d docs/_build/doctrees docs docs/_build/html
           sphinx-build -b doctest -d docs/_build/doctrees docs docs/_build/doctest
+
+  release-check:
+    needs: build-package
+    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        os: [ubuntu-latest]
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+      ###
+      # Caching.
+      # This actually *restores* a cache and schedules a cleanup action
+      # to save the cache. So it must come before the thing we want to use
+      # the cache.
+      ###
+      - name: Get pip cache dir (default)
+        id: pip-cache-default
+        if: ${{ !startsWith(runner.os, 'Windows') }}
+        run: |
+          echo "dir=$(pip cache dir)" >>$GITHUB_OUTPUT
+
+      - name: Get pip cache dir (Windows)
+        id: pip-cache-windows
+        if: ${{ startsWith(runner.os, 'Windows') }}
+        run: |
+          echo "dir=$(pip cache dir)" >> $Env:GITHUB_OUTPUT
+
+      - name: pip cache (default)
+        uses: actions/cache@v4
+        if: ${{ !startsWith(runner.os, 'Windows') }}
+        with:
+          path: ${{ steps.pip-cache-default.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: pip cache (Windows)
+        uses: actions/cache@v4
+        if: ${{ startsWith(runner.os, 'Windows') }}
+        with:
+          path: ${{ steps.pip-cache-windows.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ matrix.python-version }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Download zope.index wheel
+        uses: actions/download-artifact@v4
+        with:
+          name: zope.index-${{ runner.os }}-${{ matrix.python-version }}.whl
+          path: dist/
+      - name: Install zope.index
+        run: |
+          pip install -U wheel
+          pip install -U tox
+          pip install -U  "`ls dist/*.whl`[docs]"
+      - name: Run release check
+        env:
+          ZOPE_INTERFACE_STRICT_IRO: 1
+        run: |
+          tox -e release-check
 
   manylinux:
     runs-on: ubuntu-latest
