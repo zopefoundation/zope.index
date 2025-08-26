@@ -30,7 +30,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = '7.1.dev0'
+version = '8.0.dev0'
 
 
 def read(*rnames):
