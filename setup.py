@@ -26,7 +26,6 @@ from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 
 from setuptools import Extension
-from setuptools import find_packages
 from setuptools import setup
 
 
@@ -102,13 +101,10 @@ setup(name='zope.index',
           'Topic :: Internet :: WWW/HTTP',
           'Topic :: Software Development',
       ],
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
-      namespace_packages=['zope'],
       python_requires='>=3.9',
       extras_require={
           'test': [
-              'zope.testrunner',
+              'zope.testrunner >= 6.4',
           ],
           'tools': [
               'ZODB',
