@@ -83,6 +83,13 @@ setup(name='zope.index',
       author_email='zope-dev@zope.dev',
       description="Indices for using with catalog like text, field, etc.",
       long_description=long_description,
+      # we need the following two parameters because we compile C code,
+      # otherwise only the shared library is installed:
+      package_dir={'': 'src'},
+      packages=['zope.index',
+                'zope.index.field',
+                'zope.index.text',
+                'zope.index.topic'],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
