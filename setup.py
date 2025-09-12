@@ -26,11 +26,10 @@ from distutils.errors import DistutilsExecError
 from distutils.errors import DistutilsPlatformError
 
 from setuptools import Extension
-from setuptools import find_packages
 from setuptools import setup
 
 
-version = '7.1.dev0'
+version = '8.0.dev0'
 
 
 def read(*rnames):
@@ -84,6 +83,13 @@ setup(name='zope.index',
       author_email='zope-dev@zope.dev',
       description="Indices for using with catalog like text, field, etc.",
       long_description=long_description,
+      # we need the following two parameters because we compile C code,
+      # otherwise only the shared library is installed:
+      package_dir={'': 'src'},
+      packages=['zope.index',
+                'zope.index.field',
+                'zope.index.text',
+                'zope.index.topic'],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
@@ -102,13 +108,10 @@ setup(name='zope.index',
           'Topic :: Internet :: WWW/HTTP',
           'Topic :: Software Development',
       ],
-      packages=find_packages('src'),
-      package_dir={'': 'src'},
-      namespace_packages=['zope'],
       python_requires='>=3.9',
       extras_require={
           'test': [
-              'zope.testrunner',
+              'zope.testrunner >= 6.4',
           ],
           'tools': [
               'ZODB',
