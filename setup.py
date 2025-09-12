@@ -29,7 +29,7 @@ from setuptools import Extension
 from setuptools import setup
 
 
-version = '8.0'
+version = '8.1.dev0'
 
 
 def read(*rnames):
