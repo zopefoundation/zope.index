@@ -4,10 +4,61 @@
 
 [build-system]
 requires = [
-    "setuptools == 78.1.1",
+    "setuptools",
     "wheel",
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "zope.index"
+version = "8.1.dev0"
+description = "Indices for using with catalog like text, field, etc."
+keywords = ["zope", "index"]
+readme = "README.rst"
+requires-python = ">=3.10"
+license = "ZPL-2.1"
+authors = [
+  { name = "Zope Foundation and contributors", email = "zope-dev@zope.dev" },
+]
+maintainers = [
+  { name = "Plone Foundation and contributors", email = "zope-dev@zope.dev" },
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Zope :: 3",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "BTrees",
+  "persistent",
+  "zope.interface",
+]
+
+[project.optional-dependencies]
+docs = [
+  "Sphinx",
+  "repoze.sphinx.autointerface",
+  "furo",
+]
+test = ["zope.testrunner >= 6.4"]
+tools = ["ZODB", "transaction"]
+
+[project.urls]
+Documentation = "https://zopeindex.readthedocs.io"
+Issues = "https://github.com/zopefoundation/zope.index/issues"
+Source = "https://github.com/zopefoundation/zope.index"
+Changelog = "https://github.com/zopefoundation/zope.index/blob/master/CHANGES.rst"
 
 [tool.coverage.run]
 branch = true

@@ -29,19 +29,10 @@ from setuptools import Extension
 from setuptools import setup
 
 
-version = '8.1.dev0'
-
-
-def read(*rnames):
-    with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
-        return f.read()
-
-
-long_description = (
-    read('README.rst')
-    + '\n\n'
-    + read('CHANGES.rst')
-)
+extensions = [
+    Extension('zope.index.text.okascore',
+              [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
+]
 
 
 class optional_build_ext(build_ext):
@@ -75,65 +66,5 @@ class optional_build_ext(build_ext):
         print('*' * 80, file=sys.stderr)
 
 
-setup(name='zope.index',
-      version=version,
-      url='https://github.com/zopefoundation/zope.index',
-      license='ZPL-2.1',
-      author='Zope Foundation and Contributors',
-      author_email='zope-dev@zope.dev',
-      description="Indices for using with catalog like text, field, etc.",
-      long_description=long_description,
-      # we need the following two parameters because we compile C code,
-      # otherwise only the shared library is installed:
-      package_dir={'': 'src'},
-      packages=['zope.index',
-                'zope.index.field',
-                'zope.index.text',
-                'zope.index.topic'],
-      classifiers=[
-          'Development Status :: 5 - Production/Stable',
-          'Intended Audience :: Developers',
-          'License :: OSI Approved :: Zope Public License',
-          'Programming Language :: Python',
-          'Programming Language :: Python :: 3',
-          'Programming Language :: Python :: 3.9',
-          'Programming Language :: Python :: 3.10',
-          'Programming Language :: Python :: 3.11',
-          'Programming Language :: Python :: 3.12',
-          'Programming Language :: Python :: 3.13',
-          'Programming Language :: Python :: Implementation :: CPython',
-          'Programming Language :: Python :: Implementation :: PyPy',
-          'Natural Language :: English',
-          'Operating System :: OS Independent',
-          'Topic :: Internet :: WWW/HTTP',
-          'Topic :: Software Development',
-      ],
-      python_requires='>=3.9',
-      extras_require={
-          'test': [
-              'zope.testrunner >= 6.4',
-          ],
-          'tools': [
-              'ZODB',
-              'transaction'
-          ],
-          'docs': [
-              'Sphinx',
-              'repoze.sphinx.autointerface',
-          ],
-      },
-      install_requires=[
-          'persistent',
-          'BTrees>=4.4.1',
-          'setuptools',
-          'zope.interface'
-      ],
-      ext_modules=[
-          Extension(
-              'zope.index.text.okascore',
-              [os.path.join('src', 'zope', 'index', 'text', 'okascore.c')]),
-      ],
-      cmdclass={'build_ext': optional_build_ext},
-      include_package_data=True,
-      zip_safe=False,
-      )
+setup(ext_modules=extensions,
+      cmdclass={'build_ext': optional_build_ext})

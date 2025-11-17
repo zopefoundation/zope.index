@@ -12,14 +12,15 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+import datetime
 import os
 import sys
+from importlib.metadata import distribution
 
-import pkg_resources
 
-
+year = datetime.datetime.now().year
 sys.path.append(os.path.abspath('../src'))
-rqmt = pkg_resources.require('zope.index')[0]
+rqmt = distribution('zope.index')
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -56,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'zope.index'
-copyright = '2015-2017, Zope Foundation and Contributors'
+copyright = f'2015-{year}, Zope Foundation and Contributors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -110,7 +111,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'furo'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
