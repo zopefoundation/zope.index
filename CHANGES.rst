@@ -1,7 +1,7 @@
 Change log
 ==========
 
-8.1 (unreleased)
+8.1 (2025-11-18)
 ----------------
 
 - Move all supported package metadata into ``pyproject.toml``.
