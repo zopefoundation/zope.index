@@ -4,7 +4,7 @@ Change log
 8.2 (unreleased)
 ----------------
 
-- Add preliminary support for Python 3.15 as of 3.15b1.
+- Add support for Python 3.15.
 
 - Add support for automatically building and publishing Windows/ARM64 wheels.
 
